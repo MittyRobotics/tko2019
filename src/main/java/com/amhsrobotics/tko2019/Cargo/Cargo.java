@@ -13,8 +13,6 @@ public class Cargo {
     public static WPI_TalonSRX[] conveyorTalons = new WPI_TalonSRX[2];
 
     public void init() {
-        limitSwitch = new DigitalInput(0);
-        limitSwitch.get();
 
         intakeTalons[0] = new WPI_TalonSRX(0);
         intakeTalons[1] = new WPI_TalonSRX(1);
@@ -23,8 +21,26 @@ public class Cargo {
         conveyorTalons[1] = new WPI_TalonSRX(4);
 
         intakeTalons[1].set(ControlMode.Follower, intakeTalons[0].getDeviceID());
-        intakeTalons[0].configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
-        
+        conveyorTalons[0].configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
+
         conveyorTalons[1].set(ControlMode.Follower, conveyorTalons[0].getDeviceID());
+    }
+
+    public void spinIntake(){
+        intakeTalons[0].set(ControlMode.PercentOutput, .8); // or -1
+    }
+
+    public void stopIntake(){
+        intakeTalons[0].set(ControlMode.PercentOutput, 0);
+    }
+
+    public void raiseConveyor(){
+        double neededPos = 100; //change number to encoder amount
+        conveyorTalons[0].set(ControlMode.Position, neededPos);
+    }
+
+    public void dropConveyor(){
+        double neededPos = 0; //change number to encoder amount
+        conveyorTalons[0].set(ControlMode.Position, neededPos);
     }
 }
