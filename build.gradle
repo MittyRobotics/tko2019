@@ -1,0 +1,57 @@
+import edu.wpi.first.gradlerio.GradleRIOPlugin
+
+plugins {
+    id 'java'
+    id "edu.wpi.first.GradleRIO" version "2019.1.1"
+}
+
+def ROBOT_MAIN_CLASS = "com.amhsrobotics.tko2019"
+def includeDesktopSupport = false
+
+group 'com.amhsrobotics'
+version '0.1.0'
+
+sourceCompatibility = 1.11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    //noinspection GroovyAssignabilityCheck
+    compile wpi.deps.wpilib()
+    //noinspection GroovyAssignabilityCheck
+    compile wpi.deps.vendor.java()
+    //noinspection GroovyAssignabilityCheck
+    nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
+    //noinspection GroovyAssignabilityCheck
+    nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
+    testCompile 'junit:junit:4.12'
+}
+
+deploy {
+    targets {
+        roboRIO("roborio") {
+            team = 1351
+        }
+    }
+    artifacts {
+        frcJavaArtifact('frcJava') {
+            targets << "roborio"
+            debug = frc.getDebugOrDefault(false)
+        }
+        fileTreeArtifact('frcStaticFileDeploy') {
+
+            files = fileTree(dir: 'src/main/deploy')
+
+            targets << "roborio"
+            directory = '/home/lvuser/deploy'
+        }
+    }
+}
+
+jar {
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    //noinspection GroovyAssignabilityCheck
+    manifest GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
+}
