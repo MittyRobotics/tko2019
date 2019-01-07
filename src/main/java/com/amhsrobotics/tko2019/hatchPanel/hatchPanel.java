@@ -9,7 +9,7 @@ public class hatchPanel {
     public static DoubleSolenoid solForward;
     public static DigitalInput limitSwitch;
 
-    protected void hatchInit() {
+    protected void init() {
         solSide = new DoubleSolenoid(0, 1);
         solForward = new DoubleSolenoid(2, 3);
         limitSwitch = new DigitalInput(1);
