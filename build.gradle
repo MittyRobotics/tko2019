@@ -15,9 +15,6 @@ sourceCompatibility = 1.11
 
 repositories {
     mavenCentral()
-    maven {
-        url 'http://devsite.ctr-electronics.com/maven/release/'
-    }
 }
 
 dependencies {
@@ -29,11 +26,6 @@ dependencies {
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
     //noinspection GroovyAssignabilityCheck
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
-
-    compile 'com.ctre.phoenix:wpiapi-java:5.12.0'
-    compile 'com.ctre.phoenix:cci:5.12.0'
-    compile 'com.ctre.phoenix:api-java:5.12.0'
-
     testCompile 'junit:junit:4.12'
 }
 
