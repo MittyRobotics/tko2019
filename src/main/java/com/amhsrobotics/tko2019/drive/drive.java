@@ -29,15 +29,11 @@ public class drive {
         rightDriveTalons[0].set(ControlMode.PercentOutput, value);
     }
     public void shiftGear(int value){
-        if (value == 0)
+        if (value == 0) {
             gearShift.set(DoubleSolenoid.Value.kReverse);
+        }
         else {
             gearShift.set(DoubleSolenoid.Value.kForward);
         }
-    }
-
-
-
-
     }
 }
