@@ -5,7 +5,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class drive {
-    // creates talons
+    //creates talons
     WPI_TalonSRX[] leftDriveTalons = new WPI_TalonSRX[2];
     WPI_TalonSRX[] rightDriveTalons = new WPI_TalonSRX[2];
     DoubleSolenoid gearShift;
@@ -19,7 +19,6 @@ public class drive {
         gearShift = new DoubleSolenoid(0, 1);
         leftDriveTalons[1].set(ControlMode.Follower, leftDriveTalons[0].getDeviceID());
         rightDriveTalons[1].set(ControlMode.Follower, rightDriveTalons[0].getDeviceID());
-
     }
     // move left function
     public void moveLeft(double value){
@@ -30,7 +29,8 @@ public class drive {
     public void moveRight(double value){
         rightDriveTalons[0].set(ControlMode.PercentOutput, value);
     }
-    //shift gear function 
+
+    //shift gear function
     public void shiftGear(int value){
         if (value == 0) {
             gearShift.set(DoubleSolenoid.Value.kReverse);
