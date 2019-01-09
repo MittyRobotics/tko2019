@@ -5,7 +5,7 @@ plugins {
     id "edu.wpi.first.GradleRIO" version "2019.1.1"
 }
 
-def ROBOT_MAIN_CLASS = "com.amhsrobotics.tko2019"
+def ROBOT_MAIN_CLASS = "com.amhsrobotics.tko2019.Robot"
 def includeDesktopSupport = false
 
 group 'com.amhsrobotics'
