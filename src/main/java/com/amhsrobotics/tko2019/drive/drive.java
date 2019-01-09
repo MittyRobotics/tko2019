@@ -32,15 +32,11 @@ public class drive {
     }
     //shift gear function 
     public void shiftGear(int value){
-        if (value == 0)
+        if (value == 0) {
             gearShift.set(DoubleSolenoid.Value.kReverse);
+        }
         else {
             gearShift.set(DoubleSolenoid.Value.kForward);
         }
-    }
-
-
-
-
     }
 }
