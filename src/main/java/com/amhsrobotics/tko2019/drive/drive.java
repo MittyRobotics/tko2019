@@ -6,12 +6,12 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class drive {
     // creates talons
-    WPI_TalonSRX[] leftDriveTalons = new WPI_TalonSRX[2];
-    WPI_TalonSRX[] rightDriveTalons = new WPI_TalonSRX[2];
-    DoubleSolenoid gearShift;
+    static WPI_TalonSRX[] leftDriveTalons = new WPI_TalonSRX[2];
+    static WPI_TalonSRX[] rightDriveTalons = new WPI_TalonSRX[2];
+    static DoubleSolenoid gearShift;
     int x = 0;
     //initializes talons
-    public void init(){
+    public static void init(){
         leftDriveTalons[0] = new WPI_TalonSRX(20);
         leftDriveTalons[1] = new WPI_TalonSRX(21);
         rightDriveTalons[0] = new WPI_TalonSRX(22);
@@ -22,16 +22,16 @@ public class drive {
 
     }
     // move left function
-    public void moveLeft(double value){
+    public static void moveLeft(double value){
         leftDriveTalons[0].set(ControlMode.PercentOutput, value);
 
     }
     //move right function
-    public void moveRight(double value){
+    public static void moveRight(double value){
         rightDriveTalons[0].set(ControlMode.PercentOutput, value);
     }
     //shift gear function 
-    public void shiftGear(int value){
+    public static void shiftGear(int value){
         if (value == 0) {
             gearShift.set(DoubleSolenoid.Value.kReverse);
         }
@@ -39,4 +39,6 @@ public class drive {
             gearShift.set(DoubleSolenoid.Value.kForward);
         }
     }
+
+
 }
