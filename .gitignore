@@ -1,6 +1,7 @@
 # Java
 
 # Build
+build
 out
 
 # Gradle
@@ -11,6 +12,3 @@ out
 
 # MacOSX
 .DS_Store
-
-
-
