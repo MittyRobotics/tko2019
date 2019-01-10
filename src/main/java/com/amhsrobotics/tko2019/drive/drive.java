@@ -10,6 +10,8 @@ public class drive {
     static WPI_TalonSRX[] rightDriveTalons = new WPI_TalonSRX[2];
     static DoubleSolenoid gearShift;
     int x = 0;
+    public static int reverseFactor; //Used for robot reverse drive when A button is pressed.
+
     //initializes talons
     public static void init(){
         leftDriveTalons[0] = new WPI_TalonSRX(20);
@@ -19,17 +21,31 @@ public class drive {
         gearShift = new DoubleSolenoid(0, 1);
         leftDriveTalons[1].set(ControlMode.Follower, leftDriveTalons[0].getDeviceID());
         rightDriveTalons[1].set(ControlMode.Follower, rightDriveTalons[0].getDeviceID());
-
+        reverseFactor = 1; //1 keeps original drive direction, -1 reverses the value
     }
-    // move left function
+
+    //Manipulate drivetrain
+    // move left set of wheels
     public static void moveLeft(double value){
-        leftDriveTalons[0].set(ControlMode.PercentOutput, value);
+        leftDriveTalons[0].set(ControlMode.PercentOutput, reverseFactor*value);
+    }
 
-    }
-    //move right function
+    //move right set of wheels
     public static void moveRight(double value){
-        rightDriveTalons[0].set(ControlMode.PercentOutput, value);
+        rightDriveTalons[0].set(ControlMode.PercentOutput, reverseFactor*value);
     }
+
+    //Check if A button is pressed to toggle reverse drive direction
+    public static void  toggleReverser(boolean aButtonPressed){
+        if (aButtonPressed == true){
+            reverseFactor = -1; //Causes robot to drive in reverse
+        }
+        if (aButtonPressed == false){
+            reverseFactor = 1; //Drive normally
+        }
+    }
+
+
     //shift gear function 
     public static void shiftGear(int value){
         if (value == 0) {
