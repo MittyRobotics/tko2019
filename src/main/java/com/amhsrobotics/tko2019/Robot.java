@@ -2,9 +2,14 @@ package com.amhsrobotics.tko2019;
 
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SampleRobot;
 
 public class Robot extends SampleRobot {
+	public static void main(final String... args) {
+		RobotBase.startRobot(Robot::new);
+	}
+
 	private final Compressor compressor;
 
 	Robot() {
