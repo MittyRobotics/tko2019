@@ -15,10 +15,16 @@ public class driveControls {
         aButtonPressed = controller.getAButtonPressed();
 
         //Get left stick Y pos and call drive function
-        if ((Math.abs(controller.getY(GenericHID.Hand.kLeft)) > 0.05) || (Math.abs(controller.getY(GenericHID.Hand.kLeft)) < -0.05)) {
+        if (Math.abs(controller.getY(GenericHID.Hand.kLeft)) > 0.05){
             drive.moveLeft(controller.getY(GenericHID.Hand.kLeft));
         } else {
             drive.moveLeft(0);
+        }
+
+        if (Math.abs(controller.getY(GenericHID.Hand.kRight)) > 0.05){
+            drive.moveRight(controller.getY(GenericHID.Hand.kRight));
+        } else {
+            drive.moveRight(0);
         }
 
         //Get state of A button - note: double check code to make sure it should work
