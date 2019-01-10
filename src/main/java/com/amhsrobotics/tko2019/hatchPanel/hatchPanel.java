@@ -1,5 +1,6 @@
 package com.amhsrobotics.tko2019.hatchPanel;
 
+import com.amhsrobotics.tko2019.Robot;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DigitalInput;
 

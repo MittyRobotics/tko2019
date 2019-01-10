@@ -18,7 +18,6 @@ public class Robot extends SampleRobot {
 
 	@Override
 	public void operatorControl() {
-
 	}
 
 	@Override
