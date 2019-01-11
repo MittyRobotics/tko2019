@@ -50,7 +50,7 @@ deploy {
             debug = frc.getDebugOrDefault(false)
         }
         fileTreeArtifact('frcStaticFileDeploy') {
-            files = fileTree(dir: 'src/main/deploy')
+            files = fileTree(dir: 'src/main/resources')
             //noinspection GroovyAssignabilityCheck
             targets << "roborio"
             directory = '/home/lvuser/deploy'
