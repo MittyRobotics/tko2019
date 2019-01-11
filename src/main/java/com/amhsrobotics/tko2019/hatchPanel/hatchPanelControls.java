@@ -2,11 +2,10 @@ package com.amhsrobotics.tko2019.hatchPanel;
 
 import edu.wpi.first.wpilibj.*;
 
-public class hatchPanelControls extends hatchPanel {
-    public static Joystick leftJoy;
-    protected void init() {
-         leftJoy = new Joystick(0);
-    }
+import static com.amhsrobotics.tko2019.hatchPanel.hatchPanel.*;
+
+public class hatchPanelControls{
+    public static Joystick leftJoy = new Joystick(0);
     public void run(){
         if (leftJoy.getRawButton(4)){
             openHatch();
