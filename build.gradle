@@ -5,11 +5,11 @@ plugins {
     id "edu.wpi.first.GradleRIO" version "2019.1.1"
 }
 
-def ROBOT_MAIN_CLASS = "com.amhsrobotics.tko2019"
-def includeDesktopSupport = false
+def ROBOT_MAIN_CLASS = "com.amhsrobotics.tko2019.Robot"
+def includeDesktopSupport = true
 
 group 'com.amhsrobotics'
-version '0.1.0'
+version '0.1.5'
 
 sourceCompatibility = 1.11
 
@@ -22,19 +22,19 @@ repositories {
 
 dependencies {
     //noinspection GroovyAssignabilityCheck
-    compile wpi.deps.wpilib()
+    implementation wpi.deps.wpilib()
     //noinspection GroovyAssignabilityCheck
-    compile wpi.deps.vendor.java()
+    implementation wpi.deps.vendor.java()
     //noinspection GroovyAssignabilityCheck
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
     //noinspection GroovyAssignabilityCheck
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
 
-    compile 'com.ctre.phoenix:wpiapi-java:5.12.0'
-    compile 'com.ctre.phoenix:cci:5.12.0'
-    compile 'com.ctre.phoenix:api-java:5.12.0'
+    implementation 'com.ctre.phoenix:wpiapi-java:5.12.0'
+    implementation 'com.ctre.phoenix:cci:5.12.0'
+    implementation 'com.ctre.phoenix:api-java:5.12.0'
 
-    testCompile 'junit:junit:4.12'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.2'
 }
 
 deploy {
@@ -45,13 +45,13 @@ deploy {
     }
     artifacts {
         frcJavaArtifact('frcJava') {
+            //noinspection GroovyAssignabilityCheck
             targets << "roborio"
-            debug = frc.getDebugOrDefault(false)
+            debug = true // TODO Change to 'false' @ Competition
         }
         fileTreeArtifact('frcStaticFileDeploy') {
-
-            files = fileTree(dir: 'src/main/deploy')
-
+            files = fileTree(dir: 'src/main/resources')
+            //noinspection GroovyAssignabilityCheck
             targets << "roborio"
             directory = '/home/lvuser/deploy'
         }
@@ -59,7 +59,15 @@ deploy {
 }
 
 jar {
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    from {
+        configurations.compile.collect {
+            if (it.isDirectory()) {
+                it
+            } else {
+                zipTree(it)
+            }
+        }
+    }
     //noinspection GroovyAssignabilityCheck
     manifest GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
 }

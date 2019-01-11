@@ -1,29 +1,50 @@
 package com.amhsrobotics.tko2019;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SampleRobot;
 
-public class Robot extends SampleRobot {
-	Robot() {
+@SuppressWarnings("deprecation")
+public final class Robot extends SampleRobot {
+	public static void main(final String... args) {
+		RobotBase.startRobot(Robot::new);
+	}
+
+	private final Compressor compressor;
+
+	private Robot() {
+		compressor = new Compressor();
+	}
+
+	@Override
+	protected final void robotInit() {
 
 	}
 
 	@Override
-	protected void robotInit() {
-
+	public final void operatorControl() {
+		enabled();
 	}
 
 	@Override
-	public void operatorControl() {
-
+	public final void autonomous() {
+		enabled();
 	}
 
 	@Override
-	public void autonomous() {
-
+	public final void test() {
+		CameraServer.getInstance().startAutomaticCapture(0);
+		CameraServer.getInstance().startAutomaticCapture(1);
 	}
 
 	@Override
-	public void test() {
+	protected final void disabled() {
+		compressor.stop();
+	}
 
+	private void enabled() {
+		compressor.start();
+		compressor.setClosedLoopControl(true);
 	}
 }
