@@ -8,10 +8,11 @@ public class hatchPanelControls extends hatchPanel {
          leftJoy = new Joystick(0);
     }
     public void run(){
-        if (leftJoy.getRawButton(4)){
+        limitswitch();
+        if (leftJoy.getY() > 0.1){
             openHatch();
         }
-        else if (leftJoy.getRawButton(5)){
+        else if (leftJoy.getY() < -0.1){
             closeHatch();
         }
         else if (leftJoy.getRawButton(10)){
