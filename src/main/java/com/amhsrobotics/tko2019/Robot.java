@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SampleRobot;
 
+@SuppressWarnings("deprecation")
 public class Robot extends SampleRobot {
 	public static void main(final String... args) {
 		RobotBase.startRobot(Robot::new);
