@@ -19,8 +19,7 @@ public class Robot extends SampleRobot {
 
 	@Override
 	protected void robotInit() {
-		CameraServer.getInstance().startAutomaticCapture(0);
-		CameraServer.getInstance().startAutomaticCapture(1);
+
 	}
 
 	@Override
@@ -35,7 +34,8 @@ public class Robot extends SampleRobot {
 
 	@Override
 	public void test() {
-
+		CameraServer.getInstance().startAutomaticCapture(0);
+		CameraServer.getInstance().startAutomaticCapture(1);
 	}
 
 	@Override
