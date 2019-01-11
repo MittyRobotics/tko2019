@@ -7,10 +7,11 @@ import static com.amhsrobotics.tko2019.hatchPanel.hatchPanel.*;
 public class hatchPanelControls{
     public static Joystick leftJoy = new Joystick(0);
     public void run(){
-        if (leftJoy.getRawButton(4)){
+        limitswitch();
+        if (leftJoy.getY() > 0.1){
             openHatch();
         }
-        else if (leftJoy.getRawButton(5)){
+        else if (leftJoy.getY() < -0.1){
             closeHatch();
         }
         else if (leftJoy.getRawButton(10)){

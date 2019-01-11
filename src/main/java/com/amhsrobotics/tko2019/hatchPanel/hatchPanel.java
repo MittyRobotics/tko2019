@@ -29,10 +29,10 @@ public class hatchPanel {
         solForward.set(DoubleSolenoid.Value.kReverse);
     }
     public static void limitswitch() {
-        if (limitSwitch.get() == true) {
+        if (limitSwitch.get()) {
             openHatch();
         }
-        if (limitSwitch.get() == false) {
+        else {
             closeHatch();
         }
     }
