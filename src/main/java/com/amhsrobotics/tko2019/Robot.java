@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SampleRobot;
 
 @SuppressWarnings("deprecation")
-public class Robot extends SampleRobot {
+public final class Robot extends SampleRobot {
 	public static void main(final String... args) {
 		RobotBase.startRobot(Robot::new);
 	}
@@ -18,28 +18,28 @@ public class Robot extends SampleRobot {
 	}
 
 	@Override
-	protected void robotInit() {
+	protected final void robotInit() {
 
 	}
 
 	@Override
-	public void operatorControl() {
+	public final void operatorControl() {
 		enabled();
 	}
 
 	@Override
-	public void autonomous() {
+	public final void autonomous() {
 		enabled();
 	}
 
 	@Override
-	public void test() {
+	public final void test() {
 		CameraServer.getInstance().startAutomaticCapture(0);
 		CameraServer.getInstance().startAutomaticCapture(1);
 	}
 
 	@Override
-	protected void disabled() {
+	protected final void disabled() {
 		compressor.stop();
 	}
 
