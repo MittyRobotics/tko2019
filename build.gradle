@@ -50,9 +50,7 @@ deploy {
             debug = frc.getDebugOrDefault(false)
         }
         fileTreeArtifact('frcStaticFileDeploy') {
-
             files = fileTree(dir: 'src/main/deploy')
-
             //noinspection GroovyAssignabilityCheck
             targets << "roborio"
             directory = '/home/lvuser/deploy'
@@ -61,7 +59,15 @@ deploy {
 }
 
 jar {
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    from {
+        configurations.compile.collect {
+            if (it.isDirectory()) {
+                it
+            } else {
+                zipTree(it)
+            }
+        }
+    }
     //noinspection GroovyAssignabilityCheck
     manifest GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
 }
