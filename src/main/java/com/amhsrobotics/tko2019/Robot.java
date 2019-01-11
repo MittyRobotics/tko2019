@@ -21,22 +21,30 @@ public class Robot extends SampleRobot {
 	protected void robotInit() {
 		CameraServer.getInstance().startAutomaticCapture(0);
 		CameraServer.getInstance().startAutomaticCapture(1);
-		compressor.start();
-		compressor.setClosedLoopControl(true);
 	}
 
 	@Override
 	public void operatorControl() {
-
+		enabled();
 	}
 
 	@Override
 	public void autonomous() {
-
+		enabled();
 	}
 
 	@Override
 	public void test() {
 
+	}
+
+	@Override
+	protected void disabled() {
+		compressor.stop();
+	}
+
+	private void enabled() {
+		compressor.start();
+		compressor.setClosedLoopControl(true);
 	}
 }
