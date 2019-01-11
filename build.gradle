@@ -6,7 +6,7 @@ plugins {
 }
 
 def ROBOT_MAIN_CLASS = "com.amhsrobotics.tko2019.Robot"
-def includeDesktopSupport = false
+def includeDesktopSupport = true
 
 group 'com.amhsrobotics'
 version '0.1.5'
