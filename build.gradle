@@ -45,6 +45,7 @@ deploy {
     }
     artifacts {
         frcJavaArtifact('frcJava') {
+            //noinspection GroovyAssignabilityCheck
             targets << "roborio"
             debug = frc.getDebugOrDefault(false)
         }
@@ -52,6 +53,7 @@ deploy {
 
             files = fileTree(dir: 'src/main/deploy')
 
+            //noinspection GroovyAssignabilityCheck
             targets << "roborio"
             directory = '/home/lvuser/deploy'
         }
