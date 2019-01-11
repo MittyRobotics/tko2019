@@ -13,7 +13,7 @@ public class Robot extends SampleRobot {
 
 	private final Compressor compressor;
 
-	Robot() {
+	private Robot() {
 		compressor = new Compressor();
 	}
 
