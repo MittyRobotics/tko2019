@@ -3,7 +3,6 @@ package com.amhsrobotics.tko2019;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.SampleRobot;
 
-import static com.amhsrobotics.tko2019.hatchPanel.hatchPanel.limitswitch;
 
 public class Robot extends SampleRobot {
 	private final Compressor compressor;
@@ -21,7 +20,7 @@ public class Robot extends SampleRobot {
 	@Override
 	public void operatorControl() {
 		while (isEnabled()){
-			limitswitch();
+
 		}
 
 	}
