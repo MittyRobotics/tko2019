@@ -34,6 +34,8 @@ public class hatchPanel {
     static void sliderRight() {
         hatchPanelAuton.execute(8);
     }
+    static void deletethisfunction() {
+    }
     static void limitswitch() {
         if (limitSwitch.get()) {
             openHatch();
