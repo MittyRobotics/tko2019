@@ -29,7 +29,6 @@ public class hatchPanelAuton {
                 e.printStackTrace();
             }
         }
-        slideMotor.set(ControlMode.PercentOutput, 0);
     }
 
 }
