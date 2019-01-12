@@ -15,12 +15,17 @@ public class CargoControls {
                 Cargo.dropConveyor();
             }
             else if(cargoControls.getTrigger()){
-                Cargo.spinIntake();
+                Cargo.spinIntake(Cargo.cargoSpeed, Cargo.cargoSpeed);
             }
             else if(cargoControls.getRawButton(4)){
                 Cargo.stopIntake();
             }
-
+            else{
+                Cargo.intakeAuton();
+            }
+            if(!cargoControls.getTrigger()){
+                Cargo.stopIntake();
+            }
         }
     }
 }
