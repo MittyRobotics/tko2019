@@ -19,6 +19,15 @@ public class hatchPanelControls extends hatchPanel {
         else if (leftJoy.getRawButton(11)){
             goHatchForward();
         }
+        else if (leftJoy.getRawButton(4)) {
+            slideLeft();
+        }
+        else if (leftJoy.getRawButton(3)) {
+            slideMiddle();
+        }
+        else if (leftJoy.getRawButton(5)){
+            slideRight();
+        }
     }
 
 }
