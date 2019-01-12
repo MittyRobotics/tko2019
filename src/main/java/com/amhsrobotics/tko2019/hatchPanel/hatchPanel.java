@@ -9,7 +9,9 @@ public class hatchPanel {
 
     static DoubleSolenoid solSide = new DoubleSolenoid(0, 1);;
     static DoubleSolenoid solForward = new DoubleSolenoid(4, 5);
-    static DigitalInput limitSwitch = new DigitalInput(1);
+    static DigitalInput limitSwitchFront = new DigitalInput(1);
+    static DigitalInput limitSwitchRight = new DigitalInput(8);
+    static DigitalInput limitSwitchLeft = new DigitalInput(9);
     static WPI_TalonSRX slideMotor = new WPI_TalonSRX(0);
 
 
@@ -25,17 +27,30 @@ public class hatchPanel {
     static void goHatchBackward() {
         solForward.set(DoubleSolenoid.Value.kReverse);
     }
-    static void sliderLeft(){
+    static void slideEnd() {
+        if (limitSwitchLeft.get()) {
+            hatchPanelAuton.execute(1);
+        }
+        if (limitSwitchRight.get()) {
+            hatchPanelAuton.execute(-1);
+        }
+    }
+    static void resetEncoder(){
+        if(limitSwitchLeft.get()){
+            slideMotor.setSelectedSensorPosition(0);
+        }
+    }
+    static void slideLeft(){
         hatchPanelAuton.execute(-8);
     }
-    static void sliderMiddle() {
+    static void slideMiddle() {
         hatchPanelAuton.execute(0);
     }
-    static void sliderRight() {
+    static void slideRight() {
         hatchPanelAuton.execute(8);
     }
     static void limitswitch() {
-        if (limitSwitch.get()) {
+        if (limitSwitchFront.get()) {
             openHatch();
         }
         else {
