@@ -18,7 +18,7 @@ public class driveControls {
         if (Math.abs(controller.getY(GenericHID.Hand.kLeft)) > 0.05){
             drive.moveLeft(controller.getY(GenericHID.Hand.kLeft));
         } else {
-            drive.moveLeft(0);
+            drive.moveLeft(0.5);
         }
 
         if (Math.abs(controller.getY(GenericHID.Hand.kRight)) > 0.05){

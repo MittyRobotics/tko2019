@@ -24,7 +24,7 @@ public class drive {
         reverseFactor = 1; //1 keeps original drive direction, -1 reverses the value
     }
 
-    //Manipulate drivetrain
+    //Manipulate drive train
     // move left set of wheels
     public static void moveLeft(double value){
         leftDriveTalons[0].set(ControlMode.PercentOutput, reverseFactor*value);
