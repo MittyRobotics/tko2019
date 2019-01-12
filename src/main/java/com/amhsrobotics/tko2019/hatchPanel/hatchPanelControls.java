@@ -3,10 +3,8 @@ package com.amhsrobotics.tko2019.hatchPanel;
 import edu.wpi.first.wpilibj.*;
 
 public class hatchPanelControls extends hatchPanel {
-    public static Joystick leftJoy;
-    protected void init() {
-         leftJoy = new Joystick(0);
-    }
+    public static Joystick leftJoy = new Joystick(0);
+
     public void run(){
         limitswitch();
         if (leftJoy.getY() > 0.1){
