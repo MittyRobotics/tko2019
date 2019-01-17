@@ -6,19 +6,24 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 public class hatchPanel {
+    static DoubleSolenoid solSide;
+    static DoubleSolenoid solForward;
+    static DigitalInput limitSwitchFront, limitSwitchRight, limitSwitchLeft;
+    static WPI_TalonSRX slideMotor;
 
-    static DoubleSolenoid solSide = new DoubleSolenoid(0, 1);;
-    static DoubleSolenoid solForward = new DoubleSolenoid(4, 5);
-    static DigitalInput limitSwitchFront = new DigitalInput(1);
-    static DigitalInput limitSwitchRight = new DigitalInput(8);
-    static DigitalInput limitSwitchLeft = new DigitalInput(9);
-    static WPI_TalonSRX slideMotor = new WPI_TalonSRX(0);
+    public void init(){
+        solSide = new DoubleSolenoid(0, 1);
+        solForward = new DoubleSolenoid(4, 5);
+        limitSwitchFront = new DigitalInput(1);
+        limitSwitchRight = new DigitalInput(8);
+        limitSwitchLeft = new DigitalInput(9);
+        slideMotor = new WPI_TalonSRX(0);
+    }
 
-
-    static void openHatch() {
+    public static void openHatch() {
         solSide.set(DoubleSolenoid.Value.kReverse);
     }
-    static void closeHatch() {
+    public static void closeHatch() {
         solSide.set(DoubleSolenoid.Value.kForward);
     }
     static void goHatchForward() {
