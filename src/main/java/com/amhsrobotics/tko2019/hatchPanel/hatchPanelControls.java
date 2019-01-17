@@ -5,18 +5,18 @@ import edu.wpi.first.wpilibj.*;
 public class hatchPanelControls extends hatchPanel {
     public static Joystick leftJoy = new Joystick(0);
 
-    public void run(){
-        limitswitch();
-        if (leftJoy.getY() > 0.1){
+    public static void run(){
+        //limitswitch();
+        if (leftJoy.getRawButton(10)){
             openHatch();
         }
-        else if (leftJoy.getY() < -0.1){
+        else if (leftJoy.getRawButton(11)){
             closeHatch();
         }
-        else if (leftJoy.getRawButton(10)){
+        else if (leftJoy.getY() < -0.1){
             goHatchBackward();
         }
-        else if (leftJoy.getRawButton(11)){
+        else if (leftJoy.getY() > 0.1){
             goHatchForward();
         }
         else if (leftJoy.getRawButton(4)) {
