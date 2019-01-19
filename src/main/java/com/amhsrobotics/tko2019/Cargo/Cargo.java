@@ -57,22 +57,30 @@ public class Cargo {
     }
 
     public static void spinIntake(double topSpeed, double bottomSpeed){
-        intakeTalons[0].set(ControlMode.PercentOutput, topSpeed); // or -1
-        intakeTalons[1].set(ControlMode.PercentOutput, bottomSpeed);
+        if(intakeSensor.get()){
+            intakeTalons[0].set(ControlMode.PercentOutput, 0);
+            intakeTalons[1].set(ControlMode.PercentOutput, 0);
+        }
+        else {
+            intakeTalons[0].set(ControlMode.PercentOutput, topSpeed);
+            intakeTalons[1].set(ControlMode.PercentOutput, bottomSpeed);
+        }
     }
 
-    public static void spinouttake(){
-        intakeTalons[0].set(ControlMode.PercentOutput, -.5); //TODO
-        intakeTalons[1].set(ControlMode.PercentOutput, -.5);
+    public static void spinOuttake(double topSpeed, double bottomSpeed){
+        if(intakeSensor.get()){
+            intakeTalons[0].set(ControlMode.PercentOutput, -topSpeed);
+            intakeTalons[1].set(ControlMode.PercentOutput, -bottomSpeed);
+        }
+        else {
+            intakeTalons[0].set(ControlMode.PercentOutput, 0);
+            intakeTalons[1].set(ControlMode.PercentOutput, 0);
+        }
     }
 
     public static void stopIntake(){
-        if(spinIntake()) {
-            if (intakeSensor.get()) {
-                intakeTalons[0].set(ControlMode.PercentOutput, 0);
-                intakeTalons[1].set(ControlMode.PercentOutput, 0);
-            }
-        }
+            intakeTalons[0].set(ControlMode.PercentOutput, 0);
+            intakeTalons[1].set(ControlMode.PercentOutput, 0);
     }
 
     public static void moveConveyor(double neededPos){
