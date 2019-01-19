@@ -1,6 +1,5 @@
 package com.amhsrobotics.tko2019.hatchPanel;
 
-import com.amhsrobotics.tko2019.Robot;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -32,14 +31,15 @@ public class hatchPanel {
     static void goHatchBackward() {
         solForward.set(DoubleSolenoid.Value.kReverse);
     }
-    static void slideEnd() {
-        if (limitSwitchLeft.get()) {
-            hatchPanelAuton.execute(1);
-        }
-        if (limitSwitchRight.get()) {
-            hatchPanelAuton.execute(-1);
+
+    static void rocketDrop() {
+        if(limitSwitchFront.get()) {
+            goHatchForward();
+            closeHatch();
+            goHatchBackward();
         }
     }
+
     static void resetEncoder(){
         if(limitSwitchLeft.get()){
             slideMotor.setSelectedSensorPosition(0);
@@ -54,12 +54,12 @@ public class hatchPanel {
     static void slideRight() {
         hatchPanelAuton.execute(8);
     }
-    static void limitswitch() {
+    static void cargoDrop() {
         if (limitSwitchFront.get()) {
-            openHatch();
+            closeHatch();
         }
         else {
-            closeHatch();
+            openHatch();
         }
     }
 }

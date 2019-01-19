@@ -8,16 +8,10 @@ public class hatchPanelControls extends hatchPanel {
     public static void run(){
         //limitswitch();
         if (leftJoy.getRawButton(10)){
-            openHatch();
+            cargoDrop();
         }
-        else if (leftJoy.getRawButton(11)){
-            closeHatch();
-        }
-        else if (leftJoy.getY() < -0.1){
-            goHatchBackward();
-        }
-        else if (leftJoy.getY() > 0.1){
-            goHatchForward();
+        else if (leftJoy.getRawButton(11)) {
+            rocketDrop();
         }
         else if (leftJoy.getRawButton(4)) {
             slideLeft();
