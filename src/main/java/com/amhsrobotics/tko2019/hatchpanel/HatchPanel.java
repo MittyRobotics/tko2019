@@ -44,11 +44,16 @@ public class HatchPanel {
     }
 
     static void rocketDrop() {
-        if(wallSwitch.get() && limitSwitchFront.get()) {
+        while (wallSwitch.get() && limitSwitchFront.get()) {
             goHatchForward();
             closeHatch();
             goHatchBackward();
-            slideMiddle();
+            if (limitSwitchFront.get()){
+                openHatch();
+            }
+            else {
+                slideMiddle();
+            }
         }
     }
     public static void resetEncoder(){
@@ -66,13 +71,19 @@ public class HatchPanel {
         slide(16);
     }
     static void cargoDrop() {
-        if (limitSwitchFront.get() && wallSwitch.get()) {
+        while (limitSwitchFront.get() && wallSwitch.get()) {
             closeHatch();
+            if (limitSwitchFront.get()){
+                openHatch();
+            }
         }
     }
     static void intake() {
         if (!limitSwitchFront.get() && wallSwitch.get()){
             openHatch();
+            if(!limitSwitchFront.get()){
+                closeHatch();
+            }
         }
     }
     static void slide(double position){
