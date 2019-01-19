@@ -1,19 +1,32 @@
 package com.amhsrobotics.tko2019.Climber;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.XboxController;
 
 public class Climber {
-	static boolean isOpen = false;
-	static DoubleSolenoid climber;
-	public static void init(){
+	private boolean isOpen = false;
+	private DoubleSolenoid climber;
+	private XboxController controller;
+	public void init(){
 		climber = new DoubleSolenoid(0, 1);
 	}
-	public static void openClimber(){
+	public void openClimber(){
 		climber.set(DoubleSolenoid.Value.kForward);
 		isOpen = false;
 	}
-	public static void closeClimber(){
+	public void closeClimber(){
 		climber.set(DoubleSolenoid.Value.kReverse);
 		isOpen = true;
+	}
+	public void run(){
+		controller = new XboxController(0);
+		if(controller.getAButton()){
+			if(isOpen){
+				closeClimber();
+			}
+			else {
+				openClimber();
+			}
+		}
 	}
 }
