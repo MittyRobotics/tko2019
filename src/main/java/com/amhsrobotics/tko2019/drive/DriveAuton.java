@@ -4,8 +4,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 
 public class DriveAuton {
     private final double ticksPerInch = 119.47; //Note: double check true TPS
-    //private final WPI_TalonSRX[];
-    //PID Constants
     double p = 0.2;
     double i = 0;
     double d = 0;
