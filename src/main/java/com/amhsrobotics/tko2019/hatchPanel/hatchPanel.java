@@ -1,5 +1,7 @@
 package com.amhsrobotics.tko2019.hatchPanel;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -8,8 +10,12 @@ public class hatchPanel {
     static DoubleSolenoid solSide;
     static DoubleSolenoid solForward;
     static DigitalInput limitSwitchFront, limitSwitchRight, limitSwitchLeft, wallSwitch;
+    private static final int p = 0,
+            i = 0,
+            d = 0,
+            threshold = 10,
+            ticksPerInch = 0;
     static WPI_TalonSRX slideMotor;
-
     public void init(){
         solSide = new DoubleSolenoid(0, 1);
         solForward = new DoubleSolenoid(4, 5);
@@ -40,20 +46,19 @@ public class hatchPanel {
             slideMiddle();
         }
     }
-
-    static void resetEncoder(){
+    public static void resetEncoder(){
         if(limitSwitchLeft.get()){
             slideMotor.setSelectedSensorPosition(0);
         }
     }
     static void slideLeft(){
-        hatchPanelAuton.execute(-8);
+        slide(0);
     }
     static void slideMiddle() {
-        hatchPanelAuton.execute(0);
+        slide(8);
     }
     static void slideRight() {
-        hatchPanelAuton.execute(8);
+        slide(16);
     }
     static void cargoDrop() {
         if (limitSwitchFront.get() && wallSwitch.get()) {
@@ -65,5 +70,18 @@ public class hatchPanel {
             openHatch();
         }
     }
-
+    static void slide(double position){
+        double setpoint = position * ticksPerInch;
+        double error = slideMotor.getClosedLoopError();
+        slideMotor.set(ControlMode.Position, setpoint + slideMotor.getSelectedSensorPosition() );
+        while (Math.abs(error) > threshold) {
+            error = slideMotor.getClosedLoopError();
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        slideMotor.set(ControlMode.PercentOutput, 0);
+    }
 }
