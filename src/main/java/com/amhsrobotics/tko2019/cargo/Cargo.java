@@ -4,34 +4,36 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Joystick;
 
 //////////////////////////////////////////////////////////////////////////
 // CHECK THIS CODE. IT MAY OR MAY NOT WORK !!!!!!!!!!!!!!!!!!!!!!!!!!!!!//
 //////////////////////////////////////////////////////////////////////////
 
 public class Cargo {
-    static DigitalInput intakeSensor;
-    static DigitalInput conveyorLimit1;
-    static DigitalInput conveyorLimit2;
-    static DigitalInput conveyorLimit3;
-    static DigitalInput groundLimit1;
-    private static final double ticksPerDegree = 0; //TODO
-    public static final double cargoSpeed = 0.8;
-    public static final double rocketSpeed = 0.8;
-    public static final double baseSpeed = 0.5;
+    DigitalInput intakeSensor;
+    DigitalInput conveyorLimit1;
+    DigitalInput conveyorLimit2;
+    DigitalInput conveyorLimit3;
+    DigitalInput groundLimit1;
+    private final double ticksPerDegree = 0; //TODO
+    public final double cargoSpeed = 0.8;
+    public final double rocketSpeed = 0.8;
+    public final double baseSpeed = 0.5;
     //public static double cargoHeight = 0;
-    private static double rocketHeight = 0;
-    private static double visionHeight = 0;
-    private static double intakeHeight = 0;
-    private static double cargoHeight = 0;
+    private double rocketHeight = 0;
+    private double visionHeight = 0;
+    private double intakeHeight = 0;
+    private double cargoHeight = 0;
+    private Joystick cargoJoystick;
 
 
 
-    public static WPI_TalonSRX[] intakeTalons = new WPI_TalonSRX[2];
-    public static WPI_TalonSRX[] conveyorTalons = new WPI_TalonSRX[2];
+    public WPI_TalonSRX[] intakeTalons = new WPI_TalonSRX[2];
+    public WPI_TalonSRX[] conveyorTalons = new WPI_TalonSRX[2];
 
     public void init() {
-
+        cargoJoystick = new Joystick(1);
         intakeTalons[0] = new WPI_TalonSRX(0);
         intakeTalons[1] = new WPI_TalonSRX(1);
 
@@ -58,7 +60,12 @@ public class Cargo {
 
     }
 
-    public static void spinIntake(double topSpeed, double bottomSpeed){
+    public void run(){
+        
+    }
+
+    public void spinIntake(double topSpeed, double bottomSpeed){
+        intakeConveyor();
         if(intakeSensor.get()){
             stopIntake();
         }
@@ -68,7 +75,7 @@ public class Cargo {
         }
     }
 
-    public static void spinOuttake(double topSpeed, double bottomSpeed){
+    public void spinOuttake(double topSpeed, double bottomSpeed){
         if(intakeSensor.get()){
             intakeTalons[0].set(ControlMode.PercentOutput, -topSpeed);
             intakeTalons[1].set(ControlMode.PercentOutput, -bottomSpeed);
@@ -78,12 +85,12 @@ public class Cargo {
         }
     }
 
-    public static void stopIntake(){
+    public void stopIntake(){
             intakeTalons[0].set(ControlMode.PercentOutput, 0);
             intakeTalons[1].set(ControlMode.PercentOutput, 0);
     }
 
-    public static void moveConveyor(double neededPos){
+    public void moveConveyor(double neededPos){
         double threshold = 1;   //TODO
         double error1 = conveyorTalons[0].getClosedLoopError();
         neededPos += conveyorTalons[0].getSelectedSensorPosition();
@@ -102,34 +109,34 @@ public class Cargo {
         conveyorTalons[0].set(ControlMode.PercentOutput, 0);
     }
 
-    public static void rocketConveyor(){
+    public void rocketConveyor(){
         rocketHeight = 45; //TODO
         moveConveyor(rocketHeight);
     }
 
-    public static void cargoConveyor(){
+    public void cargoConveyor(){
         cargoHeight = 55; //TODO
         moveConveyor(rocketHeight);
     }
 
-    public static void intakeConveyor(){
+    public void intakeConveyor(){
         intakeHeight = 30;    //TODO
         moveConveyor(intakeHeight);
     }
 
-    public static void visionConveyor() {
+    public void visionConveyor() {
         visionHeight = 100; //TODO
         moveConveyor(visionHeight);
     }
 
-    public static void calibrateConveyor() {
+    public void calibrateConveyor() {
         while (!conveyorLimit1.get()) {
             conveyorTalons[0].set(ControlMode.PercentOutput, 0.5);
         }
         conveyorTalons[0].setSelectedSensorPosition(90);
     }
 
-    public static void cargoLimitSafety() {
+    public void cargoLimitSafety() {
         while(groundLimit1.get()) {
             conveyorTalons[0].set(ControlMode.PercentOutput, -0.5);
         }
