@@ -10,10 +10,10 @@ public class Drive {
     static WPI_TalonSRX[] rightDriveTalons = new WPI_TalonSRX[2];
     static DoubleSolenoid gearShift;
     int x = 0;
-    public static int reverseFactor;
+    public int reverseFactor;
 
 
-    public static void init(){
+    public void init(){
         leftDriveTalons[0] = new WPI_TalonSRX(20);
         leftDriveTalons[1] = new WPI_TalonSRX(21);
         rightDriveTalons[0] = new WPI_TalonSRX(22);
@@ -25,17 +25,17 @@ public class Drive {
     }
 
 
-    public static void moveLeft(double value){
+    public void moveLeft(double value){
         leftDriveTalons[0].set(ControlMode.PercentOutput, reverseFactor*value);
     }
 
 
-    public static void moveRight(double value){
+    public void moveRight(double value){
         rightDriveTalons[0].set(ControlMode.PercentOutput, reverseFactor*value);
     }
 
 
-    public static void  toggleReverser(boolean aButtonPressed){
+    public void toggleReverser(boolean aButtonPressed){
         if (aButtonPressed == true){
             reverseFactor = -1;
         }
@@ -46,7 +46,7 @@ public class Drive {
 
 
 
-    public static void shiftGear(int value){
+    public void shiftGear(int value){
         if (value == 0) {
             gearShift.set(DoubleSolenoid.Value.kReverse);
         }
