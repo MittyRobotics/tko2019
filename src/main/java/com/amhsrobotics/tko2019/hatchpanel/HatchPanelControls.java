@@ -4,23 +4,31 @@ import edu.wpi.first.wpilibj.*;
 
 public class HatchPanelControls extends HatchPanel {
     public static Joystick leftJoy = new Joystick(0);
-
+    private static boolean manual = false;
     public static void run(){
         //limitswitch();
-        if (leftJoy.getRawButton(3)){
-            cargoDrop();
+        if(leftJoy.getRawButton(11)){
+            manual = !manual;
         }
-        else if (leftJoy.getRawButton(2)) {
-            rocketDrop();
+        if(manual){
+            
         }
-        else if (leftJoy.getRawButton(4)) {
-            slideLeft();
-        }
-        else if (leftJoy.getRawButton(5)){
-            slideRight();
-        }
-        else if(leftJoy.getTriggerPressed()){
-            intake();
+        else{
+            if (leftJoy.getRawButton(3)){
+                cargoDrop();
+            }
+            else if (leftJoy.getRawButton(2)) {
+                rocketDrop();
+            }
+            else if (leftJoy.getRawButton(4)) {
+                slideLeft();
+            }
+            else if (leftJoy.getRawButton(5)){
+                slideRight();
+            }
+            else if(leftJoy.getTriggerPressed()){
+                intake();
+            }
         }
     }
 
