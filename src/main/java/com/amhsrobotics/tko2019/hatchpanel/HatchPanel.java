@@ -32,6 +32,7 @@ public class HatchPanel {
         slideMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 1000);
     }
     public void runs(){
+        //all the buttons: manual and automatic
         limitSwitchSafety();
         if(leftJoy.getRawButton(11)){
             manual = !manual;
@@ -91,6 +92,7 @@ public class HatchPanel {
         solForward.set(DoubleSolenoid.Value.kReverse);
     }
 
+    //outtake for the rocket
     private void rocketDrop() {
         while (wallSwitch.get() && limitSwitchFront.get()) {
             goHatchForward();
@@ -104,11 +106,15 @@ public class HatchPanel {
             }
         }
     }
+
+    //resets encoder when slider is to the left
     private void resetEncoder(){
         if(limitSwitchLeft.get()){
             slideMotor.setSelectedSensorPosition(0);
         }
     }
+
+
     private void limitSwitchSafety(){
         while (limitSwitchLeft.get()){
             slideMotor.set(ControlMode.PercentOutput, 0.2);
@@ -118,6 +124,8 @@ public class HatchPanel {
         }
         slideMotor.set(ControlMode.PercentOutput, 0);
     }
+
+    //work on position numbers
     private void slideLeft(){
         slide(0);
     }
@@ -127,6 +135,8 @@ public class HatchPanel {
     private void slideRight() {
         slide(16);
     }
+
+    //action for cargo outtake
     private void cargoDrop() {
         while (limitSwitchFront.get() && wallSwitch.get()) {
             closeHatch();
@@ -135,6 +145,8 @@ public class HatchPanel {
             }
         }
     }
+
+    //take in the hatch panel *has safety measures*
     private void intake() {
         if (!limitSwitchFront.get() && wallSwitch.get()){
             openHatch();
@@ -143,6 +155,8 @@ public class HatchPanel {
             }
         }
     }
+
+    //how far the mechanism has to slide
     private void slide(double position){
         final int threshold = 10, ticksPerInch = 0;
         double setpoint = position * ticksPerInch;
