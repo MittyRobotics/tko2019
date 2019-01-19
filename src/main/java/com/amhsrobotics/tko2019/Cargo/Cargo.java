@@ -16,13 +16,15 @@ public class Cargo {
     static DigitalInput conveyorLimit2;
     static DigitalInput conveyorLimit3;
     static DigitalInput groundLimit1;
-    private static final double ticksPerInch = 0; //TODO
+    private static final double ticksPerDegree = 0; //TODO
     public static final double cargoSpeed = 0.8;
     public static final double rocketSpeed = 0.8;
     public static final double baseSpeed = 0.5;
-    public static double cargoHeight = 0;
-    public static double baseHeight = 0;
-    public static double topHeight = 0;
+    //public static double cargoHeight = 0;
+    public static double rocketHeight = 0;
+    public static double visionHeight = 0;
+    public static double intakeHeight = 0;
+
 
 
     public static WPI_TalonSRX[] intakeTalons = new WPI_TalonSRX[2];
@@ -87,7 +89,7 @@ public class Cargo {
         double threshold = 1;   //TODO
         double error1 = conveyorTalons[0].getClosedLoopError();
         neededPos += conveyorTalons[0].getSelectedSensorPosition();
-        conveyorTalons[0].set(ControlMode.Position, neededPos*ticksPerInch);
+        conveyorTalons[0].set(ControlMode.Position, neededPos*ticksPerDegree);
 
         while((Math.abs(error1) > threshold)){
             error1 = conveyorTalons[0].getClosedLoopError();
@@ -108,13 +110,18 @@ public class Cargo {
     }
 
     public static void rocketConveyor(){
-        final double highSetpoint = 150; //TODO
-        moveConveyor(highSetpoint);
+        rocketHeight = 45; //TODO
+        moveConveyor(rocketHeight);
+    }
+
+    public static void cargoConveyor(){
+        rocketHeight = 55; //TODO
+        moveConveyor(rocketHeight);
     }
 
     public static void dropConveyor(){
-        final double lowSetpoint = 300;    //TODO
-        moveConveyor(lowSetpoint);
+        intakeHeight = 30;    //TODO
+        moveConveyor(intakeHeight);
     }
 
     public static void intakeAuton (){
@@ -126,11 +133,17 @@ public class Cargo {
             raiseConveyor();
         }
     }
+
+    public static void visionConveyor() {
+        visionHeight = 100;
+        moveConveyor(visionHeight);
+    }
+
     public static void calibrateConveyor() {
         while (!conveyorLimit1.get()) {
             conveyorTalons[0].set(ControlMode.PercentOutput, 0.5);
         }
-        conveyorTalons[0].setSelectedSensorPosition(0);
+        conveyorTalons[0].setSelectedSensorPosition(90);
     }
 
     public static void cargoLimitSafety() {
