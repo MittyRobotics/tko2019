@@ -1,4 +1,4 @@
-package com.amhsrobotics.tko2019.hatchPanel;
+package com.amhsrobotics.tko2019.hatchpanel;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -6,7 +6,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DigitalInput;
 
-public class hatchPanel {
+public class HatchPanel {
     static DoubleSolenoid solSide;
     static DoubleSolenoid solForward;
     static DigitalInput limitSwitchFront, limitSwitchRight, limitSwitchLeft, wallSwitch;

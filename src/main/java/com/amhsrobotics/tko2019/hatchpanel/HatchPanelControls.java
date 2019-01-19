@@ -1,8 +1,8 @@
-package com.amhsrobotics.tko2019.hatchPanel;
+package com.amhsrobotics.tko2019.hatchpanel;
 
 import edu.wpi.first.wpilibj.*;
 
-public class hatchPanelControls extends hatchPanel {
+public class HatchPanelControls extends HatchPanel {
     public static Joystick leftJoy = new Joystick(0);
 
     public static void run(){
