@@ -6,20 +6,19 @@ import edu.wpi.first.wpilibj.XboxController;
 public class Climber {
 	private boolean isOpen = false;
 	private DoubleSolenoid climber;
-	private XboxController controller;
 	public void init(){
 		climber = new DoubleSolenoid(0, 1);
 	}
-	public void openClimber(){
+	private void openClimber(){
 		climber.set(DoubleSolenoid.Value.kForward);
 		isOpen = false;
 	}
-	public void closeClimber(){
+	private void closeClimber(){
 		climber.set(DoubleSolenoid.Value.kReverse);
 		isOpen = true;
 	}
 	public void run(){
-		controller = new XboxController(0);
+		XboxController controller = new XboxController(0);
 		if(controller.getAButton()){
 			if(isOpen){
 				closeClimber();
