@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 public class hatchPanel {
     static DoubleSolenoid solSide;
     static DoubleSolenoid solForward;
-    static DigitalInput limitSwitchFront, limitSwitchRight, limitSwitchLeft;
+    static DigitalInput limitSwitchFront, limitSwitchRight, limitSwitchLeft, wallSwitch;
     static WPI_TalonSRX slideMotor;
 
     public void init(){
@@ -33,10 +33,11 @@ public class hatchPanel {
     }
 
     static void rocketDrop() {
-        if(limitSwitchFront.get()) {
+        if(wallSwitch.get() && limitSwitchFront.get()) {
             goHatchForward();
             closeHatch();
             goHatchBackward();
+            slideMiddle();
         }
     }
 
@@ -55,11 +56,14 @@ public class hatchPanel {
         hatchPanelAuton.execute(8);
     }
     static void cargoDrop() {
-        if (limitSwitchFront.get()) {
+        if (limitSwitchFront.get() && wallSwitch.get()) {
             closeHatch();
         }
-        else {
+    }
+    static void intake() {
+        if (!limitSwitchFront.get() && wallSwitch.get()){
             openHatch();
         }
     }
+
 }
