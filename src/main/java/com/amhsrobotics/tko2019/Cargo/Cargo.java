@@ -21,9 +21,10 @@ public class Cargo {
     public static final double rocketSpeed = 0.8;
     public static final double baseSpeed = 0.5;
     //public static double cargoHeight = 0;
-    public static double rocketHeight = 0;
-    public static double visionHeight = 0;
-    public static double intakeHeight = 0;
+    private static double rocketHeight = 0;
+    private static double visionHeight = 0;
+    private static double intakeHeight = 0;
+    private static double cargoHeight = 0;
 
 
 
@@ -60,8 +61,7 @@ public class Cargo {
 
     public static void spinIntake(double topSpeed, double bottomSpeed){
         if(intakeSensor.get()){
-            intakeTalons[0].set(ControlMode.PercentOutput, 0);
-            intakeTalons[1].set(ControlMode.PercentOutput, 0);
+            stopIntake();
         }
         else {
             intakeTalons[0].set(ControlMode.PercentOutput, topSpeed);
@@ -75,8 +75,7 @@ public class Cargo {
             intakeTalons[1].set(ControlMode.PercentOutput, -bottomSpeed);
         }
         else {
-            intakeTalons[0].set(ControlMode.PercentOutput, 0);
-            intakeTalons[1].set(ControlMode.PercentOutput, 0);
+            stopIntake();
         }
     }
 
@@ -104,38 +103,23 @@ public class Cargo {
         conveyorTalons[0].set(ControlMode.PercentOutput, 0);
     }
 
-    public static void raiseConveyor(){
-        final double highSetpoint = 0; //TODO
-        moveConveyor(highSetpoint);
-    }
-
     public static void rocketConveyor(){
         rocketHeight = 45; //TODO
         moveConveyor(rocketHeight);
     }
 
     public static void cargoConveyor(){
-        rocketHeight = 55; //TODO
+        cargoHeight = 55; //TODO
         moveConveyor(rocketHeight);
     }
 
-    public static void dropConveyor(){
+    public static void intakeConveyor(){
         intakeHeight = 30;    //TODO
         moveConveyor(intakeHeight);
     }
 
-    public static void intakeAuton (){
-        if (!intakeSensor.get()){
-            spinIntake(baseSpeed, baseSpeed);
-        }
-        else{
-            stopIntake();
-            raiseConveyor();
-        }
-    }
-
     public static void visionConveyor() {
-        visionHeight = 100;
+        visionHeight = 100; //TODO
         moveConveyor(visionHeight);
     }
 
