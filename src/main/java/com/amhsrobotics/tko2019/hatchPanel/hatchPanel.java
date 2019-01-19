@@ -23,6 +23,11 @@ public class hatchPanel {
         limitSwitchRight = new DigitalInput(8);
         limitSwitchLeft = new DigitalInput(9);
         slideMotor = new WPI_TalonSRX(0);
+        slideMotor.config_kP(0, p, 0);
+        slideMotor.config_kI(0,i, 0);
+        slideMotor.config_kD(0,d,0);
+
+        slideMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 1000);
     }
 
     public static void openHatch() {
