@@ -1,4 +1,4 @@
-package com.amhsrobotics.tko2019.Climber;
+package com.amhsrobotics.tko2019.climber;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.XboxController;
