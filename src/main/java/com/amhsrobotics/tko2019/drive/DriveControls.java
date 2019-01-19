@@ -14,7 +14,7 @@ public class DriveControls {
         controller = new XboxController(0);
         aButtonPressed = controller.getAButtonPressed();
 
-        
+
         if (Math.abs(controller.getY(GenericHID.Hand.kLeft)) > 0.05){
             Drive.moveLeft(controller.getY(GenericHID.Hand.kLeft));
         } else {
