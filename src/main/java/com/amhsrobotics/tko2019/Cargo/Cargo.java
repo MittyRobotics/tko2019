@@ -22,6 +22,7 @@ public class Cargo {
     public static final double baseSpeed = 0.5;
     public static double cargoHeight = 0;
     public static double baseHeight = 0;
+    public static double topHeight = 0;
 
 
     public static WPI_TalonSRX[] intakeTalons = new WPI_TalonSRX[2];
@@ -37,8 +38,8 @@ public class Cargo {
 
         intakeSensor = new DigitalInput(0);
         conveyorLimit1 = new DigitalInput(1);
-        conveyorLimit1 = new DigitalInput(2);
-        conveyorLimit1 = new DigitalInput(3);
+       // conveyorLimit2 = new DigitalInput(2);
+        //conveyorLimit3 = new DigitalInput(3);
         groundLimit1 = new DigitalInput(4);
 
         conveyorTalons[0].configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
@@ -66,7 +67,12 @@ public class Cargo {
     }
 
     public static void stopIntake(){
-        intakeTalons[0].set(ControlMode.PercentOutput, 0);
+        if(spinIntake()) {
+            if (intakeSensor.get()) {
+                intakeTalons[0].set(ControlMode.PercentOutput, 0);
+                intakeTalons[1].set(ControlMode.PercentOutput, 0);
+            }
+        }
     }
 
     public static void moveConveyor(double neededPos){
@@ -112,14 +118,20 @@ public class Cargo {
             raiseConveyor();
         }
     }
-    public static void calibrateConveyor(){
-        while(!conveyorLimit1.get()){
-            conveyorTalons[0].set(ControlMode.Position, conveyorTalons[0].getSelectedSensorPosition() + 1);
+    public static void calibrateConveyor() {
+        while (!conveyorLimit1.get()) {
+            conveyorTalons[0].set(ControlMode.PercentOutput, 0.5);
         }
-        cargoHeight = conveyorTalons[0].getSelectedSensorPosition();
-        while(!conveyorLimit1.get()){
-            conveyorTalons[0].set(ControlMode.Position, conveyorTalons[0].getSelectedSensorPosition() - 1);
+        conveyorTalons[0].setSelectedSensorPosition(0);
+    }
+
+    public static void cargoLimitSafety() {
+        while(groundLimit1.get()) {
+            conveyorTalons[0].set(ControlMode.PercentOutput, -0.5);
         }
-        baseHeight = conveyorTalons[0].getSelectedSensorPosition();
+        conveyorTalons[0].set(ControlMode.PercentOutput, 0);
+        while(!conveyorLimit1.get()) {
+            conveyorTalons[0].set(ControlMode.PercentOutput, 0.5);
+        }
     }
 }
