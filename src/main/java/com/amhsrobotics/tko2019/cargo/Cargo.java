@@ -62,13 +62,16 @@ public class Cargo {
 
     public void run(){
         boolean manual = false;
-
+        int level = 0; //0 = intake, 1 = rocket, 2 = cargo
         while(true){
             if(cargoJoystick.getRawButton(11)){
-                manual = true;
-            }
-            if(cargoJoystick.getRawButton(10)){
-                manual = false;
+                manual = !manual;
+                if(manual){
+                    System.out.println("Manual Mode");
+                }
+                else {
+                    System.out.println("Automatic Mode");
+                }
             }
             if (!manual) {
                 if (cargoJoystick.getRawButton(2)) {
@@ -76,55 +79,69 @@ public class Cargo {
                 }
                 else if (cargoJoystick.getRawButton(4)) {
                     cargoConveyor();
+                    level = 2;
                 }
                 else if (cargoJoystick.getRawButton(3)) {
                     rocketConveyor();
+                    level = 1;
                 }
                 else if (cargoJoystick.getRawButton(2)) {
                     intakeConveyor();
+                    level = 0;
                 }
                 else if (cargoJoystick.getTrigger()) {
-                    spinOuttake(1, 1);
+                    if(level == 0){
+                        spinOuttake(1, 1);
+                    }
+                    else if(level == 1){
+                        spinOuttake(1, 1);
+                    }
+                    else {
+                        spinOuttake(1, 1);
+                    }
                 }
             }
             if ((manual)){
-                if (cargoJoystick.getRawButton(2)) {
-                    intake(1, 1);
+                if (cargoJoystick.getTrigger()) {
+                    spinRoller(1, 1);
                 }
                 else if (cargoJoystick.getRawButton(3)) {
-                    intake(-1, -1);
+                    spinRoller(-1, -1);
                 }
-                double cargopos = cargoJoystick.getY();
-                conveyorTalons[0].set(ControlMode.PercentOutput, cargopos);
-                conveyorTalons[1].set(ControlMode.PercentOutput, cargopos);
+                double cargoPos = cargoJoystick.getY();
+                if(Math.abs(cargoPos) > 0.05){
+                    conveyorTalons[0].set(ControlMode.PercentOutput, cargoPos);
+                    conveyorTalons[1].set(ControlMode.PercentOutput, cargoPos);
+                }
+                else {
+                    conveyorTalons[0].set(ControlMode.PercentOutput, 0);
+                    conveyorTalons[1].set(ControlMode.PercentOutput, 0);
+                }
             }
         }
     }
 
     public void spinIntake(double topSpeed, double bottomSpeed){
         intakeConveyor();
-        if(intakeSensor.get()){
-            stopIntake();
-        }
-        else {
+        while (!intakeSensor.get()) {
             intakeTalons[0].set(ControlMode.PercentOutput, topSpeed);
             intakeTalons[1].set(ControlMode.PercentOutput, bottomSpeed);
         }
+        stopIntake();
+        visionConveyor();
     }
 
-    public void intake(double topSpeed, double bottomSpeed){
+    public void spinRoller(double topSpeed, double bottomSpeed){
         intakeTalons[0].set(ControlMode.PercentOutput, -topSpeed);
         intakeTalons[1].set(ControlMode.PercentOutput, -bottomSpeed);
     }
 
     public void spinOuttake(double topSpeed, double bottomSpeed){
-        if(intakeSensor.get()){
+       while (intakeSensor.get()){
             intakeTalons[0].set(ControlMode.PercentOutput, -topSpeed);
             intakeTalons[1].set(ControlMode.PercentOutput, -bottomSpeed);
         }
-        else {
-            stopIntake();
-        }
+        stopIntake();
     }
 
     public void stopIntake(){
