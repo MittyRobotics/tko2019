@@ -47,18 +47,30 @@ public class Drive {
     public void run(){
         XboxController controller = new XboxController(0);
 
-        if (Math.abs(controller.getY(GenericHID.Hand.kLeft)) > 0.05){
-            moveLeft(controller.getY(GenericHID.Hand.kLeft));
-        } else {
-            moveLeft(0);
+        if(reverseFactor == 1){
+            if (Math.abs(controller.getY(GenericHID.Hand.kLeft)) > 0.05){
+                moveLeft(controller.getY(GenericHID.Hand.kLeft));
+            } else {
+                moveLeft(0);
+            }
+            if (Math.abs(controller.getY(GenericHID.Hand.kRight)) > 0.05){
+                moveRight(controller.getY(GenericHID.Hand.kRight));
+            } else {
+                moveRight(0);
+            }
         }
-
-        if (Math.abs(controller.getY(GenericHID.Hand.kRight)) > 0.05){
-            moveRight(controller.getY(GenericHID.Hand.kRight));
-        } else {
-            moveRight(0);
+        else{
+            if (Math.abs(controller.getY(GenericHID.Hand.kLeft)) > 0.05){
+                moveRight(controller.getY(GenericHID.Hand.kLeft));
+            } else {
+                moveRight(0);
+            }
+            if (Math.abs(controller.getY(GenericHID.Hand.kRight)) > 0.05){
+                moveLeft(controller.getY(GenericHID.Hand.kRight));
+            } else {
+                moveLeft(0);
+            }
         }
-
 
         boolean pressed = controller.getAButtonPressed();
         toggleReverser(pressed);
