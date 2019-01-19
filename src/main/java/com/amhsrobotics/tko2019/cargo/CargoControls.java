@@ -1,4 +1,4 @@
-package com.amhsrobotics.tko2019.Cargo;
+package com.amhsrobotics.tko2019.cargo;
 
 import edu.wpi.first.wpilibj.Joystick;
 
