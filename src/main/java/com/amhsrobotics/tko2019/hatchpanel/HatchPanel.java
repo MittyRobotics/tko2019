@@ -8,72 +8,95 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Joystick;
 
 public class HatchPanel {
-    private Joystick leftJoy;
+
     private boolean manual = false;
+    private final int p = 0; //TODO
+    private final int i = 0; //TODO
+    private final int d = 0; //TODO
+    private final int threshold = 10; //TODO
+    private final int ticksPerInch = 0; //TODO
+
+    private final int[] solSideId = {0, 1}; //TODO
+    private final int[] solForwardId = {2, 3}; //TODO
     private DoubleSolenoid solSide;
     private DoubleSolenoid solForward;
-    private DigitalInput limitSwitchFront, limitSwitchRight, limitSwitchLeft, wallSwitch;
-    private WPI_TalonSRX slideMotor;
-    public void init(){
-        final int p = 0, i = 0, d = 0;
-        //Ids need work
-        leftJoy = new Joystick(0);
-        solSide = new DoubleSolenoid(0, 1);
-        solForward = new DoubleSolenoid(4, 5);
-        limitSwitchFront = new DigitalInput(1);
-        limitSwitchRight = new DigitalInput(8);
-        limitSwitchLeft = new DigitalInput(9);
-        wallSwitch = new DigitalInput(7);
-        slideMotor = new WPI_TalonSRX(0);
-        slideMotor.config_kP(0, p, 0);
-        slideMotor.config_kI(0,i, 0);
-        slideMotor.config_kD(0,d,0);
 
-        slideMotor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 1000);
+    private final int hatchSwitchId = 0; //TODO
+    private final int[] sliderSwitchesIds = {1, 2}; //TODO
+    private final int wallSwitchId = 3; //TODO
+    private DigitalInput hatchSwitch;
+    private DigitalInput[] sliderSwitches = new DigitalInput[2];
+    private DigitalInput wallSwitch;
+
+    private final int slideTalonId = 28;
+    private WPI_TalonSRX slideTalon;
+
+    private final int joystickId = 1; //TODO
+    private Joystick hatchJoystick;
+
+    public void init(){
+        hatchJoystick = new Joystick(joystickId);
+
+        solSide = new DoubleSolenoid(solSideId[0], solSideId[1]);
+        solForward = new DoubleSolenoid(solForwardId[0], solForwardId[1]);
+
+        hatchSwitch = new DigitalInput(hatchSwitchId);
+        wallSwitch = new DigitalInput(wallSwitchId);
+        for(int i = 0; i < 2; i++){
+            sliderSwitches[i] = new DigitalInput(sliderSwitchesIds[i]);
+        }
+
+        slideTalon = new WPI_TalonSRX(slideTalonId);
+
+        slideTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 1000);
+
+        slideTalon.config_kP(0, p, 0);
+        slideTalon.config_kI(0,i, 0);
+        slideTalon.config_kD(0,d,0);
     }
     public void runs(){
         //all the buttons: manual and automatic
         limitSwitchSafety();
-        if(leftJoy.getRawButton(11)){
+        if(hatchJoystick.getRawButton(11)){
             manual = !manual;
         }
         if(manual){
-            if (leftJoy.getTriggerPressed()){
+            if (hatchJoystick.getTriggerPressed()){
                 openHatch();
             }
-            else if (leftJoy.getRawButton(2)){
+            else if (hatchJoystick.getRawButton(2)){
                 closeHatch();
             }
-            if (leftJoy.getY() > 0.1){
+            if (hatchJoystick.getY() > 0.1){
                 goHatchForward();
             }
-            else if (leftJoy.getY() < -0.1){
+            else if (hatchJoystick.getY() < -0.1){
                 goHatchBackward();
             }
-            if (leftJoy.getRawButton(4)){
+            if (hatchJoystick.getRawButton(4)){
                 slideLeft();
             }
-            else if (leftJoy.getRawButton(5)){
+            else if (hatchJoystick.getRawButton(5)){
                 slideRight();
             }
-            else if (leftJoy.getRawButton(3)) {
+            else if (hatchJoystick.getRawButton(3)) {
                 slideMiddle();
             }
         }
         else{
-            if (leftJoy.getRawButton(3)){
+            if (hatchJoystick.getRawButton(3)){
                 cargoDrop();
             }
-            else if (leftJoy.getRawButton(2)) {
+            else if (hatchJoystick.getRawButton(2)) {
                 rocketDrop();
             }
-            else if (leftJoy.getRawButton(4)) {
+            else if (hatchJoystick.getRawButton(4)) {
                 slideLeft();
             }
-            else if (leftJoy.getRawButton(5)){
+            else if (hatchJoystick.getRawButton(5)){
                 slideRight();
             }
-            else if(leftJoy.getTriggerPressed()){
+            else if(hatchJoystick.getTriggerPressed()){
                 intake();
             }
         }
@@ -94,11 +117,11 @@ public class HatchPanel {
 
     //outtake for the rocket
     private void rocketDrop() {
-        while (wallSwitch.get() && limitSwitchFront.get()) {
+        while (wallSwitch.get() && hatchSwitch.get()) {
             goHatchForward();
             closeHatch();
             goHatchBackward();
-            if (limitSwitchFront.get()){
+            if (hatchSwitch.get()){
                 openHatch();
             }
             else {
@@ -109,20 +132,21 @@ public class HatchPanel {
 
     //resets encoder when slider is to the left
     private void resetEncoder(){
-        if(limitSwitchLeft.get()){
-            slideMotor.setSelectedSensorPosition(0);
+        if(sliderSwitches[0].get()){
+            slideTalon.setSelectedSensorPosition(0);
         }
     }
 
 
     private void limitSwitchSafety(){
-        while (limitSwitchLeft.get()){
-            slideMotor.set(ControlMode.PercentOutput, 0.2);
+        while (sliderSwitches[0].get()){
+            slideTalon.set(ControlMode.PercentOutput, 0.2);
         }
-        while (limitSwitchRight.get()){
-            slideMotor.set(ControlMode.PercentOutput, -0.2);
+        slideTalon.set(ControlMode.PercentOutput, 0);
+        while (sliderSwitches[1].get()){
+            slideTalon.set(ControlMode.PercentOutput, -0.2);
         }
-        slideMotor.set(ControlMode.PercentOutput, 0);
+        slideTalon.set(ControlMode.PercentOutput, 0);
     }
 
     //work on position numbers
@@ -138,9 +162,9 @@ public class HatchPanel {
 
     //action for cargo outtake
     private void cargoDrop() {
-        while (limitSwitchFront.get() && wallSwitch.get()) {
+        while (hatchSwitch.get() && wallSwitch.get()) {
             closeHatch();
-            if (limitSwitchFront.get()){
+            if (hatchSwitch.get()){
                 openHatch();
             }
         }
@@ -148,9 +172,9 @@ public class HatchPanel {
 
     //take in the hatch panel *has safety measures*
     private void intake() {
-        if (!limitSwitchFront.get() && wallSwitch.get()){
+        if (!hatchSwitch.get() && wallSwitch.get()){
             openHatch();
-            if(!limitSwitchFront.get()){
+            if(!hatchSwitch.get()){
                 closeHatch();
             }
         }
@@ -158,18 +182,17 @@ public class HatchPanel {
 
     //how far the mechanism has to slide
     private void slide(double position){
-        final int threshold = 10, ticksPerInch = 0;
         double setpoint = position * ticksPerInch;
-        double error = slideMotor.getClosedLoopError();
-        slideMotor.set(ControlMode.Position, setpoint);
+        double error = slideTalon.getClosedLoopError();
+        slideTalon.set(ControlMode.Position, setpoint);
         while (Math.abs(error) > threshold) {
-            error = slideMotor.getClosedLoopError();
+            error = slideTalon.getClosedLoopError();
             try {
                 Thread.sleep(20);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-        slideMotor.set(ControlMode.PercentOutput, 0);
+        slideTalon.set(ControlMode.PercentOutput, 0);
     }
 }
