@@ -11,58 +11,59 @@ import edu.wpi.first.wpilibj.Joystick;
 //////////////////////////////////////////////////////////////////////////
 
 public class Cargo {
-    private DigitalInput intakeSensor;
-    private DigitalInput conveyorLimit1;
-    private DigitalInput conveyorLimit2;
-    private DigitalInput conveyorLimit3;
-    private DigitalInput groundLimit1;
     private final double ticksPerDegree = 0; //TODO
-    public final double cargoSpeed = 0.8;
-    public final double rocketSpeed = 0.8;
-    public final double baseSpeed = 0.5;
-    private double rocketHeight = 0;
-    private double visionHeight = 0;
-    private double intakeHeight = 0;
-    private double cargoHeight = 0;
+    private final double cargoSpeed = 0.8; //TODO
+    private final double rocketSpeed = 0.8; //TODO
+    private final double baseSpeed = 0.5; //TODO
+    private final double rocketHeight = 0; //TODO
+    private final double visionHeight = 0; //TODO
+    private final double intakeHeight = 0; //TODO
+    private final double cargoHeight = 0; //TODO
+    private final double p = 0.2; //TODO
+    private final double i = 0; //TODO
+    private final double d = 0; //TODO
+    private final double threshold = 1; //TODO
+    private boolean manual = false;
+    private int level = 0; //0 = intake, 1 = rocket, 2 = cargo
+
+    private final int intakeSensorId = 0; //TODO
+    private final int[] conveyorLimitIds = {1, 2}; //TODO
+    private DigitalInput intakeSensor;
+    private DigitalInput[] conveyorLimits = new DigitalInput[conveyorLimitIds.length];
+
+    private final int cargoJoystickId = 2;
     private Joystick cargoJoystick;
 
-
-
-    private WPI_TalonSRX[] intakeTalons = new WPI_TalonSRX[2];
-    private WPI_TalonSRX[] conveyorTalons = new WPI_TalonSRX[2];
+    private final int[] intakeTalonsIds = {26, 27};
+    private final int[] conveyorTalonIds  = {24, 25};
+    private WPI_TalonSRX[] intakeTalons = new WPI_TalonSRX[intakeTalonsIds.length];
+    private WPI_TalonSRX[] conveyorTalons = new WPI_TalonSRX[conveyorTalonIds.length];
 
     public void init() {
-        cargoJoystick = new Joystick(1);
-        intakeTalons[0] = new WPI_TalonSRX(0);
-        intakeTalons[1] = new WPI_TalonSRX(1);
+        cargoJoystick = new Joystick(cargoJoystickId);
+        for(int i = 0; i < intakeTalonsIds.length; i++){
+            intakeTalons[i] = new WPI_TalonSRX(intakeTalonsIds[i]);
+        }
+        for(int i = 0; i < conveyorTalonIds.length; i++){
+            conveyorTalons[i] = new WPI_TalonSRX(conveyorTalonIds[i]);
+        }
 
-        conveyorTalons[0] = new WPI_TalonSRX(3);
-        conveyorTalons[1] = new WPI_TalonSRX(4);
-
-        intakeSensor = new DigitalInput(0);
-        conveyorLimit1 = new DigitalInput(1);
-       // conveyorLimit2 = new DigitalInput(2);
-        //conveyorLimit3 = new DigitalInput(3);
-        groundLimit1 = new DigitalInput(4);
+        intakeSensor = new DigitalInput(intakeSensorId);
+        for (int i = 0; i < conveyorLimits.length; i++){
+            conveyorLimits[i] = new DigitalInput(conveyorLimitIds[i]);
+        }
 
         conveyorTalons[0].configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
 
         conveyorTalons[1].set(ControlMode.Follower, conveyorTalons[0].getDeviceID());
 
-        double p = 0.2;  //TODO
-        double i = 0;
-        double d = 0;
-
         conveyorTalons[0].config_kP(0, p, 0);
         conveyorTalons[0].config_kP(0, i, 0);
         conveyorTalons[0].config_kP(0, d, 0);
-
     }
 
     public void run(){
         cargoLimitSafety();
-        boolean manual = false;
-        int level = 0; //0 = intake, 1 = rocket, 2 = cargo
         if(cargoJoystick.getRawButton(11)){
             manual = !manual;
             if(manual){
@@ -89,14 +90,14 @@ public class Cargo {
                 level = 0;
             }
             else if (cargoJoystick.getTrigger()) {
-                if(level == 0){
-                    spinOuttake(1, 1);
+                if(level == 2){
+                    spinOuttake(cargoSpeed, cargoSpeed);
                 }
                 else if(level == 1){
-                    spinOuttake(1, 1);
+                    spinOuttake(rocketSpeed, rocketSpeed);
                 }
                 else {
-                    spinOuttake(1, 1);
+                    spinOuttake(baseSpeed, baseSpeed);
                 }
             }
         }
@@ -130,8 +131,8 @@ public class Cargo {
     }
 
     private void spinRoller(double topSpeed, double bottomSpeed){
-        intakeTalons[0].set(ControlMode.PercentOutput, -topSpeed);
-        intakeTalons[1].set(ControlMode.PercentOutput, -bottomSpeed);
+        intakeTalons[0].set(ControlMode.PercentOutput, topSpeed);
+        intakeTalons[1].set(ControlMode.PercentOutput, bottomSpeed);
     }
 
     private void spinOuttake(double topSpeed, double bottomSpeed){
@@ -148,7 +149,6 @@ public class Cargo {
     }
 
     private void moveConveyor(double neededPos){
-        double threshold = 1;   //TODO
         double error1 = conveyorTalons[0].getClosedLoopError();
         neededPos += conveyorTalons[0].getSelectedSensorPosition();
         conveyorTalons[0].set(ControlMode.Position, neededPos*ticksPerDegree);
@@ -167,39 +167,36 @@ public class Cargo {
     }
 
     private void rocketConveyor(){
-        rocketHeight = 45; //TODO
         moveConveyor(rocketHeight);
     }
 
     private void cargoConveyor(){
-        cargoHeight = 55; //TODO
-        moveConveyor(rocketHeight);
+        moveConveyor(cargoHeight);
     }
 
     private void intakeConveyor(){
-        intakeHeight = 30;    //TODO
         moveConveyor(intakeHeight);
     }
 
     private void visionConveyor() {
-        visionHeight = 100; //TODO
         moveConveyor(visionHeight);
     }
 
     private void calibrateConveyor() {
-        while (!conveyorLimit1.get()) {
+        while (!conveyorLimits[0].get()) {
             conveyorTalons[0].set(ControlMode.PercentOutput, 0.5);
         }
         conveyorTalons[0].setSelectedSensorPosition(90);
     }
 
     private void cargoLimitSafety() {
-        while(groundLimit1.get()) {
+        while(conveyorLimits[0].get()) {
             conveyorTalons[0].set(ControlMode.PercentOutput, -0.5);
         }
         conveyorTalons[0].set(ControlMode.PercentOutput, 0);
-        while(!conveyorLimit1.get()) {
+        while(conveyorLimits[1].get()) {
             conveyorTalons[0].set(ControlMode.PercentOutput, 0.5);
         }
+        conveyorTalons[0].set(ControlMode.PercentOutput, 0);
     }
 }
