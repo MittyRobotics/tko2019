@@ -47,7 +47,6 @@ deploy {
         frcJavaArtifact('frcJava') {
             //noinspection GroovyAssignabilityCheck
             targets << "roborio"
-            debug = true // TODO Change to 'false' @ Competition
         }
         fileTreeArtifact('frcStaticFileDeploy') {
             files = fileTree(dir: 'src/main/resources')
