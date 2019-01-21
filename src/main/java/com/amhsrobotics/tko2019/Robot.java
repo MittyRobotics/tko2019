@@ -15,7 +15,7 @@ public final class Robot extends SampleRobot {
 	
 	@Override
 	protected final void robotInit() {
-
+		compressor.setClosedLoopControl(true);
 	}
 
 	@Override
@@ -41,6 +41,5 @@ public final class Robot extends SampleRobot {
 
 	private void enabled() {
 		compressor.start();
-		compressor.setClosedLoopControl(true);
 	}
 }
