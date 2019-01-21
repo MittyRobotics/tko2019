@@ -33,8 +33,6 @@ dependencies {
     implementation 'com.ctre.phoenix:api-java:5.12.1'
     implementation 'com.ctre.phoenix:wpiapi-java:5.12.1'
     implementation 'com.ctre.phoenix:cci:5.12.1'
-
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.2'
 }
 
 deploy {
