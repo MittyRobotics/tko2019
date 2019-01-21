@@ -182,11 +182,9 @@ public class HatchPanel {
 
     //how far the mechanism has to slide
     private void slide(double position){
-        double setpoint = position * ticksPerInch;
-        double error = slideTalon.getClosedLoopError();
-        slideTalon.set(ControlMode.Position, setpoint);
-        while (Math.abs(error) > threshold) {
-            error = slideTalon.getClosedLoopError();
+
+        slideTalon.set(ControlMode.Position, position * ticksPerInch);
+        while (Math.abs(slideTalon.getClosedLoopError()) > threshold) {
             try {
                 Thread.sleep(20);
             } catch (InterruptedException e) {
