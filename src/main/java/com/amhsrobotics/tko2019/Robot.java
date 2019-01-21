@@ -1,6 +1,5 @@
 package com.amhsrobotics.tko2019;
 
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SampleRobot;
@@ -30,8 +29,7 @@ public final class Robot extends SampleRobot {
 
 	@Override
 	public final void test() {
-		CameraServer.getInstance().startAutomaticCapture(0);
-		CameraServer.getInstance().startAutomaticCapture(1);
+
 	}
 
 	@Override
