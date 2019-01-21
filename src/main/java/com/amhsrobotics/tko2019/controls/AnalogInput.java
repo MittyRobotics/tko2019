@@ -35,7 +35,7 @@ public enum AnalogInput {
 		this.inputRequest = inputRequest;
 	}
 
-	public AnalogInputRequest getInputRequest() {
+	public final AnalogInputRequest getInputRequest() {
 		return inputRequest;
 	}
 }
