@@ -1,12 +1,11 @@
 package com.amhsrobotics.tko2019;
 
-import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SampleRobot;
 
-@SuppressWarnings("deprecation")
-public final class Robot extends SampleRobot {
+public class Robot extends SampleRobot {
 	public static void main(final String... args) {
 		RobotBase.startRobot(Robot::new);
 	}
@@ -14,33 +13,24 @@ public final class Robot extends SampleRobot {
 	private final Compressor compressor = new Compressor();
 	
 	@Override
-	protected final void robotInit() {
-
-	}
-
-	@Override
-	public final void operatorControl() {
-		enabled();
-	}
-
-	@Override
-	public final void autonomous() {
-		enabled();
-	}
-
-	@Override
-	public final void test() {
+	protected void robotInit() {
 		CameraServer.getInstance().startAutomaticCapture(0);
 		CameraServer.getInstance().startAutomaticCapture(1);
+		compressor.start();
+		compressor.setClosedLoopControl(true);
 	}
 
 	@Override
-	protected final void disabled() {
-		compressor.stop();
+	public void operatorControl() {
 	}
 
-	private void enabled() {
-		compressor.start();
-		compressor.setClosedLoopControl(true);
+	@Override
+	public void autonomous() {
+
+	}
+
+	@Override
+	public void test() {
+
 	}
 }
