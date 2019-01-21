@@ -23,7 +23,7 @@ public class Drive {
     private DoubleSolenoid gearShift;
     private int gear = 1;
 
-    private int reverseFactor = 1;
+    private boolean shouldReverse = false;
 
     public void init() {
         for (int talonId = 0; talonId < leftTalonIds.length; talonId++) {
@@ -47,7 +47,18 @@ public class Drive {
     public void run(){
         XboxController controller = new XboxController(0);
 
-        if(reverseFactor == 1){
+        if (shouldReverse) {
+	        if (Math.abs(controller.getY(GenericHID.Hand.kRight)) > 0.05){
+		        moveLeft(-controller.getY(GenericHID.Hand.kRight));
+	        } else {
+		        moveLeft(0);
+	        }
+	        if (Math.abs(controller.getY(GenericHID.Hand.kLeft)) > 0.05){
+                moveRight(-controller.getY(GenericHID.Hand.kLeft));
+            } else {
+                moveRight(0);
+            }
+        } else {
             if (Math.abs(controller.getY(GenericHID.Hand.kLeft)) > 0.05){
                 moveLeft(controller.getY(GenericHID.Hand.kLeft));
             } else {
@@ -58,18 +69,7 @@ public class Drive {
             } else {
                 moveRight(0);
             }
-        }
-        else{
-            if (Math.abs(controller.getY(GenericHID.Hand.kLeft)) > 0.05){
-                moveRight(controller.getY(GenericHID.Hand.kLeft));
-            } else {
-                moveRight(0);
-            }
-            if (Math.abs(controller.getY(GenericHID.Hand.kRight)) > 0.05){
-                moveLeft(controller.getY(GenericHID.Hand.kRight));
-            } else {
-                moveLeft(0);
-            }
+
         }
 
         boolean pressed = controller.getAButtonPressed();
@@ -98,22 +98,17 @@ public class Drive {
     }
 
     private void moveLeft(final double value){
-        leftDriveTalons[0].set(ControlMode.PercentOutput, reverseFactor * value);
+        leftDriveTalons[0].set(ControlMode.PercentOutput, value);
     }
 
 
     private void moveRight(final double value){
-        rightDriveTalons[0].set(ControlMode.PercentOutput, reverseFactor * value);
+        rightDriveTalons[0].set(ControlMode.PercentOutput, value);
     }
 
 
-    private void toggleReverser(boolean aButtonPressed){
-        if (aButtonPressed){
-            reverseFactor = -1;
-        }
-        if (!aButtonPressed){
-            reverseFactor = 1;
-        }
+    private void toggleReverser(boolean shouldReverse){
+        this.shouldReverse = shouldReverse;
     }
 
     public void shiftGear(int value){
