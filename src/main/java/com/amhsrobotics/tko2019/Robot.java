@@ -10,12 +10,8 @@ public class Robot extends SampleRobot {
 		RobotBase.startRobot(Robot::new);
 	}
 
-	private final Compressor compressor;
-
-	Robot() {
-		compressor = new Compressor();
-	}
-
+	private final Compressor compressor = new Compressor();
+	
 	@Override
 	protected void robotInit() {
 		CameraServer.getInstance().startAutomaticCapture(0);
