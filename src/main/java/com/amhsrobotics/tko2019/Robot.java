@@ -11,12 +11,8 @@ public final class Robot extends SampleRobot {
 		RobotBase.startRobot(Robot::new);
 	}
 
-	private final Compressor compressor;
-
-	private Robot() {
-		compressor = new Compressor();
-	}
-
+	private final Compressor compressor = new Compressor();
+	
 	@Override
 	protected final void robotInit() {
 

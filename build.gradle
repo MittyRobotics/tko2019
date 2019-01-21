@@ -9,7 +9,7 @@ def ROBOT_MAIN_CLASS = "com.amhsrobotics.tko2019.Robot"
 def includeDesktopSupport = true
 
 group 'com.amhsrobotics'
-version '0.1.5'
+version '0.1.6'
 
 sourceCompatibility = 1.11
 
