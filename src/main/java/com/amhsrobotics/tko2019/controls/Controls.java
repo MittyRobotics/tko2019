@@ -9,14 +9,15 @@ public class Controls {
 		return ourInstance;
 	}
 
-	private final HashMap<Integer, HashMap<DigitalInput, HashMap<DigitalType, ArrayList<ControlCommand>>>> buttonControls = new HashMap<>();
-	private final HashMap<Integer, HashMap<AnalogInput, HashMap<AnalogType, ArrayList<ControlCommand>>>> analogControls = new HashMap<>();
+	private final HashMap<Integer, HashMap<DigitalInput, HashMap<DigitalType, ArrayList<DigitalControlCommand>>>> buttonControls = new HashMap<>();
+	private final HashMap<Integer, HashMap<AnalogInput, HashMap<AnalogType, ArrayList<AnalogControlCommand>>>> analogControls = new HashMap<>();
 
 	private final Thread controlsThread = new Thread(this::checkControls);
 	private volatile boolean shouldRun = false;
 
 	private Controls() {
-
+		controlsThread.setName("Controls Thread");
+		controlsThread.setPriority(Thread.MAX_PRIORITY);
 	}
 
 	public void enable() {
@@ -30,44 +31,84 @@ public class Controls {
 		shouldRun = false;
 	}
 
-	public void registerButtonPress(int id, DigitalInput digitalInput, DigitalType digitalType, ControlCommand lambda) {
-		if (!buttonControls.containsKey(id)) {
-			buttonControls.put(id, new HashMap<>());
-		}
-		final HashMap<DigitalInput, HashMap<DigitalType, ArrayList<ControlCommand>>> inputs = buttonControls.get(id);
-		if (!inputs.containsKey(digitalInput)) {
-			inputs.put(digitalInput, new HashMap<>());
-		}
-		final HashMap<DigitalType, ArrayList<ControlCommand>> commands = inputs.get(digitalInput);
-		if (!commands.containsKey(digitalType)) {
-			commands.put(digitalType, new ArrayList<>());
-		}
+	public void registerDigitalCommand(int id, DigitalInput digitalInput, DigitalType digitalType, DigitalControlCommand lambda) {
+		buttonControls.putIfAbsent(id, new HashMap<>());
+		final HashMap<DigitalInput, HashMap<DigitalType, ArrayList<DigitalControlCommand>>> inputs = buttonControls.get(id);
+		inputs.putIfAbsent(digitalInput, new HashMap<>());
+		final HashMap<DigitalType, ArrayList<DigitalControlCommand>> commands = inputs.get(digitalInput);
+		commands.putIfAbsent(digitalType, new ArrayList<>());
 		commands.get(digitalType).add(lambda);
 	}
 
-	public void registerButtonRelease(int id, DigitalInput digitalInput, ControlCommand lambda) {
-
-	}
-
-	public void registerButtonHold(int id, DigitalInput digitalInput, ControlCommand lambda) {
-
+	public void registerAnalogCommand(int id, AnalogInput analogInput, AnalogType analogType, AnalogControlCommand lambda) {
+		analogControls.putIfAbsent(id, new HashMap<>());
+		final HashMap<AnalogInput, HashMap<AnalogType, ArrayList<AnalogControlCommand>>> inputs = analogControls.get(id);
+		inputs.putIfAbsent(analogInput, new HashMap<>());
+		final HashMap<AnalogType, ArrayList<AnalogControlCommand>> commands = inputs.get(analogInput);
+		commands.putIfAbsent(analogType, new ArrayList<>());
+		commands.get(analogType).add(lambda);
 	}
 
 	private void checkControls() {
+		final HashMap<Integer, HashMap<DigitalInput, Boolean>> cachedDigitalInputs = new HashMap<>();
+		final HashMap<Integer, HashMap<AnalogInput, Double>> cachedAnalogInputs = new HashMap<>();
 		while (shouldRun) {
 			// Buttons
-
+			for (final int deviceID : buttonControls.keySet()) {
+				for (final DigitalInput digitalInput : buttonControls.get(deviceID).keySet()) {
+					boolean value = digitalInput.getInputRequest().requestDigital(ControllerID.getController(deviceID));
+					cachedDigitalInputs.putIfAbsent(deviceID, new HashMap<>());
+					cachedDigitalInputs.get(deviceID).putIfAbsent(digitalInput, value);
+					boolean cachedValue = cachedDigitalInputs.get(deviceID).get(digitalInput);
+					if (value) {
+						ArrayList<DigitalControlCommand> pressCommands = buttonControls.get(deviceID).get(digitalInput).get(DigitalType.DigitalPress);
+						if (pressCommands != null && !cachedValue) {
+							for (DigitalControlCommand controlCommand : pressCommands) {
+								controlCommand.action();
+							}
+						}
+						ArrayList<DigitalControlCommand> holdCommands = buttonControls.get(deviceID).get(digitalInput).get(DigitalType.DigitalHold);
+						if (holdCommands != null) {
+							for (DigitalControlCommand controlCommand : holdCommands) {
+								controlCommand.action();
+							}
+						}
+					} else {
+						ArrayList<DigitalControlCommand> releaseCommands = buttonControls.get(deviceID).get(digitalInput).get(DigitalType.DigitalRelease);
+						if (releaseCommands != null && cachedValue) {
+							for (DigitalControlCommand controlCommand : releaseCommands) {
+								controlCommand.action();
+							}
+						}
+					}
+					cachedDigitalInputs.get(deviceID).put(digitalInput, value);
+				}
+			}
 
 			// AnalogInput
+			for (final int deviceID : analogControls.keySet()) {
+				for (final AnalogInput analogInput : analogControls.get(deviceID).keySet()) {
+					double value = analogInput.getInputRequest().requestAnalog(ControllerID.getController(deviceID));
+					cachedAnalogInputs.putIfAbsent(deviceID, new HashMap<>());
+					cachedAnalogInputs.get(deviceID).putIfAbsent(analogInput, value);
+					double cachedValue = cachedAnalogInputs.get(deviceID).get(analogInput);
+					if (Math.abs(value) > 0.05) {
+						ArrayList<AnalogControlCommand> outOfThresholdCommands = analogControls.get(deviceID).get(analogInput).get(AnalogType.OutOfThreshold);
+						if (outOfThresholdCommands != null) {
+							for (AnalogControlCommand controlCommand : outOfThresholdCommands) {
+								controlCommand.action(value);
+							}
+						}
+					}
+				}
+			}
 
+			// Delay
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
-	}
-
-	enum DigitalType {
-		DigitalPress, DigitalRelease, DigitalHold
-	}
-
-	enum AnalogType {
-
 	}
 }

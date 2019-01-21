@@ -19,7 +19,7 @@ public enum ControllerID {
 		return ordinal();
 	}
 
-	public final GenericHID getController(int id) {
+	public static GenericHID getController(int id) {
 		return ControllerID.values()[id].controller;
 	}
 }

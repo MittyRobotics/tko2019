@@ -1,7 +1,5 @@
 package com.amhsrobotics.tko2019.controls;
 
-import edu.wpi.first.wpilibj.GenericHID;
-
 public enum DigitalInput {
 	XboxA(genericHID -> {
 		return genericHID.getRawButton(1);
@@ -85,7 +83,13 @@ public enum DigitalInput {
 		return genericHID.getRawButton(11);
 	});
 
-	DigitalInput(DigitalInputRequest inputRequest){
+	private final DigitalInputRequest inputRequest;
 
+	DigitalInput(final DigitalInputRequest inputRequest){
+		this.inputRequest = inputRequest;
+	}
+
+	public DigitalInputRequest getInputRequest() {
+		return inputRequest;
 	}
 }

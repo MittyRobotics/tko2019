@@ -1,5 +1,5 @@
 package com.amhsrobotics.tko2019.controls;
 
-public interface ControlCommand {
+public interface DigitalControlCommand {
 	void action();
 }

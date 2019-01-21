@@ -29,7 +29,13 @@ public enum AnalogInput {
 		return genericHID.getRawAxis(2);
 	});
 
-	AnalogInput(AnalogInputRequest inputRequest){
+	private final AnalogInputRequest inputRequest;
 
+	AnalogInput(AnalogInputRequest inputRequest){
+		this.inputRequest = inputRequest;
+	}
+
+	public AnalogInputRequest getInputRequest() {
+		return inputRequest;
 	}
 }
