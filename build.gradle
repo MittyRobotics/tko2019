@@ -6,10 +6,10 @@ plugins {
 }
 
 def ROBOT_MAIN_CLASS = "com.amhsrobotics.tko2019.Robot"
-def includeDesktopSupport = true
+def includeDesktopSupport = false
 
 group 'com.amhsrobotics'
-version '0.1.6'
+version '0.2.0'
 
 sourceCompatibility = 1.11
 
