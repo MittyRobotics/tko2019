@@ -1,6 +1,6 @@
 package com.amhsrobotics.tko2019.controls;
 
-public enum  Button {
+public enum DigitalInput {
 	XboxA(1), XboxB(2), XboxX(3), XboxY(4),
 	XboxLBumper(5), XboxRBumper(6),
 	Dpad0(0), Dpad45(45), Dpad90(90), Dpad135(135),
@@ -13,12 +13,12 @@ public enum  Button {
 	Joystick10(10), Joystick11(11);
 
 	private final int rawId;
-	Button(int rawId) {
 
+	DigitalInput(final int rawId) {
 		this.rawId = rawId;
 	}
 
-	public int getRawId() {
+	public final int getRawId() {
 		return rawId;
 	}
 }
