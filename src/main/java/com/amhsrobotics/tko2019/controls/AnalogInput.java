@@ -1,16 +1,35 @@
 package com.amhsrobotics.tko2019.controls;
 
 public enum AnalogInput {
-	XboxLTrigger(2), XboxRTrigger(3),
-	XboxLXJoystick(0), XboxRXJoystick(4),
-	XboxLYJoystick(1), XboxRYJoystick(5),
-	JoystickX(0), JoystickY(1), JoystickZ(2);
+	XboxLTrigger(genericHID -> {
+		return genericHID.getRawAxis(2);
+	}),
+	XboxRTrigger(genericHID -> {
+		return genericHID.getRawAxis(3);
+	}),
+	XboxLXJoystick(genericHID -> {
+		return genericHID.getRawAxis(0);
+	}),
+	XboxRXJoystick(genericHID -> {
+		return genericHID.getRawAxis(4);
+	}),
+	XboxLYJoystick(genericHID -> {
+		return genericHID.getRawAxis(1);
+	}),
+	XboxRYJoystick(genericHID -> {
+		return genericHID.getRawAxis(5);
+	}),
+	JoystickX(genericHID -> {
+		return genericHID.getRawAxis(0);
+	}),
+	JoystickY(genericHID -> {
+		return genericHID.getRawAxis(1);
+	}),
+	JoystickZ(genericHID -> {
+		return genericHID.getRawAxis(2);
+	});
 
-	private final int rawId;
-	AnalogInput(int rawId){
-		this.rawId = rawId;
-	}
-	public int getRawId() {
-		return rawId;
+	AnalogInput(AnalogInputRequest inputRequest){
+
 	}
 }
