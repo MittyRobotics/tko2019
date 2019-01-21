@@ -30,9 +30,9 @@ dependencies {
     //noinspection GroovyAssignabilityCheck
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
 
-    implementation 'com.ctre.phoenix:api-java:5.12.1'
-    implementation 'com.ctre.phoenix:wpiapi-java:5.12.1'
-    implementation 'com.ctre.phoenix:cci:5.12.1'
+    compile 'com.ctre.phoenix:api-java:5.12.1'
+    compile 'com.ctre.phoenix:wpiapi-java:5.12.1'
+    compile 'com.ctre.phoenix:cci:5.12.1'
 }
 
 deploy {
