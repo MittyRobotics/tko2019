@@ -1,5 +1,6 @@
 package com.amhsrobotics.tko2019.controls;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Controls {
@@ -8,11 +9,11 @@ public class Controls {
 		return ourInstance;
 	}
 
+	private final HashMap<Integer, HashMap<DigitalInput, HashMap<DigitalType, ArrayList<ControlCommand>>>> buttonControls = new HashMap<>();
+	private final HashMap<Integer, HashMap<AnalogInput, HashMap<AnalogType, ArrayList<ControlCommand>>>> analogControls = new HashMap<>();
+
 	private final Thread controlsThread = new Thread(this::checkControls);
 	private volatile boolean shouldRun = false;
-
-	private final HashMap<Integer, HashMap<DigitalInput, HashMap<Type, ControllCommand>>> buttonControls = new HashMap<>();
-	private final HashMap<Integer, HashMap<AnalogInput, HashMap<Type, ControllCommand>>> analogControls = new HashMap<>();
 
 	private Controls() {
 
@@ -29,18 +30,26 @@ public class Controls {
 		shouldRun = false;
 	}
 
-	public void registerButtonPress(int id, DigitalInput button, ControllCommand lambda) {
+	public void registerButtonPress(int id, DigitalInput digitalInput, DigitalType digitalType, ControlCommand lambda) {
 		if (!buttonControls.containsKey(id)) {
 			buttonControls.put(id, new HashMap<>());
 		}
+		final HashMap<DigitalInput, HashMap<DigitalType, ArrayList<ControlCommand>>> inputs = buttonControls.get(id);
+		if (!inputs.containsKey(digitalInput)) {
+			inputs.put(digitalInput, new HashMap<>());
+		}
+		final HashMap<DigitalType, ArrayList<ControlCommand>> commands = inputs.get(digitalInput);
+		if (!commands.containsKey(digitalType)) {
+			commands.put(digitalType, new ArrayList<>());
+		}
+		commands.get(digitalType).add(lambda);
+	}
+
+	public void registerButtonRelease(int id, DigitalInput digitalInput, ControlCommand lambda) {
 
 	}
 
-	public void registerButtonRelease(int id, DigitalInput button, ControllCommand lambda) {
-
-	}
-
-	public void registerButtonHold(int id, DigitalInput button, ControllCommand lambda) {
+	public void registerButtonHold(int id, DigitalInput digitalInput, ControlCommand lambda) {
 
 	}
 
@@ -50,13 +59,15 @@ public class Controls {
 
 
 			// AnalogInput
-			if (true) {
 
-			}
 		}
 	}
 
-	enum Type {
+	enum DigitalType {
 		DigitalPress, DigitalRelease, DigitalHold
+	}
+
+	enum AnalogType {
+
 	}
 }
