@@ -22,9 +22,9 @@ repositories {
 
 dependencies {
     //noinspection GroovyAssignabilityCheck
-    implementation wpi.deps.wpilib()
+    compile wpi.deps.wpilib()
     //noinspection GroovyAssignabilityCheck
-    implementation wpi.deps.vendor.java()
+    compile wpi.deps.vendor.java()
     //noinspection GroovyAssignabilityCheck
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
     //noinspection GroovyAssignabilityCheck
