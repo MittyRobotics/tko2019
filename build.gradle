@@ -34,7 +34,7 @@ dependencies {
     implementation 'com.ctre.phoenix:wpiapi-java:5.12.1'
     implementation 'com.ctre.phoenix:cci:5.12.1'
 
-    testCompile 'junit:junit:4.12'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.2'
 }
 
 deploy {
@@ -45,12 +45,12 @@ deploy {
     }
     artifacts {
         frcJavaArtifact('frcJava') {
+            //noinspection GroovyAssignabilityCheck
             targets << "roborio"
         }
         fileTreeArtifact('frcStaticFileDeploy') {
-
-            files = fileTree(dir: 'src/main/deploy')
-
+            files = fileTree(dir: 'src/main/resources')
+            //noinspection GroovyAssignabilityCheck
             targets << "roborio"
             directory = '/home/lvuser/deploy'
         }
@@ -58,7 +58,15 @@ deploy {
 }
 
 jar {
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    from {
+        configurations.compile.collect {
+            if (it.isDirectory()) {
+                it
+            } else {
+                zipTree(it)
+            }
+        }
+    }
     //noinspection GroovyAssignabilityCheck
     manifest GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
 }
