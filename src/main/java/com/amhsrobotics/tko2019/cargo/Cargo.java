@@ -31,16 +31,12 @@ public class Cargo {
     private DigitalInput intakeSensor;
     private DigitalInput[] conveyorLimits = new DigitalInput[conveyorLimitIds.length];
 
-    private final int cargoJoystickId = 2;
-    private Joystick cargoJoystick;
-
     private final int[] intakeTalonsIds = {26, 27};
     private final int[] conveyorTalonIds  = {24, 25};
     private WPI_TalonSRX[] intakeTalons = new WPI_TalonSRX[intakeTalonsIds.length];
     private WPI_TalonSRX[] conveyorTalons = new WPI_TalonSRX[conveyorTalonIds.length];
 
     public void init() {
-        cargoJoystick = new Joystick(cargoJoystickId);
         for(int i = 0; i < intakeTalonsIds.length; i++){
             intakeTalons[i] = new WPI_TalonSRX(intakeTalonsIds[i]);
         }
@@ -63,60 +59,11 @@ public class Cargo {
     }
 
     public void run(){
-        cargoLimitSafety();
-        if(cargoJoystick.getRawButton(11)){
-            manual = !manual;
-            if(manual){
-                System.out.println("Manual Mode");
-            }
-            else {
-                System.out.println("Automatic Mode");
-            }
+        if(manual){
+
         }
-        if (!manual) {
-            if (cargoJoystick.getRawButton(2)) {
-                spinIntake(1, 1);
-            }
-            else if (cargoJoystick.getRawButton(4)) {
-                cargoConveyor();
-                level = 2;
-            }
-            else if (cargoJoystick.getRawButton(3)) {
-                rocketConveyor();
-                level = 1;
-            }
-            else if (cargoJoystick.getRawButton(2)) {
-                intakeConveyor();
-                level = 0;
-            }
-            else if (cargoJoystick.getTrigger()) {
-                if(level == 2){
-                    spinOuttake(cargoSpeed, cargoSpeed);
-                }
-                else if(level == 1){
-                    spinOuttake(rocketSpeed, rocketSpeed);
-                }
-                else {
-                    spinOuttake(baseSpeed, baseSpeed);
-                }
-            }
-        }
-        else{
-            if (cargoJoystick.getTrigger()) {
-                spinRoller(1, 1);
-            }
-            else if (cargoJoystick.getRawButton(3)) {
-                spinRoller(-1, -1);
-            }
-            double cargoPos = cargoJoystick.getY();
-            if(Math.abs(cargoPos) > 0.05){
-                conveyorTalons[0].set(ControlMode.PercentOutput, cargoPos);
-                conveyorTalons[1].set(ControlMode.PercentOutput, cargoPos);
-            }
-            else {
-                conveyorTalons[0].set(ControlMode.PercentOutput, 0);
-                conveyorTalons[1].set(ControlMode.PercentOutput, 0);
-            }
+        else {
+
         }
     }
 
