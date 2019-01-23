@@ -5,7 +5,6 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Joystick;
 
 public class HatchPanel {
 
@@ -31,12 +30,7 @@ public class HatchPanel {
     private final int slideTalonId = 28;
     private WPI_TalonSRX slideTalon;
 
-    private final int joystickId = 1; //TODO
-    private Joystick hatchJoystick;
-
     public void init(){
-        hatchJoystick = new Joystick(joystickId);
-
         solSide = new DoubleSolenoid(solSideId[0], solSideId[1]);
         solForward = new DoubleSolenoid(solForwardId[0], solForwardId[1]);
 
@@ -54,51 +48,12 @@ public class HatchPanel {
         slideTalon.config_kI(0,i, 0);
         slideTalon.config_kD(0,d,0);
     }
-    public void runs(){
-        //all the buttons: manual and automatic
-        limitSwitchSafety();
-        if(hatchJoystick.getRawButton(11)){
-            manual = !manual;
-        }
+    public void run(){
         if(manual){
-            if (hatchJoystick.getTriggerPressed()){
-                openHatch();
-            }
-            else if (hatchJoystick.getRawButton(2)){
-                closeHatch();
-            }
-            if (hatchJoystick.getY() > 0.1){
-                goHatchForward();
-            }
-            else if (hatchJoystick.getY() < -0.1){
-                goHatchBackward();
-            }
-            if (hatchJoystick.getRawButton(4)){
-                slideLeft();
-            }
-            else if (hatchJoystick.getRawButton(5)){
-                slideRight();
-            }
-            else if (hatchJoystick.getRawButton(3)) {
-                slideMiddle();
-            }
+
         }
-        else{
-            if (hatchJoystick.getRawButton(3)){
-                cargoDrop();
-            }
-            else if (hatchJoystick.getRawButton(2)) {
-                rocketDrop();
-            }
-            else if (hatchJoystick.getRawButton(4)) {
-                slideLeft();
-            }
-            else if (hatchJoystick.getRawButton(5)){
-                slideRight();
-            }
-            else if(hatchJoystick.getTriggerPressed()){
-                intake();
-            }
+        else {
+
         }
     }
 
