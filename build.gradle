@@ -6,10 +6,10 @@ plugins {
 }
 
 def ROBOT_MAIN_CLASS = "com.amhsrobotics.tko2019.Robot"
-def includeDesktopSupport = true
+def includeDesktopSupport = false
 
 group 'com.amhsrobotics'
-version '0.1.5'
+version '0.2.0'
 
 sourceCompatibility = 1.11
 
@@ -22,19 +22,13 @@ repositories {
 
 dependencies {
     //noinspection GroovyAssignabilityCheck
-    implementation wpi.deps.wpilib()
+    compile wpi.deps.wpilib()
     //noinspection GroovyAssignabilityCheck
-    implementation wpi.deps.vendor.java()
+    compile wpi.deps.vendor.java()
     //noinspection GroovyAssignabilityCheck
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
     //noinspection GroovyAssignabilityCheck
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
-
-    implementation 'com.ctre.phoenix:api-java:5.12.1'
-    implementation 'com.ctre.phoenix:wpiapi-java:5.12.1'
-    implementation 'com.ctre.phoenix:cci:5.12.1'
-
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.2'
 }
 
 deploy {
@@ -47,7 +41,6 @@ deploy {
         frcJavaArtifact('frcJava') {
             //noinspection GroovyAssignabilityCheck
             targets << "roborio"
-            debug = true // TODO Change to 'false' @ Competition
         }
         fileTreeArtifact('frcStaticFileDeploy') {
             files = fileTree(dir: 'src/main/resources')
