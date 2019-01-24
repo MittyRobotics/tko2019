@@ -1,5 +1,9 @@
 package com.amhsrobotics.tko2019.cargo;
 
+import com.amhsrobotics.tko2019.controls.AnalogInput;
+import com.amhsrobotics.tko2019.controls.AnalogType;
+import com.amhsrobotics.tko2019.controls.Controls;
+import com.amhsrobotics.tko2019.controls.DigitalType;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -59,6 +63,15 @@ public class Cargo {
     }
 
     public void run(){
+        Controls.getInstance().registerDigitalCommand(2, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick11, DigitalType.DigitalRelease, ()->{
+            manual = !manual;
+            if(manual){
+                System.out.println("Manual Mode");
+            }
+            else {
+                System.out.println("Auton Mode");
+            }
+        });
         if(manual){
 
         }
