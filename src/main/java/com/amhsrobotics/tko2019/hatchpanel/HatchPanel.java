@@ -21,7 +21,7 @@ public class HatchPanel {
     private DoubleSolenoid solForward;
 
     private final int hatchSwitchId = 0; //TODO
-    private final int[] sliderSwitchesIds = {1, 2}; //TODO
+    private final int[] sliderSwitchesIds = {0, 1}; //TODO
     private final int wallSwitchId = 3; //TODO
     private DigitalInput hatchSwitch;
     private DigitalInput[] sliderSwitches = new DigitalInput[2];
