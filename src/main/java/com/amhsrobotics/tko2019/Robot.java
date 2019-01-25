@@ -8,22 +8,18 @@ import edu.wpi.first.wpilibj.SampleRobot;
 
 @SuppressWarnings("deprecation")
 public final class Robot extends SampleRobot {
-	private final Drive drive;
-
-	public static void main(final String... args) {
+  public static void main(final String... args) {
 		RobotBase.startRobot(Robot::new);
 	}
 
-	private final Compressor compressor;
+	private final Drive drive = new Drive();
 
-	private Robot() {
-		drive = new Drive();
-		compressor = new Compressor();
-	}
-
+  private final Compressor compressor = new Compressor();
+	
 	@Override
 	protected final void robotInit() {
 		drive.init();
+    compressor.setClosedLoopControl(true);
 	}
 
 	@Override
@@ -38,8 +34,7 @@ public final class Robot extends SampleRobot {
 
 	@Override
 	public final void test() {
-		CameraServer.getInstance().startAutomaticCapture(0);
-		CameraServer.getInstance().startAutomaticCapture(1);
+
 	}
 
 	@Override
@@ -49,6 +44,5 @@ public final class Robot extends SampleRobot {
 
 	private void enabled() {
 		compressor.start();
-		compressor.setClosedLoopControl(true);
 	}
 }
