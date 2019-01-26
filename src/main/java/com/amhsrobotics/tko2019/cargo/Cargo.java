@@ -108,13 +108,12 @@ public class Cargo {
             });
         } else if (!manual) {
             Controls.getInstance().registerDigitalCommand(2, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick3, DigitalType.DigitalRelease, () -> {
-                if ((groundThreshold)){
-                    rocketConveyor();
+                if ((rocketThreshold)){
+                    cargoConveyor();
                     groundThreshold = false;
                     System.out.println("Rocket Height");;
                 }
-                else if (rocketThreshold){
-                    cargoConveyor();
+                else if (groundThreshold){
                     rocketThreshold = false;
                     System.out.println("Cargo Height");
                 }
@@ -145,21 +144,17 @@ public class Cargo {
                 //1 = ground, 2 = rocket, 3 = cargo 4 = human player height
             });
             Controls.getInstance().registerAnalogCommand(2, AnalogInput.JoystickY, AnalogType.OutOfThreshold, (value) -> {
-                if (intakeSensor.get()){
-                    visionConveyor();
-                    stopIntake();
-                }
-                else if ((intakeThreshold) && (value < -0.5)){
+                if ((intakeThreshold) && (value < -0.5)){
                     spinIntake(intakeSpeed, intakeSpeed);  //TODO
                 }
                 else if ((groundThreshold) && (value < -0.5)){
                     spinIntake(groundSpeed, groundSpeed);  //TODO
                 }
                 else if ((rocketThreshold) && (value > 0.5)){
-                    spinIntake(rocketSpeed, rocketSpeed);  //TODO
+                    spinOuttake(rocketSpeed, rocketSpeed);  //TODO
                 }
                 else if ((cargoThreshold) && (value > 0.5)){
-                    spinIntake(cargoSpeed, cargoSpeed);  //TODO
+                    spinOuttake(cargoSpeed, cargoSpeed);  //TODO
                 }
                 else {stopIntake();}
             });
@@ -185,6 +180,16 @@ public class Cargo {
 
 
     private void spinIntake ( double topSpeed, double bottomSpeed){
+        if (intakeSensor.get()){
+            visionConveyor();
+            stopIntake();
+        }
+
+        intakeTalons[0].set(ControlMode.PercentOutput, topSpeed);
+        intakeTalons[1].set(ControlMode.PercentOutput, bottomSpeed);
+    }
+
+    private void spinOuttake ( double topSpeed, double bottomSpeed){
         intakeTalons[0].set(ControlMode.PercentOutput, topSpeed);
         intakeTalons[1].set(ControlMode.PercentOutput, bottomSpeed);
     }
