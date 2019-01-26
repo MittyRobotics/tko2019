@@ -108,37 +108,36 @@ public class Cargo {
             });
         } else if (!manual) {
             Controls.getInstance().registerDigitalCommand(2, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick3, DigitalType.DigitalRelease, () -> {
-                if ((rocketThreshold)){
-                    cargoConveyor();
+                if ((conveyorTalons[0].getSelectedSensorPosition() < rocketHeight*ticksPerDegree - 100)){
+                    rocketConveyor();
                     groundThreshold = false;
-                    System.out.println("Rocket Height");;
+                    System.out.println("Rocket Height");
                 }
-                else if (groundThreshold){
+                else if (conveyorTalons[0].getSelectedSensorPosition() < cargoHeight*ticksPerDegree - 100){
+                    cargoConveyor();
                     rocketThreshold = false;
                     System.out.println("Cargo Height");
                 }
-                else if (cargoThreshold){
+                else {
                     intakeConveyor();
-                    cargoThreshold = false;
-                    System.out.println("Intake Height");
+                    System.out.println("Human Player Height");
                 }
-                else {stopIntake();}
                 //1 = ground, 2 = rocket, 3 = cargo 4 = human player height
             });
             Controls.getInstance().registerDigitalCommand(2, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick2, DigitalType.DigitalRelease, () -> {
-                if ((intakeThreshold)){
+                if ((conveyorTalons[0].getSelectedSensorPosition() > cargoHeight*ticksPerDegree + 100)){
                     cargoConveyor();
-                    groundThreshold = false;
+                    intakeThreshold = false;
                     System.out.println("Cargo Height");;
                 }
-                else if (cargoThreshold){
+                else if (conveyorTalons[0].getSelectedSensorPosition() > rocketHeight*ticksPerDegree + 100){
                     rocketConveyor();
-                    rocketThreshold = false;
+                    cargoThreshold = false;
                     System.out.println("Rocket Height");
                 }
-                else if (rocketThreshold){
+                else {
                     intakeConveyor();
-                    cargoThreshold = false;
+                    rocketThreshold = false;
                     System.out.println("Intake Height");
                 }
                 //1 = ground, 2 = rocket, 3 = cargo 4 = human player height
