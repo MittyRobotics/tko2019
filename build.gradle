@@ -6,7 +6,6 @@ plugins {
 }
 
 def ROBOT_MAIN_CLASS = "com.amhsrobotics.tko2019.Robot"
-def includeDesktopSupport = false
 
 group 'com.amhsrobotics'
 version '0.2.0'
@@ -15,9 +14,6 @@ sourceCompatibility = 1.11
 
 repositories {
     mavenCentral()
-    maven {
-        url 'http://devsite.ctr-electronics.com/maven/release/'
-    }
 }
 
 dependencies {
