@@ -47,7 +47,7 @@ public class Drive {
 	@Deprecated
 	public void run() {
 
-		if shouldReverse {
+		if (shouldReverse) {
             Controls.getInstance().registerAnalogCommand(0, AnalogInput.XboxLYJoystick, AnalogType.OutOfThreshold, value -> {
                 moveLeft(-value);
             });
@@ -62,7 +62,6 @@ public class Drive {
                 moveRight(value);
             });
         }
-
         Controls.getInstance().registerDigitalCommand(0, DigitalInput.XboxLBumper, DigitalType.DigitalPress, ()->{
             shiftGear(1);
         });
@@ -85,21 +84,12 @@ public class Drive {
 			}
 		}
 
-		//leftDriveTalons[0].set(ControlMode.PercentOutput, 0);
-		//rightDriveTalons[0].set(ControlMode.PercentOutput, 0);
-
-		Controls.getInstance().registerAnalogCommand(0,AnalogInput.XboxLYJoystick, AnalogType.OutOfThreshold, value -> {
-		    moveLeft(0);
-        });
-        Controls.getInstance().registerAnalogCommand(0,AnalogInput.XboxRYJoystick, AnalogType.OutOfThreshold, value -> {
-            moveRight(0);
-        });
+		leftDriveTalons[0].set(ControlMode.PercentOutput, 0);
+		rightDriveTalons[0].set(ControlMode.PercentOutput, 0);
 	}
 
 
-	private void moveLeft(final double value) {
-		leftDriveTalons[0].set(ControlMode.PercentOutput, value);
-	}
+	private void moveLeft(final double value) {leftDriveTalons[0].set(ControlMode.PercentOutput, value); }
 
 
 	private void moveRight(final double value) {
