@@ -1,5 +1,6 @@
 package com.amhsrobotics.tko2019.drive;
 
+import com.amhsrobotics.tko2019.controls.*;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -45,35 +46,26 @@ public class Drive {
 
 	@Deprecated
 	public void run() {
-		XboxController controller = new XboxController(0);
 
-		if (shouldReverse) {
-			if (Math.abs(controller.getY(GenericHID.Hand.kRight)) > 0.05) {
-				moveLeft(-controller.getY(GenericHID.Hand.kRight));
-			} else {
-				moveLeft(0);
-			}
-			if (Math.abs(controller.getY(GenericHID.Hand.kLeft)) > 0.05) {
-				moveRight(-controller.getY(GenericHID.Hand.kLeft));
-			} else {
-				moveRight(0);
-			}
-		} else {
-			if (Math.abs(controller.getY(GenericHID.Hand.kLeft)) > 0.05) {
-				moveLeft(controller.getY(GenericHID.Hand.kLeft));
-			} else {
-				moveLeft(0);
-			}
-			if (Math.abs(controller.getY(GenericHID.Hand.kRight)) > 0.05) {
-				moveRight(controller.getY(GenericHID.Hand.kRight));
-			} else {
-				moveRight(0);
-			}
+		if shouldReverse {
+            Controls.getInstance().registerAnalogCommand(0, AnalogInput.XboxLYJoystick, AnalogType.OutOfThreshold, value -> {
+                moveLeft(-value);
+            });
+            Controls.getInstance().registerAnalogCommand(0, AnalogInput.XboxRYJoystick, AnalogType.OutOfThreshold, value -> {
+                moveRight(-value);
+            });
+        } else {
+            Controls.getInstance().registerAnalogCommand(0, AnalogInput.XboxLYJoystick, AnalogType.OutOfThreshold, value -> {
+                moveLeft(value);
+            });
+            Controls.getInstance().registerAnalogCommand(0, AnalogInput.XboxRYJoystick, AnalogType.OutOfThreshold, value -> {
+                moveRight(value);
+            });
+        }
 
-		}
-
-		boolean pressed = controller.getAButtonPressed();
-		toggleReverser(pressed);
+        Controls.getInstance().registerDigitalCommand(0, DigitalInput.XboxLBumper, DigitalType.DigitalPress, ()->{
+            shiftGear(1);
+        });
 	}
 
 	public void move(final double distance) {
@@ -93,9 +85,17 @@ public class Drive {
 			}
 		}
 
-		leftDriveTalons[0].set(ControlMode.PercentOutput, 0);
-		rightDriveTalons[0].set(ControlMode.PercentOutput, 0);
+		//leftDriveTalons[0].set(ControlMode.PercentOutput, 0);
+		//rightDriveTalons[0].set(ControlMode.PercentOutput, 0);
+
+		Controls.getInstance().registerAnalogCommand(0,AnalogInput.XboxLYJoystick, AnalogType.OutOfThreshold, value -> {
+		    moveLeft(0);
+        });
+        Controls.getInstance().registerAnalogCommand(0,AnalogInput.XboxRYJoystick, AnalogType.OutOfThreshold, value -> {
+            moveRight(0);
+        });
 	}
+
 
 	private void moveLeft(final double value) {
 		leftDriveTalons[0].set(ControlMode.PercentOutput, value);
