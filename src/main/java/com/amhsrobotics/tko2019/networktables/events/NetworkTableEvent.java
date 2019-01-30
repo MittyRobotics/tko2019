@@ -10,10 +10,26 @@ public class NetworkTableEvent {
 	private final NetworkTableEntry entry;
 	private final NetworkTableValue value;
 
-	public NetworkTableEvent(final NetworkTable table, final String key, final NetworkTableEntry entry, final NetworkTableValue value) {
+	NetworkTableEvent(final NetworkTable table, final String key, final NetworkTableEntry entry, final NetworkTableValue value) {
 		this.table = table;
 		this.key = key;
 		this.entry = entry;
 		this.value = value;
+	}
+
+	public NetworkTable getTable() {
+		return table;
+	}
+
+	public String getKey() {
+		return key;
+	}
+
+	public NetworkTableEntry getEntry() {
+		return entry;
+	}
+
+	public NetworkTableValue getValue() {
+		return value;
 	}
 }

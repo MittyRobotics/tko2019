@@ -4,7 +4,7 @@ import edu.wpi.first.networktables.EntryListenerFlags;
 
 public enum NetworkTableFlags {
 	Update(EntryListenerFlags.kUpdate),
-	AlsoLocalChanges(EntryListenerFlags.kLocal),
+	LocalChanges(EntryListenerFlags.kLocal),
 
 	New(EntryListenerFlags.kNew),
 	ImmediateListenting(EntryListenerFlags.kImmediate),
@@ -19,6 +19,6 @@ public enum NetworkTableFlags {
 	}
 
 	public int getValue() {
-		return 0;
+		return value;
 	}
 }

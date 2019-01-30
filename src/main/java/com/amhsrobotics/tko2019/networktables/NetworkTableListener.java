@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public interface NetworkTableListener extends TableEntryListener {
 	@Override
-	default void valueChanged(NetworkTable table, String key, NetworkTableEntry entry, NetworkTableValue value, int flags) {
+	default void valueChanged(final NetworkTable table, final String key, final NetworkTableEntry entry, final NetworkTableValue value, final int flags) {
 		final ArrayList<NetworkTableEvent> events = new ArrayList<>();
 		for (int i = 0; i < 6; i++) {
 			if (flags >> i % 2 == 1) {
@@ -35,5 +35,5 @@ public interface NetworkTableListener extends TableEntryListener {
 		}
 	}
 
-	void handleEvent(NetworkTableEvent event);
+	void handleEvent(final NetworkTableEvent event);
 }
