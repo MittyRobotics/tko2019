@@ -16,9 +16,9 @@ public class NetworkTables {
 		return ourInstance;
 	}
 
-	void registerToTableChange(NetworkTableKey key, NetworkTableListener listener, NetworkTableFlags... flags) {
+	void registerToTableChange(final NetworkTableKey key, final NetworkTableListener listener, final NetworkTableFlags... flags) {
 		int flagsValue = 0;
-		for (NetworkTableFlags flag : flags) {
+		for (final NetworkTableFlags flag : flags) {
 			flagsValue += flag.getValue();
 		}
 		primaryTable.addEntryListener(key.toString(), listener, flagsValue);
