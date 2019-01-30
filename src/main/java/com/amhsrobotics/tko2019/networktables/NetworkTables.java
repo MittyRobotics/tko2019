@@ -2,7 +2,6 @@ package com.amhsrobotics.tko2019.networktables;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.TableEntryListener;
 
 public class NetworkTables {
 	private static NetworkTables ourInstance = new NetworkTables();
@@ -17,7 +16,7 @@ public class NetworkTables {
 		return ourInstance;
 	}
 
-	void registerToTableChange(NetworkTableKey key, TableEntryListener listener, NetworkTableFlags... flags) {
+	void registerToTableChange(NetworkTableKey key, NetworkTableListener listener, NetworkTableFlags... flags) {
 		int flagsValue = 0;
 		for (NetworkTableFlags flag : flags) {
 			flagsValue += flag.getValue();
