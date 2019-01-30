@@ -6,11 +6,6 @@ import edu.wpi.first.networktables.TableEntryListener;
 
 public class NetworkTables {
 	private static NetworkTables ourInstance = new NetworkTables();
-
-	public static NetworkTables getInstance() {
-		return ourInstance;
-	}
-
 	private final NetworkTable primaryTable;
 
 	private NetworkTables() {
@@ -18,9 +13,13 @@ public class NetworkTables {
 		primaryTable = networkTableInstance.getTable("/SmartDashboard");
 	}
 
+	public static NetworkTables getInstance() {
+		return ourInstance;
+	}
+
 	void registerToTableChange(NetworkTableKey key, TableEntryListener listener, NetworkTableFlags... flags) {
 		int flagsValue = 0;
-		for (NetworkTableFlags flag: flags) {
+		for (NetworkTableFlags flag : flags) {
 
 		}
 		primaryTable.addEntryListener(key.toString(), listener, flagsValue);
