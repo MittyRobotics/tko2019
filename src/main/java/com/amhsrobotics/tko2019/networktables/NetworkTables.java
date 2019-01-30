@@ -20,7 +20,7 @@ public class NetworkTables {
 	void registerToTableChange(NetworkTableKey key, TableEntryListener listener, NetworkTableFlags... flags) {
 		int flagsValue = 0;
 		for (NetworkTableFlags flag : flags) {
-
+			flagsValue += flag.getValue();
 		}
 		primaryTable.addEntryListener(key.toString(), listener, flagsValue);
 	}
