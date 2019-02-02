@@ -9,8 +9,8 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 
 public class Drive {
-	private final int[] leftTalonIds = {20, 21};
-	private final int[] rightTalonIds = {22, 23};
+	private final int[] leftTalonIds = {2, 3};
+	private final int[] rightTalonIds = {0, 1};
 	private final int[] gearShiftingIds = {0, 1};
 
 	private final double[] ticksPerInch = {0.0, 119.47};
@@ -28,43 +28,48 @@ public class Drive {
 
 	public void init() {
 		for (int talonId = 0; talonId < leftTalonIds.length; talonId++) {
-			final WPI_TalonSRX talon = new WPI_TalonSRX(leftTalonIds[talonId]);
+			leftDriveTalons[talonId] = new WPI_TalonSRX(leftTalonIds[talonId]);
+			rightDriveTalons[talonId] = new WPI_TalonSRX(rightTalonIds[talonId]);
 
-			talon.config_kP(0, p);
-			talon.config_kI(0, i);
-			talon.config_kD(0, d);
-
-			if (talonId == 0) {
-				talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-			} else {
-				talon.set(ControlMode.Follower, leftTalonIds[0]);
-			}
+//			talon.config_kP(0, p);
+//			talon.config_kI(0, i);
+//			talon.config_kD(0, d);
+//
+//			if (talonId == 0) {
+//				talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+//			} else {
+//				talon.set(ControlMode.Follower, leftTalonIds[0]);
+//			}
 		}
 
-		gearShift = new DoubleSolenoid(gearShiftingIds[0], gearShiftingIds[1]);
+//		gearShift = new DoubleSolenoid(gearShiftingIds[0], gearShiftingIds[1]);
 	}
 
 	@Deprecated
 	public void run() {
 
-		if (shouldReverse) {
             Controls.getInstance().registerAnalogCommand(0, AnalogInput.XboxLYJoystick, AnalogType.OutOfThreshold, value -> {
-                moveLeft(-value);
+            	if(shouldReverse){
+					moveLeft(value/2);
+				}
+            	else {
+					moveLeft(-value/2);
+				}
             });
             Controls.getInstance().registerAnalogCommand(0, AnalogInput.XboxRYJoystick, AnalogType.OutOfThreshold, value -> {
-                moveRight(-value);
+                if(shouldReverse){
+					moveRight(-value/2);
+				}
+                else {
+                	moveRight(value/2);
+				}
             });
-        } else {
-            Controls.getInstance().registerAnalogCommand(0, AnalogInput.XboxLYJoystick, AnalogType.OutOfThreshold, value -> {
-                moveLeft(value);
-            });
-            Controls.getInstance().registerAnalogCommand(0, AnalogInput.XboxRYJoystick, AnalogType.OutOfThreshold, value -> {
-                moveRight(value);
-            });
-        }
-        Controls.getInstance().registerDigitalCommand(0, DigitalInput.XboxLBumper, DigitalType.DigitalPress, ()->{
-            shiftGear(1);
-        });
+//        Controls.getInstance().registerDigitalCommand(0, DigitalInput.XboxLBumper, DigitalType.DigitalPress, ()->{
+//            shiftGear(1);
+//        });
+		Controls.getInstance().registerDigitalCommand(0, DigitalInput.XboxRBumper, DigitalType.DigitalPress, () ->{
+			toggleReverser(!shouldReverse);
+		});
 	}
 
 	public void move(final double distance) {
@@ -89,10 +94,10 @@ public class Drive {
 	}
 
 
-	private void moveLeft(final double value) {leftDriveTalons[0].set(ControlMode.PercentOutput, value); }
+	public void moveLeft(final double value) {leftDriveTalons[0].set(ControlMode.PercentOutput, value); }
 
 
-	private void moveRight(final double value) {
+	public void moveRight(final double value) {
 		rightDriveTalons[0].set(ControlMode.PercentOutput, value);
 	}
 

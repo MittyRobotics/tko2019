@@ -1,5 +1,8 @@
 package com.amhsrobotics.tko2019;
 
+import com.amhsrobotics.tko2019.controls.AnalogInput;
+import com.amhsrobotics.tko2019.controls.AnalogType;
+import com.amhsrobotics.tko2019.controls.Controls;
 import com.amhsrobotics.tko2019.drive.Drive;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
@@ -13,23 +16,25 @@ public final class Robot extends SampleRobot {
 	}
 
 	private final Drive drive = new Drive();
-
-  private final Compressor compressor = new Compressor();
+//
+//  private final Compressor compressor = new Compressor();
 	
 	@Override
 	protected final void robotInit() {
 		drive.init();
-    compressor.setClosedLoopControl(true);
+		drive.run();
+//    compressor.setClosedLoopControl(true);
 	}
 
 	@Override
 	public final void operatorControl() {
-		enabled();
+		Controls.getInstance().enable();
+//		enabled();
 	}
 
 	@Override
 	public final void autonomous() {
-		enabled();
+//		enabled();
 	}
 
 	@Override
@@ -37,12 +42,12 @@ public final class Robot extends SampleRobot {
 
 	}
 
-	@Override
-	protected final void disabled() {
-		compressor.stop();
-	}
-
-	private void enabled() {
-		compressor.start();
-	}
+//	@Override
+//	protected final void disabled() {
+//		compressor.stop();
+//	}
+//
+//	private void enabled() {
+//		compressor.start();
+//	}
 }
