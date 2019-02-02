@@ -7,17 +7,17 @@ import com.amhsrobotics.tko2019.controls.DigitalType;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class HatchPanel {
 
     private boolean manual = false;
-    private final int p = 0; //TODO
-    private final int i = 0; //TODO
+    private final double p = 4; //TODO
+    private final double i = 0; //TODO
     private final int d = 0; //TODO
-    private final int threshold = 10; //TODO
-    private final int ticksPerInch = 0; //TODO
+    private final double threshold = 142.714; //TODO
+    private final double ticksPerInch = 142.714; //TODO
     private boolean processDone = false;
 
     private final int[] solSideId = {0, 1}; //TODO
@@ -29,24 +29,24 @@ public class HatchPanel {
     private final int[] sliderSwitchesIds = {0, 1}; //TODO
     private final int wallSwitchId = 3; //TODO
     private DigitalInput hatchSwitch;
-    private DigitalInput[] sliderSwitches = new DigitalInput[2];
+    public DigitalInput[] sliderSwitches = new DigitalInput[2];
     private DigitalInput wallSwitch;
 
-    private final int slideTalonId = 28;
-    private WPI_TalonSRX slideTalon;
+    public final int slideTalonId = 2;
+    public WPI_TalonSRX slideTalon;
 
     public void init(){
-        solSide = new DoubleSolenoid(solSideId[0], solSideId[1]);
-        solForward = new DoubleSolenoid(solForwardId[0], solForwardId[1]);
+//        solSide = new DoubleSolenoid(solSideId[0], solSideId[1]);
+//        solForward = new DoubleSolenoid(solForwardId[0], solForwardId[1]);
 
-        hatchSwitch = new DigitalInput(hatchSwitchId);
-        wallSwitch = new DigitalInput(wallSwitchId);
+//       hatchSwitch = new DigitalInput(hatchSwitchId);
+//        wallSwitch = new DigitalInput(wallSwitchId);
         for(int i = 0; i < 2; i++){
             sliderSwitches[i] = new DigitalInput(sliderSwitchesIds[i]);
         }
 
         slideTalon = new WPI_TalonSRX(slideTalonId);
-
+        slideTalon.configClosedloopRamp(0.0);
         slideTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 1000);
 
         slideTalon.config_kP(0, p, 0);
@@ -182,14 +182,14 @@ public class HatchPanel {
     }
 
     //work on position numbers
-    private void slideLeft(){
+    public void slideLeft(){
+        slide(-8);
+    }
+    public void slideMiddle() {
         slide(0);
     }
-    private void slideMiddle() {
+    public void slideRight() {
         slide(8);
-    }
-    private void slideRight() {
-        slide(16);
     }
 
     //action for cargo outtake
@@ -213,16 +213,21 @@ public class HatchPanel {
     }
 
     //how far the mechanism has to slide
-    private void slide(double position){
+    public void slide(double position){ //position in inches
 
-        slideTalon.set(ControlMode.Position, position * ticksPerInch);
-        while (Math.abs(slideTalon.getClosedLoopError()) > threshold) {
-            try {
-                Thread.sleep(20);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        slideTalon.set(ControlMode.PercentOutput, 0);
+        System.out.println("slide yEEt");
+        slideTalon.set(ControlMode.Position, (slideTalon.getSelectedSensorPosition() + position * ticksPerInch));
+
+//       while (Math.abs(slideTalon.getClosedLoopError()) > threshold) {
+//            try {
+//                Thread.sleep(20);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+            //System.out.println("waiting");
+//        }
+        System.out.println("slide yeet 2.0");
+        System.out.println("end error =" + slideTalon.getClosedLoopError());
+//        slideTalon.set(ControlMode.PercentOutput, 0);
     }
 }
