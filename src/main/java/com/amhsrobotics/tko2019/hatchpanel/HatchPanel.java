@@ -13,11 +13,11 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 public class HatchPanel {
 
     private boolean manual = false;
-    private final double p = 4; //TODO
+    private final double p = 16; //TODO
     private final double i = 0; //TODO
     private final int d = 0; //TODO
-    private final double threshold = 142.714; //TODO
-    private final double ticksPerInch = 142.714; //TODO
+    private final double threshold = 151.7; //TODO
+    public final double ticksPerInch = 151.7; //TODO
     private boolean processDone = false;
 
     private final int[] solSideId = {0, 1}; //TODO
@@ -216,7 +216,8 @@ public class HatchPanel {
     public void slide(double position){ //position in inches
 
         System.out.println("slide yEEt");
-        slideTalon.set(ControlMode.Position, (slideTalon.getSelectedSensorPosition() + position * ticksPerInch));
+        slideTalon.set(ControlMode.Position, (position * ticksPerInch));
+//        slideTalon.set(ControlMode.Position, (slideTalon.getSelectedSensorPosition() + position));
 
 //       while (Math.abs(slideTalon.getClosedLoopError()) > threshold) {
 //            try {
@@ -229,5 +230,6 @@ public class HatchPanel {
         System.out.println("slide yeet 2.0");
         System.out.println("end error =" + slideTalon.getClosedLoopError());
 //        slideTalon.set(ControlMode.PercentOutput, 0);
+        System.out.println(slideTalon.getSelectedSensorPosition());
     }
 }
