@@ -5,5 +5,6 @@ public enum pcState {
     FOLLOWING_TARGET,
     CHECK_OBJECT,
     CHECK_RELATIVE_POSITION,
-    SCORING
+    SCORING,
+    EXIT_VISION
 }

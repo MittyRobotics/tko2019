@@ -3,68 +3,131 @@ package com.amhsrobotics.tko2019.sequences;
 import com.amhsrobotics.tko2019.sequences.States.pcState;
 
 public class PickupCargo {
-    pcState state;
+    static pcState state = pcState.IDLE;
 
-    public void Idle(){
+    private static pcState lastState;
 
+    public static void main(String... args){
+        System.out.println(state);
+        VisionCommand();
+        while(true){
+            PickupCargoMain();
+        }
     }
 
-    public void FollowingTarget(){
+    public static void PickupCargoMain(){
+
+        switch(state){
+            case IDLE:
+                Idle();
+                break;
+            case FOLLOWING_TARGET:
+                FollowingTarget();
+                break;
+            case CHECK_OBJECT:
+                CheckObject();
+                break;
+            case CHECK_RELATIVE_POSITION:
+                CheckRelativePosition();
+                break;
+            case SCORING:
+                Scoring();
+                break;
+            case EXIT_VISION:
+                ExitVision();
+                break;
+        }
+    }
+
+
+    public static  void Idle(){
+        //System.out.println(state);
+    }
+
+    public static void FollowingTarget(){
+        System.out.println(state);
         PathComplete();
+
     }
 
-    public void CheckObject(){
+    public static  void CheckObject(){
+        System.out.println(state);
         HasObject();
+
     }
 
-    public void CheckRelativePosition(){
+    public static void CheckRelativePosition(){
+        System.out.println(state);
         CorrectPos();
+
     }
 
-    public void Scoring(){
+    public static  void Scoring(){
+        System.out.println(state);
         ScoringDone();
+
     }
 
     //Transitions
 
-    public void VisionCommand(){
+    public static void VisionCommand(){
         if(state == pcState.IDLE){
-            state = pcState.FOLLOWING_TARGET;
+            state = pcState.CHECK_OBJECT;
+            lastState = pcState.IDLE;
         }
     }
 
-    public void ExitVision(){
+    public static void ExitVision(){
+        System.out.println(state);
         state = pcState.IDLE;
+        lastState = pcState.IDLE;
+
     }
 
-    public void PathComplete(){
+    public static void PathComplete(){
         if(state == pcState.FOLLOWING_TARGET){
             state = pcState.CHECK_OBJECT;
+            lastState = pcState.FOLLOWING_TARGET;
         }
     }
 
-    public void HasObject(){
+    public static  void HasObject(){
         if(state == pcState.CHECK_OBJECT){
-            state = pcState.CHECK_RELATIVE_POSITION;
+            state = pcState.EXIT_VISION;
         }
     }
 
-    public void CorrectPos(){
+    public static void NoObject(){
+        if(state == pcState.CHECK_OBJECT){
+            if(lastState == pcState.IDLE){
+                state = pcState.FOLLOWING_TARGET;
+            }
+            if(lastState == pcState.FOLLOWING_TARGET){
+                state = pcState.CHECK_RELATIVE_POSITION;
+            }
+            lastState = pcState.CHECK_OBJECT;
+
+        }
+    }
+
+    public static void CorrectPos(){
         if(state == pcState.CHECK_RELATIVE_POSITION){
             state = pcState.SCORING;
         }
     }
 
-    public void ScoringDone(){
+    public static void ScoringDone(){
         if(state == pcState.SCORING){
-            state = pcState.IDLE;
+            state = pcState.EXIT_VISION;
         }
     }
 
-    public void WrongPos(){
+    public static void WrongPos(){
         if(state == pcState.CHECK_RELATIVE_POSITION){
-            state = pcState.IDLE;
+            state = pcState.EXIT_VISION;
         }
     }
+
+
 }
 
