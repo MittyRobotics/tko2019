@@ -6,7 +6,6 @@ plugins {
 }
 
 def ROBOT_MAIN_CLASS = "com.amhsrobotics.tko2019.Robot"
-def includeDesktopSupport = false
 
 group 'com.amhsrobotics'
 version '0.2.0'
@@ -15,9 +14,6 @@ sourceCompatibility = 1.11
 
 repositories {
     mavenCentral()
-    maven {
-        url 'http://devsite.ctr-electronics.com/maven/release/'
-    }
 }
 
 dependencies {
@@ -30,9 +26,10 @@ dependencies {
     //noinspection GroovyAssignabilityCheck
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
 
-    compile 'com.ctre.phoenix:api-java:5.12.1'
+compile 'com.ctre.phoenix:api-java:5.12.1'
     compile 'com.ctre.phoenix:wpiapi-java:5.12.1'
     compile 'com.ctre.phoenix:cci:5.12.1'
+
 }
 
 deploy {
