@@ -1,0 +1,11 @@
+Tank Drive
+
+Autonomous Integration with Vision
+
+Gear Shift
+The robot should shift to high gear when 'a' button is pressed
+The robot should shift to low gear when 'b' button is pressed
+
+Drive Reversal
+Pressing and holding RT reverses the drive direction while pressed
+Address issue of having to hold button while controlling drive
