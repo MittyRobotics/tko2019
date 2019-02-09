@@ -1,6 +1,7 @@
 package com.amhsrobotics.tko2019.subsystems.drive;
 
 import com.amhsrobotics.tko2019.controls.AnalogType;
+import com.amhsrobotics.tko2019.controls.ControllerID;
 import com.amhsrobotics.tko2019.controls.Controls;
 import com.amhsrobotics.tko2019.controls.DigitalType;
 import com.amhsrobotics.tko2019.settings.ControlsConfig;
@@ -68,21 +69,21 @@ public final class Drive implements Subsystem {
 	public void initControls() {
 		entering("initControls");
 
-		Controls.getInstance().registerAnalogCommand(0, ControlsConfig.LEFT_WHEELS, AnalogType.OutOfThresholdMinor, value -> {
+		Controls.getInstance().registerAnalogCommand(ControllerID.XboxController.getId(), ControlsConfig.LEFT_WHEELS, AnalogType.OutOfThresholdMinor, value -> {
 			if (shouldReverse) {
 				moveRight(-value);
 			} else {
 				moveLeft(value);
 			}
 		});
-		Controls.getInstance().registerAnalogCommand(0, ControlsConfig.RIGHT_WHEELS, AnalogType.OutOfThresholdMinor, value -> {
+		Controls.getInstance().registerAnalogCommand(ControllerID.XboxController.getId(), ControlsConfig.RIGHT_WHEELS, AnalogType.OutOfThresholdMinor, value -> {
 			if (shouldReverse) {
 				moveLeft(-value);
 			} else {
 				moveRight(value);
 			}
 		});
-        Controls.getInstance().registerDigitalCommand(0, ControlsConfig.GEAR_SWITCH, DigitalType.DigitalPress, () -> {
+        Controls.getInstance().registerDigitalCommand(ControllerID.XboxController.getId(), ControlsConfig.GEAR_SWITCH, DigitalType.DigitalPress, () -> {
         	if (System.currentTimeMillis() - lastSwitch > 1000) {
 		        if (gear == 1) {
 			        shiftGear(0);
@@ -94,7 +95,7 @@ public final class Drive implements Subsystem {
         		getLogger().warning("Shifter is on Cooldown.");
 	        }
         });
-		Controls.getInstance().registerDigitalCommand(0, ControlsConfig.REVERSE_DIRECTION, DigitalType.DigitalPress, () -> {
+		Controls.getInstance().registerDigitalCommand(ControllerID.XboxController.getId(), ControlsConfig.REVERSE_DIRECTION, DigitalType.DigitalPress, () -> {
 			toggleReverser(!shouldReverse);
 		});
 

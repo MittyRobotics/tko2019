@@ -19,7 +19,7 @@ public class Climber implements Subsystem {
 	@Override
 	public void initControls() {
 		Controls.getInstance().registerDigitalCommand(0, DigitalInput.XboxA, DigitalType.DigitalPress, () -> {
-			if (DriverStation.getInstance().getMatchTime() < 30) {
+			if (DriverStation.getInstance().getMatchTime() < 30 && DriverStation.getInstance().isOperatorControl()) {
 				release();
 			}
 		});
