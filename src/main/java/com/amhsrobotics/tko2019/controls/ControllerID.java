@@ -15,11 +15,11 @@ public enum ControllerID {
 		this.controller = controller;
 	}
 
-	public final int getId() {
-		return ordinal();
-	}
-
 	public static GenericHID getController(int id) {
 		return ControllerID.values()[id].controller;
+	}
+
+	public final int getId() {
+		return ordinal();
 	}
 }

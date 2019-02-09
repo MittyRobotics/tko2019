@@ -14,10 +14,10 @@ public enum AnalogInput {
 		return genericHID.getRawAxis(4);
 	}),
 	XboxLYJoystick(genericHID -> {
-		return genericHID.getRawAxis(1);
+		return -genericHID.getRawAxis(1);
 	}),
 	XboxRYJoystick(genericHID -> {
-		return genericHID.getRawAxis(5);
+		return -genericHID.getRawAxis(5);
 	}),
 	JoystickX(genericHID -> {
 		return genericHID.getRawAxis(0);
@@ -31,7 +31,7 @@ public enum AnalogInput {
 
 	private final AnalogInputRequest inputRequest;
 
-	AnalogInput(AnalogInputRequest inputRequest){
+	AnalogInput(AnalogInputRequest inputRequest) {
 		this.inputRequest = inputRequest;
 	}
 

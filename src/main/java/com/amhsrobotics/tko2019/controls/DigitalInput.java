@@ -85,7 +85,7 @@ public enum DigitalInput {
 
 	private final DigitalInputRequest inputRequest;
 
-	DigitalInput(final DigitalInputRequest inputRequest){
+	DigitalInput(final DigitalInputRequest inputRequest) {
 		this.inputRequest = inputRequest;
 	}
 

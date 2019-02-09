@@ -1,0 +1,14 @@
+package com.amhsrobotics.tko2019.settings.subsystems;
+
+public class PID {
+	// Drive
+
+	public final static double[] DRIVE = {0.2, 0, 0, 0};
+
+
+	// Hatch Panel
+
+	public final static double[] SLIDER = {16, 0, 0, 0};
+
+
+}

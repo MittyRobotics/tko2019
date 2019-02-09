@@ -1,52 +1,85 @@
 package com.amhsrobotics.tko2019.controls;
 
+import com.amhsrobotics.tko2019.logging.LogCapable;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class Controls {
-	private static Controls ourInstance = new Controls();
-	public static Controls getInstance() {
-		return ourInstance;
-	}
+public class Controls implements LogCapable {
+	private final static Controls ourInstance = new Controls();
 
-	private final HashMap<Integer, HashMap<DigitalInput, HashMap<DigitalType, ArrayList<DigitalControlCommand>>>> buttonControls = new HashMap<>();
-	private final HashMap<Integer, HashMap<AnalogInput, HashMap<AnalogType, ArrayList<AnalogControlCommand>>>> analogControls = new HashMap<>();
+	private final ConcurrentHashMap<Integer, ConcurrentHashMap<DigitalInput, ConcurrentHashMap<DigitalType, ArrayList<DigitalControlCommand>>>> buttonControls = new ConcurrentHashMap<>();
+	private final ConcurrentHashMap<Integer, ConcurrentHashMap<AnalogInput, ConcurrentHashMap<AnalogType, ArrayList<AnalogControlCommand>>>> analogControls = new ConcurrentHashMap<>();
+
+	private final HashMap<String, > buttonControls = new HashMap<>();
+	private final HashMap<String, > analogControls = new HashMap<>();
 
 	private final Thread controlsThread = new Thread(this::checkControls);
 	private volatile boolean shouldRun = false;
 
 	private Controls() {
+		entering("<init>");
 		controlsThread.setName("Controls Thread");
 		controlsThread.setPriority(Thread.MAX_PRIORITY);
+		exiting("<init>");
 	}
 
-	public void enable() {
+	public static Controls getInstance() {
+		return ourInstance;
+	}
+
+	public synchronized void enable() {
+		entering("enable");
 		if (!shouldRun) {
+			//noinspection LoopConditionNotUpdatedInsideLoop
+			while (controlsThread.isAlive()) {
+				Thread.onSpinWait();
+			}
+			toggleSoftware("Enabled", true);
 			shouldRun = true;
 			controlsThread.start();
 		}
+		exiting("enable");
 	}
 
 	public void disable() {
+		entering("disable");
+		toggleSoftware("Enabled", false);
 		shouldRun = false;
+		exiting("disable");
 	}
 
-	public void registerDigitalCommand(int id, DigitalInput digitalInput, DigitalType digitalType, DigitalControlCommand lambda) {
-		buttonControls.putIfAbsent(id, new HashMap<>());
-		final HashMap<DigitalInput, HashMap<DigitalType, ArrayList<DigitalControlCommand>>> inputs = buttonControls.get(id);
-		inputs.putIfAbsent(digitalInput, new HashMap<>());
-		final HashMap<DigitalType, ArrayList<DigitalControlCommand>> commands = inputs.get(digitalInput);
+	@SuppressWarnings("Duplicates")
+	public void registerDigitalCommand(int id, DigitalInput digitalInput, DigitalType digitalType, DigitalControlCommand lambda, String... commandName) {
+		entering("registerDigitalCommand");
+		buttonControls.putIfAbsent(id, new ConcurrentHashMap<>());
+		final ConcurrentHashMap<DigitalInput, ConcurrentHashMap<DigitalType, ArrayList<DigitalControlCommand>>> inputs = buttonControls.get(id);
+		inputs.putIfAbsent(digitalInput, new ConcurrentHashMap<>());
+		final ConcurrentHashMap<DigitalType, ArrayList<DigitalControlCommand>> commands = inputs.get(digitalInput);
 		commands.putIfAbsent(digitalType, new ArrayList<>());
 		commands.get(digitalType).add(lambda);
+		exiting("registerDigitalCommand");
 	}
 
-	public void registerAnalogCommand(int id, AnalogInput analogInput, AnalogType analogType, AnalogControlCommand lambda) {
-		analogControls.putIfAbsent(id, new HashMap<>());
-		final HashMap<AnalogInput, HashMap<AnalogType, ArrayList<AnalogControlCommand>>> inputs = analogControls.get(id);
-		inputs.putIfAbsent(analogInput, new HashMap<>());
-		final HashMap<AnalogType, ArrayList<AnalogControlCommand>> commands = inputs.get(analogInput);
+	@SuppressWarnings("Duplicates")
+	public void registerAnalogCommand(int id, AnalogInput analogInput, AnalogType analogType, AnalogControlCommand lambda, String... commandName) {
+		entering("registerAnalogCommand");
+		analogControls.putIfAbsent(id, new ConcurrentHashMap<>());
+		final ConcurrentHashMap<AnalogInput, ConcurrentHashMap<AnalogType, ArrayList<AnalogControlCommand>>> inputs = analogControls.get(id);
+		inputs.putIfAbsent(analogInput, new ConcurrentHashMap<>());
+		final ConcurrentHashMap<AnalogType, ArrayList<AnalogControlCommand>> commands = inputs.get(analogInput);
 		commands.putIfAbsent(analogType, new ArrayList<>());
 		commands.get(analogType).add(lambda);
+		exiting("registerAnalogCommand");
+	}
+
+	public void unregisterDigialCommand(final String commandName) {
+
+	}
+
+	public void unregisterAnalogCommand(final String commandName) {
+
 	}
 
 	private void checkControls() {
@@ -93,9 +126,31 @@ public class Controls {
 					cachedAnalogInputs.get(deviceID).putIfAbsent(analogInput, value);
 					double cachedValue = cachedAnalogInputs.get(deviceID).get(analogInput);
 					if (Math.abs(value) > 0.05) {
-						ArrayList<AnalogControlCommand> outOfThresholdCommands = analogControls.get(deviceID).get(analogInput).get(AnalogType.OutOfThreshold);
-						if (outOfThresholdCommands != null) {
-							for (AnalogControlCommand controlCommand : outOfThresholdCommands) {
+						ArrayList<AnalogControlCommand> outOfMinorThresholdCommands = analogControls.get(deviceID).get(analogInput).get(AnalogType.OutOfThresholdMinor);
+						if (outOfMinorThresholdCommands != null) {
+							for (AnalogControlCommand controlCommand : outOfMinorThresholdCommands) {
+								controlCommand.action(value);
+							}
+						}
+					} else {
+						ArrayList<AnalogControlCommand> commands = analogControls.get(deviceID).get(analogInput).get(AnalogType.InThresholdMinor);
+						if (commands != null) {
+							for (AnalogControlCommand command : commands) {
+								command.action(value);
+							}
+						}
+					}
+					if (Math.abs(value) > 0.5) {
+						ArrayList<AnalogControlCommand> outOfMajorThresholdCommands = analogControls.get(deviceID).get(analogInput).get(AnalogType.OutOfThresholdMajor);
+						if (outOfMajorThresholdCommands != null) {
+							for (AnalogControlCommand controlCommand : outOfMajorThresholdCommands) {
+								controlCommand.action(value);
+							}
+						}
+					} else {
+						ArrayList<AnalogControlCommand> outOfMinorThresholdCommands = analogControls.get(deviceID).get(analogInput).get(AnalogType.InThresholdMajor);
+						if (outOfMinorThresholdCommands != null) {
+							for (AnalogControlCommand controlCommand : outOfMinorThresholdCommands) {
 								controlCommand.action(value);
 							}
 						}
@@ -111,4 +166,6 @@ public class Controls {
 			}
 		}
 	}
+
+
 }
