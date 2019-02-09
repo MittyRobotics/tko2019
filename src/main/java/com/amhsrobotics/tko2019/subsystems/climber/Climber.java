@@ -18,14 +18,19 @@ public class Climber implements Subsystem {
 
 	@Override
 	public void initControls() {
+		entering("initControls");
 		Controls.getInstance().registerDigitalCommand(0, DigitalInput.XboxA, DigitalType.DigitalPress, () -> {
 			if (DriverStation.getInstance().getMatchTime() < 30 && DriverStation.getInstance().isOperatorControl()) {
 				release();
 			}
 		});
+		exiting("initControls");
 	}
 
 	private void release() {
+		entering("release");
+		solenoidSet(climberSolenoid, DoubleSolenoid.Value.kForward);
 		climberSolenoid.set(DoubleSolenoid.Value.kForward);
+		exiting("release");
 	}
 }
