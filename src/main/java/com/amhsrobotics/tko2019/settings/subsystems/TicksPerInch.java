@@ -9,4 +9,8 @@ public class TicksPerInch {
 	// Hatch Panel
 
 	public static final double SLIDER_TPI = 151.7;
+
+	//Cargo
+	public static final double CARGO_TPD = 0; //TODO
+
 }
