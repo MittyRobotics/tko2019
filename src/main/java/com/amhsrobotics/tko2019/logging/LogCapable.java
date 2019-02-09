@@ -45,6 +45,10 @@ public interface LogCapable {
 		getLogger().log(SOFTWARE_TOGGLE, String.format("%s Toggled to %s", name, value));
 	}
 
+	default void throwing(final String methodName, final Throwable throwable) {
+		getLogger().throwing(getClass().getName(), methodName, throwable);
+	}
+
 	default void entering(final String methodName) {
 		getLogger().entering(getClass().getName(), methodName);
 	}
