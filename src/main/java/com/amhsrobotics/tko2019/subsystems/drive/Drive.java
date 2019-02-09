@@ -102,8 +102,8 @@ public final class Drive implements Subsystem {
 		exiting("initControls");
 	}
 
-	public void straight(final double inches) {
-		entering("straight");
+	public void moveStraight(final double inches) {
+		entering("moveStraight");
 
 
 		final double setpoint = inches * TicksPerInch.DRIVE_TPI[gear];
@@ -126,7 +126,7 @@ public final class Drive implements Subsystem {
 		rTalons[0].set(ControlMode.PercentOutput, 0);
 
 
-		exiting("straight");
+		exiting("moveStraight");
 	}
 
 	public void turn(final double degrees) {
