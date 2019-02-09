@@ -12,8 +12,8 @@ public class Controls implements LogCapable {
 	private final ConcurrentHashMap<Integer, ConcurrentHashMap<DigitalInput, ConcurrentHashMap<DigitalType, ArrayList<DigitalControlCommand>>>> buttonControls = new ConcurrentHashMap<>();
 	private final ConcurrentHashMap<Integer, ConcurrentHashMap<AnalogInput, ConcurrentHashMap<AnalogType, ArrayList<AnalogControlCommand>>>> analogControls = new ConcurrentHashMap<>();
 
-	private final HashMap<String, > buttonControls = new HashMap<>();
-	private final HashMap<String, > analogControls = new HashMap<>();
+	private final HashMap<String, DigitalControlCommand> registeredDigialControls = new HashMap<>();
+	private final HashMap<String, AnalogControlCommand> registeredAnalogControls = new HashMap<>();
 
 	private final Thread controlsThread = new Thread(this::checkControls);
 	private volatile boolean shouldRun = false;
@@ -53,33 +53,45 @@ public class Controls implements LogCapable {
 	@SuppressWarnings("Duplicates")
 	public void registerDigitalCommand(int id, DigitalInput digitalInput, DigitalType digitalType, DigitalControlCommand lambda, String... commandName) {
 		entering("registerDigitalCommand");
+
 		buttonControls.putIfAbsent(id, new ConcurrentHashMap<>());
 		final ConcurrentHashMap<DigitalInput, ConcurrentHashMap<DigitalType, ArrayList<DigitalControlCommand>>> inputs = buttonControls.get(id);
 		inputs.putIfAbsent(digitalInput, new ConcurrentHashMap<>());
 		final ConcurrentHashMap<DigitalType, ArrayList<DigitalControlCommand>> commands = inputs.get(digitalInput);
 		commands.putIfAbsent(digitalType, new ArrayList<>());
 		commands.get(digitalType).add(lambda);
+
+		if (commandName.length != 0) {
+			registeredDigialControls.put(commandName[0], lambda);
+		}
+
 		exiting("registerDigitalCommand");
 	}
 
 	@SuppressWarnings("Duplicates")
 	public void registerAnalogCommand(int id, AnalogInput analogInput, AnalogType analogType, AnalogControlCommand lambda, String... commandName) {
 		entering("registerAnalogCommand");
+
 		analogControls.putIfAbsent(id, new ConcurrentHashMap<>());
 		final ConcurrentHashMap<AnalogInput, ConcurrentHashMap<AnalogType, ArrayList<AnalogControlCommand>>> inputs = analogControls.get(id);
 		inputs.putIfAbsent(analogInput, new ConcurrentHashMap<>());
 		final ConcurrentHashMap<AnalogType, ArrayList<AnalogControlCommand>> commands = inputs.get(analogInput);
 		commands.putIfAbsent(analogType, new ArrayList<>());
 		commands.get(analogType).add(lambda);
+
+		if (commandName.length != 0) {
+			registeredAnalogControls.put(commandName[0], lambda);
+		}
+
 		exiting("registerAnalogCommand");
 	}
 
-	public void unregisterDigialCommand(final String commandName) {
-
+	public void unregisterDigialCommand(int id, DigitalInput digitalInput, DigitalType digitalType, final String commandName) {
+		buttonControls.get(id).get(digitalInput).get(digitalType).remove(registeredDigialControls.get(commandName));
 	}
 
-	public void unregisterAnalogCommand(final String commandName) {
-
+	public void unregisterAnalogCommand(int id, AnalogInput analogInput, AnalogType analogType, final String commandName) {
+		analogControls.get(id).get(analogInput).get(analogType).remove(registeredAnalogControls.get(commandName));
 	}
 
 	private void checkControls() {
