@@ -1,17 +1,65 @@
 package com.amhsrobotics.tko2019.sequences;
 
+import com.amhsrobotics.tko2019.networktables.NetworkTableKey;
+import com.amhsrobotics.tko2019.networktables.NetworkTables;
+import com.amhsrobotics.tko2019.networktables.events.NetworkTableNewEvent;
+import com.amhsrobotics.tko2019.networktables.events.NetworkTableUpdateEvent;
 import com.amhsrobotics.tko2019.sequences.States.Check;
 import com.amhsrobotics.tko2019.sequences.States.VisionMode;
 import com.amhsrobotics.tko2019.sequences.States.State;
+import com.amhsrobotics.tko2019.serializeddata.Coordinate;
+import edu.wpi.first.networktables.NetworkTableEntry;
+
+import java.io.*;
 
 public class Sequence {
     static VisionMode currSequence;
+    VisionMode prevMode;
     static State state;
-    public static void main(String... args){
+
+    public boolean completedPath = false;
+
+
+    public Coordinate currCoord;
+
+    NetworkTableEntry networkTableEntry;
+
+    public void SequenceMain(String... args){
+
+        NetworkTables.getInstance().registerToTableChange(NetworkTableKey.Mode, event -> {
+            if(event instanceof NetworkTableNewEvent){
+                networkTableEntry = event.getEntry();
+
+            }
+        });
+        NetworkTables.getInstance().registerToTableChange(NetworkTableKey.Coordinte, event -> {
+            if (event instanceof NetworkTableUpdateEvent) {
+                ObjectInputStream in;
+                try {
+                    FileInputStream file = new FileInputStream(event.getValue().getString());
+                    in = new ObjectInputStream(file);
+                    currCoord = (Coordinate) in.readObject();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+        });
+
+
         state = State.IDLE;
-        currSequence = VisionMode.PICKUP_HATCH;
         VisionCommand();
+
+        //TODO: No while true loops, change later
         while(1==1){
+
+            if(prevMode != currSequence){
+                networkTableEntry.setDouble(currSequence.ordinal());
+            }
+
             switch(currSequence){
                 case NO_STATE:
                     break;
@@ -223,5 +271,28 @@ public class Sequence {
                 System.out.println("Failed");
             }
         }
+
+    public void pickupCargo(){
+        currSequence = VisionMode.PICKUP_CARGO;
     }
+    public void pickupHatch(){
+        currSequence = VisionMode.PICKUP_HATCH;
+    }
+    public void scoreCargoCS(){
+        currSequence = VisionMode.SCORE_CARGO_CS;
+    }
+    public void scoreCargoRS(){
+        currSequence = VisionMode.SCORE_CARGO_RS;
+    }
+    public void scoreHatchCS(){
+        currSequence = VisionMode.SCORE_HATCH_CS;
+    }
+    public void scoreHatchLeft(){
+        currSequence = VisionMode.SCORE_HATCH_LEFT;
+    }
+    public void scoreHatchRight(){
+        currSequence = VisionMode.SCORE_HATCH_RIGHT;
+    }
+
+}
 
