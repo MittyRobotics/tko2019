@@ -1,48 +1,34 @@
 package com.amhsrobotics.tko2019.subsystems.hatchpanel;
 
-import com.amhsrobotics.tko2019.controls.AnalogInput;
-import com.amhsrobotics.tko2019.controls.AnalogType;
+import com.amhsrobotics.tko2019.controls.ControllerID;
 import com.amhsrobotics.tko2019.controls.Controls;
+import com.amhsrobotics.tko2019.controls.DigitalInput;
 import com.amhsrobotics.tko2019.controls.DigitalType;
+import com.amhsrobotics.tko2019.hardware.Switches;
 import com.amhsrobotics.tko2019.settings.subsystems.PID;
+import com.amhsrobotics.tko2019.settings.subsystems.SolenoidIds;
+import com.amhsrobotics.tko2019.settings.subsystems.TalonIds;
 import com.amhsrobotics.tko2019.settings.subsystems.TicksPerInch;
 import com.amhsrobotics.tko2019.subsystems.Subsystem;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class HatchPanel implements Subsystem {
-	private final int[] solSideId = {0, 1}; //TODO
-	private final int[] solForwardId = {2, 3}; //TODO
-	private final int hatchSwitchId = 0; //TODO
-	private final int[] sliderSwitchesIds = {0, 1}; //TODO
-	private final int wallSwitchId = 3; //TODO
-	private final int slideTalonId = 2;
 	private boolean manual = false;
 	private boolean processDone = false;
-	private DoubleSolenoid solSide;
-	private DoubleSolenoid solForward;
-	private DigitalInput hatchSwitch;
-	private DigitalInput[] sliderSwitches = new DigitalInput[2];
-	private DigitalInput wallSwitch;
+	private DoubleSolenoid grabber;
+	private DoubleSolenoid pushForward;
 	private WPI_TalonSRX slideTalon;
 
 	@Override
 	public void init() {
 
 
-		solSide = new DoubleSolenoid(solSideId[0], solSideId[1]);
-		solForward = new DoubleSolenoid(solForwardId[0], solForwardId[1]);
-
-		hatchSwitch = new DigitalInput(hatchSwitchId);
-		wallSwitch = new DigitalInput(wallSwitchId);
-		for (int i = 0; i < 2; i++) {
-			sliderSwitches[i] = new DigitalInput(sliderSwitchesIds[i]);
-		}
-
-		slideTalon = new WPI_TalonSRX(slideTalonId);
+		grabber = new DoubleSolenoid(SolenoidIds.GRABBER[0], SolenoidIds.GRABBER[1]);
+		pushForward = new DoubleSolenoid(SolenoidIds.PUSH_FORWARD[0], SolenoidIds.PUSH_FORWARD[1]);
+		slideTalon = new WPI_TalonSRX(TalonIds.SLIDE_TALON);
 		slideTalon.configClosedloopRamp(0.0);
 		slideTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 1000);
 
@@ -55,7 +41,7 @@ public class HatchPanel implements Subsystem {
 
 	@Override
 	public void initControls() {
-		Controls.getInstance().registerDigitalCommand(1, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick11, DigitalType.DigitalPress, () -> {
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), com.amhsrobotics.tko2019.controls.DigitalInput.Joystick11, DigitalType.DigitalPress, () -> {
 			manual = !manual;
 			if (manual) {
 				System.out.println("Manual Mode");
@@ -63,125 +49,100 @@ public class HatchPanel implements Subsystem {
 				System.out.println("Automatic Mode");
 			}
 		});
-
-		Controls.getInstance().registerDigitalCommand(1, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick4, DigitalType.DigitalPress, () -> {
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), DigitalInput.Joystick4, DigitalType.DigitalRelease, ()->{
+			if ((!Switches.getInstance().wallSwitch.get() && !Switches.getInstance().hatchSwitch.get()) && (processDone)) {
+				slideMiddle();
+				processDone = false;
+			}
+		});
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), DigitalInput.Joystick5, DigitalType.DigitalRelease, ()->{
+			if ((!Switches.getInstance().wallSwitch.get() && !Switches.getInstance().hatchSwitch.get()) && (processDone)) {
+				slideMiddle();
+				processDone = false;
+			}
+		});
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), com.amhsrobotics.tko2019.controls.DigitalInput.Joystick4, DigitalType.DigitalPress, () -> {
 			if (!manual) {
 				slideLeft();
-				if ((!wallSwitch.get() && !hatchSwitch.get()) && (processDone)) {
-					slideMiddle();
-					processDone = false;
-				}
 			} else {
-				slideLeft();
+				manualSlideLeft();
 			}
 		});
 
-		Controls.getInstance().registerDigitalCommand(1, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick5, DigitalType.DigitalPress, () -> {
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), com.amhsrobotics.tko2019.controls.DigitalInput.Joystick5, DigitalType.DigitalPress, () -> {
 			if (!manual) {
 				slideRight();
-				if ((!wallSwitch.get() && !hatchSwitch.get()) && (processDone)) {
-					slideMiddle();
-					processDone = false;
-				}
 			} else {
-				slideRight();
+				manualSlideRight();
 			}
 		});
 
-		Controls.getInstance().registerDigitalCommand(1, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick3, DigitalType.DigitalPress, () -> {
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), com.amhsrobotics.tko2019.controls.DigitalInput.Joystick3, DigitalType.DigitalPress, () -> {
 			if (!manual) {
-				if (hatchSwitch.get() && wallSwitch.get()) {
-					goHatchForward();
-					closeHatch();
-					goHatchBackward();
+				if (Switches.getInstance().hatchSwitch.get() && Switches.getInstance().wallSwitch.get()) {
 					processDone = true;
 				}
 			} else {
-				slideMiddle();
-			}
-		});
-
-		Controls.getInstance().registerDigitalCommand(1, com.amhsrobotics.tko2019.controls.DigitalInput.JoystickTrigger, DigitalType.DigitalPress, () -> {
-			if (!manual) {
-				if ((!hatchSwitch.get()) && (wallSwitch.get())) {
-					openHatch();
-				}
-			} else {
 				openHatch();
 			}
 		});
 
-		if (manual) {
-
-			Controls.getInstance().registerDigitalCommand(1, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick2, DigitalType.DigitalPress, () -> {
-				closeHatch();
-			});
-
-			Controls.getInstance().registerAnalogCommand(1, AnalogInput.JoystickY, AnalogType.OutOfThresholdMinor, (value) -> {
-				if (value < -0.5) {
-					goHatchBackward();
-				} else if (value > 0.5) {
-					goHatchForward();
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), com.amhsrobotics.tko2019.controls.DigitalInput.JoystickTrigger, DigitalType.DigitalPress, () -> {
+			if (Switches.getInstance().wallSwitch.get()) {
+				if (!manual) {
+					if(Switches.getInstance().hatchSwitch.get()){
+						outtake();
+					} else {
+						intake();
+					}
 				}
-			});
-
-		}
+				else {
+					if(Switches.getInstance().hatchSwitch.get()){
+						closeHatch();
+					}
+				}
+			}
+		});
 	}
 
 	private void openHatch() {
-		solSide.set(DoubleSolenoid.Value.kReverse);
+		grabber.set(DoubleSolenoid.Value.kReverse);
 	}
 
 	private void closeHatch() {
-		solSide.set(DoubleSolenoid.Value.kForward);
+		grabber.set(DoubleSolenoid.Value.kForward);
 	}
 
 	private void goHatchForward() {
-		solForward.set(DoubleSolenoid.Value.kForward);
+		pushForward.set(DoubleSolenoid.Value.kForward);
 	}
 
 	private void goHatchBackward() {
-		solForward.set(DoubleSolenoid.Value.kReverse);
+		pushForward.set(DoubleSolenoid.Value.kReverse);
 	}
 
 	//outtake for the rocket
-	private void rocketDrop() {
-		while (wallSwitch.get() && hatchSwitch.get()) {
-			goHatchForward();
-			closeHatch();
-			goHatchBackward();
-			if (hatchSwitch.get()) {
-				openHatch();
-			} else {
-				slideMiddle();
-			}
-		}
-	}
 
 	//resets encoder when slider is to the left
 	private void resetEncoder() {
 		slideTalon.set(ControlMode.PercentOutput, 0.1);
-		if (sliderSwitches[0].get()) {
+		if (slideTalon.getSensorCollection().isFwdLimitSwitchClosed()) {
 			slideTalon.setSelectedSensorPosition(0);
-			slideTalon.set(ControlMode.PercentOutput, 0);
 		}
 	}
 
-
-	private void limitSwitchSafety() {
-		while (sliderSwitches[0].get()) {
-			slideTalon.set(ControlMode.PercentOutput, 0.2);
-		}
-		slideTalon.set(ControlMode.PercentOutput, 0);
-		while (sliderSwitches[1].get()) {
-			slideTalon.set(ControlMode.PercentOutput, -0.2);
-		}
-		slideTalon.set(ControlMode.PercentOutput, 0);
-	}
 
 	//work on position numbers
 	private void slideLeft() {
 		slide(0);
+	}
+
+	private void manualSlideLeft(){
+		slideTalon.set(ControlMode.PercentOutput, 0.5);
+	}
+
+	private void manualSlideRight(){
+		slideTalon.set(ControlMode.PercentOutput, -0.5);
 	}
 
 	private void slideMiddle() {
@@ -192,22 +153,22 @@ public class HatchPanel implements Subsystem {
 		slide(16);
 	}
 
-	//action for cargo outtake
-	private void cargoDrop() {
-		while (hatchSwitch.get() && wallSwitch.get()) {
-			closeHatch();
-			if (hatchSwitch.get()) {
-				openHatch();
+	//take in the hatch panel *has safety measures*
+	private void intake() {
+		if (!Switches.getInstance().hatchSwitch.get() && Switches.getInstance().wallSwitch.get()) {
+			openHatch();
+			if (!Switches.getInstance().hatchSwitch.get()) {
+				closeHatch();
 			}
 		}
 	}
-
-	//take in the hatch panel *has safety measures*
-	private void intake() {
-		if (!hatchSwitch.get() && wallSwitch.get()) {
-			openHatch();
-			if (!hatchSwitch.get()) {
-				closeHatch();
+	private void outtake(){
+		if(Switches.getInstance().hatchSwitch.get() && Switches.getInstance().wallSwitch.get()){
+			goHatchForward();
+			closeHatch();
+			goHatchBackward();
+			if(Switches.getInstance().hatchSwitch.get()){
+				openHatch();
 			}
 		}
 	}

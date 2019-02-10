@@ -6,7 +6,6 @@ import com.amhsrobotics.tko2019.controls.ControllerID;
 import com.amhsrobotics.tko2019.controls.Controls;
 import com.amhsrobotics.tko2019.controls.DigitalType;
 import com.amhsrobotics.tko2019.hardware.Switches;
-import com.amhsrobotics.tko2019.logging.LogCapable;
 import com.amhsrobotics.tko2019.settings.subsystems.PID;
 import com.amhsrobotics.tko2019.settings.subsystems.TalonIds;
 import com.amhsrobotics.tko2019.settings.subsystems.TicksPerInch;
@@ -14,8 +13,6 @@ import com.amhsrobotics.tko2019.subsystems.Subsystem;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
-import javax.naming.ldap.Control;
 
 public class Cargo implements Subsystem {
 	private final double threshold = 1 * TicksPerInch.CARGO_TPD;
@@ -187,10 +184,9 @@ public class Cargo implements Subsystem {
 		moveConveyor(IntakeHeights.GROUND_HEIGHT);
 	}
 
-	private void calibrateConveyor() {
-		while (!Switches.getInstance().conveyorLimits[0].get()) {
-			conveyorTalons[0].set(ControlMode.PercentOutput, 0.5);
+	private void resetEncoder() {
+		if(conveyorTalons[0].getSensorCollection().isFwdLimitSwitchClosed()){
+			conveyorTalons[0].setSelectedSensorPosition(0);
 		}
-		conveyorTalons[0].setSelectedSensorPosition(90);
 	}
 }

@@ -11,17 +11,17 @@ public class Switches implements LogCapable {
 	}
 
 	private final int INTAKE_SENSOR_ID = 0;
-	private final int[] CONVEYOR_LIMIT_IDS = {1, 2};
+	private final int HATCH_SWITCH_ID = 0;
+	private final int WALL_SWITCH_ID = 3;
 
 	public DigitalInput intakeSensor;
-	public DigitalInput[] conveyorLimits = new DigitalInput[CONVEYOR_LIMIT_IDS.length];
+	public DigitalInput hatchSwitch;
+	public DigitalInput wallSwitch;
 
 	private Switches() {
 		intakeSensor = new DigitalInput(INTAKE_SENSOR_ID);
-		for(int limitSwitchIds = 0; limitSwitchIds < conveyorLimits.length; limitSwitchIds++){
-			final DigitalInput digitalInput = new DigitalInput(CONVEYOR_LIMIT_IDS[limitSwitchIds]);
-			conveyorLimits[limitSwitchIds] = digitalInput;
-		}
+		hatchSwitch = new DigitalInput(HATCH_SWITCH_ID);
+		wallSwitch = new DigitalInput(WALL_SWITCH_ID);
 	}
 
 	public void init() {

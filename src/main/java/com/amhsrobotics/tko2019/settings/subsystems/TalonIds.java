@@ -13,4 +13,5 @@ public class TalonIds {
 
 
 	// Hatch Panel
+	public static final int SLIDE_TALON = 40;
 }
