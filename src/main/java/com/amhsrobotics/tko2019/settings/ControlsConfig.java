@@ -22,4 +22,8 @@ public class ControlsConfig {
 
 	public static final DigitalInput SLIDE_LEFT = DigitalInput.Joystick4;
 	public static final DigitalInput SLIDE_RIGHT = DigitalInput.Joystick5;
+
+	//Climber
+
+	public static final DigitalInput RELEASE_CLIMBER = DigitalInput.XboxA;
 }

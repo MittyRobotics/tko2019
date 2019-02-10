@@ -1,8 +1,10 @@
 package com.amhsrobotics.tko2019.subsystems.climber;
 
+import com.amhsrobotics.tko2019.controls.ControllerID;
 import com.amhsrobotics.tko2019.controls.Controls;
 import com.amhsrobotics.tko2019.controls.DigitalInput;
 import com.amhsrobotics.tko2019.controls.DigitalType;
+import com.amhsrobotics.tko2019.settings.ControlsConfig;
 import com.amhsrobotics.tko2019.settings.subsystems.SolenoidIds;
 import com.amhsrobotics.tko2019.subsystems.Subsystem;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -19,7 +21,7 @@ public class Climber implements Subsystem {
 	@Override
 	public void initControls() {
 		entering("initControls");
-		Controls.getInstance().registerDigitalCommand(0, DigitalInput.XboxA, DigitalType.DigitalPress, () -> {
+		Controls.getInstance().registerDigitalCommand(ControllerID.XboxController.getId(), ControlsConfig.RELEASE_CLIMBER, DigitalType.DigitalPress, () -> {
 			if (DriverStation.getInstance().getMatchTime() < 30 && DriverStation.getInstance().isOperatorControl()) {
 				release();
 			}
