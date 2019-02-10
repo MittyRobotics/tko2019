@@ -1,11 +1,11 @@
 package com.amhsrobotics.tko2019.subsystems.cargo;
 
-import com.amhsrobotics.tko2019.controls.AnalogInput;
 import com.amhsrobotics.tko2019.controls.AnalogType;
 import com.amhsrobotics.tko2019.controls.ControllerID;
 import com.amhsrobotics.tko2019.controls.Controls;
 import com.amhsrobotics.tko2019.controls.DigitalType;
 import com.amhsrobotics.tko2019.hardware.Switches;
+import com.amhsrobotics.tko2019.settings.ControlsConfig;
 import com.amhsrobotics.tko2019.settings.subsystems.PID;
 import com.amhsrobotics.tko2019.settings.subsystems.TalonIds;
 import com.amhsrobotics.tko2019.settings.subsystems.TicksPerInch;
@@ -46,7 +46,7 @@ public class Cargo implements Subsystem {
 
 	public void initControls() {
 
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick2.getId(), com.amhsrobotics.tko2019.controls.DigitalInput.Joystick11, DigitalType.DigitalRelease, () -> {
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick2.getId(), ControlsConfig.SWITCH_MODE, DigitalType.DigitalPress, () -> {
 			manual = !manual;
 			if (manual) {
 				System.out.println("Manual Mode");
@@ -54,20 +54,19 @@ public class Cargo implements Subsystem {
 				System.out.println("Auton Mode");
 			}
 		});
-		//manual
-			Controls.getInstance().registerAnalogCommand(ControllerID.Joystick2.getId(), AnalogInput.JoystickY, AnalogType.OutOfThresholdMinor, (value) -> {
+			Controls.getInstance().registerAnalogCommand(ControllerID.Joystick2.getId(), ControlsConfig.SPIN_INTAKE, AnalogType.OutOfThresholdMinor, (value) -> {
 				if(manual){
 					spinIntake(value, value);
 				}
 				else {
-					if(Math.abs(value) < 0.05){
+					if((value < 0.05 && (level == 0 || level == 3)) || (value > 0.05 && (level == 1 || level == 2))){
 						intakeOuttakeMacro();
 					} else {
 						stopIntake();
 					}
 				}
 			});
-			Controls.getInstance().registerDigitalCommand(ControllerID.Joystick2.getId(), com.amhsrobotics.tko2019.controls.DigitalInput.Joystick3, DigitalType.DigitalHold, () -> {
+			Controls.getInstance().registerDigitalCommand(ControllerID.Joystick2.getId(), ControlsConfig.ANGLE_UP, DigitalType.DigitalHold, () -> {
 				if(manual){
 					conveyorTalons[0].set(ControlMode.Position, conveyorTalons[1].getSelectedSensorPosition() + 1);
 				}
@@ -81,14 +80,14 @@ public class Cargo implements Subsystem {
 						level = 2;
 						System.out.println("Cargo Height");
 					} else {
-						intakeConveyor();
+						stationConveyor();
 						level = 3;
 						System.out.println("Human Player Height");
 						//0 = ground, 1 = rocket, 2 = cargo 3 = human player height
 					}
 				}
             });
-			Controls.getInstance().registerDigitalCommand(ControllerID.Joystick2.getId(), com.amhsrobotics.tko2019.controls.DigitalInput.Joystick2, DigitalType.DigitalHold, () -> {
+			Controls.getInstance().registerDigitalCommand(ControllerID.Joystick2.getId(), ControlsConfig.ANGLE_DOWN, DigitalType.DigitalHold, () -> {
 				if(manual){
 					conveyorTalons[0].set(ControlMode.Position, conveyorTalons[1].getSelectedSensorPosition() - 1);
 				}
@@ -172,7 +171,7 @@ public class Cargo implements Subsystem {
 		moveConveyor(IntakeHeights.CARGO_HEIGHT);
 	}
 
-	private void intakeConveyor() {
+	private void stationConveyor() {
 		moveConveyor(IntakeHeights.STATION_HEIGHT);
 	}
 

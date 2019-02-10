@@ -2,9 +2,9 @@ package com.amhsrobotics.tko2019.subsystems.hatchpanel;
 
 import com.amhsrobotics.tko2019.controls.ControllerID;
 import com.amhsrobotics.tko2019.controls.Controls;
-import com.amhsrobotics.tko2019.controls.DigitalInput;
 import com.amhsrobotics.tko2019.controls.DigitalType;
 import com.amhsrobotics.tko2019.hardware.Switches;
+import com.amhsrobotics.tko2019.settings.ControlsConfig;
 import com.amhsrobotics.tko2019.settings.subsystems.PID;
 import com.amhsrobotics.tko2019.settings.subsystems.SolenoidIds;
 import com.amhsrobotics.tko2019.settings.subsystems.TalonIds;
@@ -41,7 +41,7 @@ public class HatchPanel implements Subsystem {
 
 	@Override
 	public void initControls() {
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), com.amhsrobotics.tko2019.controls.DigitalInput.Joystick11, DigitalType.DigitalPress, () -> {
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SWITCH_MODE, DigitalType.DigitalPress, () -> {
 			manual = !manual;
 			if (manual) {
 				System.out.println("Manual Mode");
@@ -49,19 +49,19 @@ public class HatchPanel implements Subsystem {
 				System.out.println("Automatic Mode");
 			}
 		});
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), DigitalInput.Joystick4, DigitalType.DigitalRelease, ()->{
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SLIDE_LEFT, DigitalType.DigitalRelease, ()->{
 			if ((!Switches.getInstance().wallSwitch.get() && !Switches.getInstance().hatchSwitch.get()) && (processDone)) {
 				slideMiddle();
 				processDone = false;
 			}
 		});
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), DigitalInput.Joystick5, DigitalType.DigitalRelease, ()->{
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SLIDE_RIGHT, DigitalType.DigitalRelease, ()->{
 			if ((!Switches.getInstance().wallSwitch.get() && !Switches.getInstance().hatchSwitch.get()) && (processDone)) {
 				slideMiddle();
 				processDone = false;
 			}
 		});
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), com.amhsrobotics.tko2019.controls.DigitalInput.Joystick4, DigitalType.DigitalPress, () -> {
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SLIDE_LEFT, DigitalType.DigitalPress, () -> {
 			if (!manual) {
 				slideLeft();
 			} else {
@@ -69,7 +69,7 @@ public class HatchPanel implements Subsystem {
 			}
 		});
 
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), com.amhsrobotics.tko2019.controls.DigitalInput.Joystick5, DigitalType.DigitalPress, () -> {
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SLIDE_RIGHT, DigitalType.DigitalPress, () -> {
 			if (!manual) {
 				slideRight();
 			} else {
@@ -78,28 +78,23 @@ public class HatchPanel implements Subsystem {
 		});
 
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), com.amhsrobotics.tko2019.controls.DigitalInput.Joystick3, DigitalType.DigitalPress, () -> {
-			if (!manual) {
-				if (Switches.getInstance().hatchSwitch.get() && Switches.getInstance().wallSwitch.get()) {
+			if (Switches.getInstance().hatchSwitch.get() && Switches.getInstance().wallSwitch.get()) {
+				if (!manual) {
 					processDone = true;
+					outtake();
+				} else {
+					closeHatch();
 				}
-			} else {
-				openHatch();
 			}
 		});
 
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), com.amhsrobotics.tko2019.controls.DigitalInput.JoystickTrigger, DigitalType.DigitalPress, () -> {
-			if (Switches.getInstance().wallSwitch.get()) {
+			if (!Switches.getInstance().hatchSwitch.get() && Switches.getInstance().wallSwitch.get()) {
 				if (!manual) {
-					if(Switches.getInstance().hatchSwitch.get()){
-						outtake();
-					} else {
-						intake();
-					}
-				}
-				else {
-					if(Switches.getInstance().hatchSwitch.get()){
-						closeHatch();
-					}
+					processDone = true;
+					intake();
+				} else {
+					openHatch();
 				}
 			}
 		});
