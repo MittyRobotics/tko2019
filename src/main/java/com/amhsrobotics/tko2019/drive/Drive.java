@@ -7,10 +7,11 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import 
 
 public class Drive {
-	private final int[] leftTalonIds = {2, 3};
-	private final int[] rightTalonIds = {0, 1};
+	private final int[] leftTalonIds = {0, 1};
+	private final int[] rightTalonIds = {2,3};
 	private final int[] gearShiftingIds = {0, 1};
 
 	private final double[] ticksPerInch = {0.0, 119.47};
@@ -41,6 +42,8 @@ public class Drive {
 //				talon.set(ControlMode.Follower, leftTalonIds[0]);
 //			}
 		}
+		leftDriveTalons[0].setInverted(true);
+		leftDriveTalons[1].setInverted(true);
 
 //		gearShift = new DoubleSolenoid(gearShiftingIds[0], gearShiftingIds[1]);
 	}
@@ -50,24 +53,25 @@ public class Drive {
 
             Controls.getInstance().registerAnalogCommand(0, AnalogInput.XboxLYJoystick, AnalogType.OutOfThreshold, value -> {
             	if(shouldReverse){
-					moveLeft(value/2);
+					moveLeft(value);
 				}
             	else {
-					moveLeft(-value/2);
+					moveRight(-value);
 				}
             });
             Controls.getInstance().registerAnalogCommand(0, AnalogInput.XboxRYJoystick, AnalogType.OutOfThreshold, value -> {
                 if(shouldReverse){
-					moveRight(-value/2);
+					moveRight(value);
 				}
                 else {
-                	moveRight(value/2);
+                	moveLeft(-value);
 				}
             });
 //        Controls.getInstance().registerDigitalCommand(0, DigitalInput.XboxLBumper, DigitalType.DigitalPress, ()->{
 //            shiftGear(1);
 //        });
-		Controls.getInstance().registerDigitalCommand(0, DigitalInput.XboxRBumper, DigitalType.DigitalPress, () ->{
+		Controls.getInstance().registerDigitalCommand(0, DigitalInput.XboxLJoystick, DigitalType.DigitalPress, () ->{
+			System.out.println("Here");
 			toggleReverser(!shouldReverse);
 		});
 	}

@@ -24,22 +24,23 @@ public class HatchPanel {
     private DoubleSolenoid solSide;
     private DoubleSolenoid solForward;
 
-    private final int hatchSwitchId = 0; //TODO
+    private final int hatchSwitchId = 4; //TODO
     private final int[] sliderSwitchesIds = {0, 1}; //TODO
     private final int wallSwitchId = 3; //TODO
     private DigitalInput hatchSwitch;
-    private DigitalInput[] sliderSwitches = new DigitalInput[2];
+    public DigitalInput[] sliderSwitches = new DigitalInput[2];
     private DigitalInput wallSwitch;
 
-    private final int slideTalonId = 2;
-    private WPI_TalonSRX slideTalon;
+    public final int slideTalonId = 0;
+    public WPI_TalonSRX slideTalon;
 
     public void init(){
         solSide = new DoubleSolenoid(solSideId[0], solSideId[1]);
         solForward = new DoubleSolenoid(solForwardId[0], solForwardId[1]);
 
-       hatchSwitch = new DigitalInput(hatchSwitchId);
+        hatchSwitch = new DigitalInput(hatchSwitchId);
         wallSwitch = new DigitalInput(wallSwitchId);
+
         for(int i = 0; i < 2; i++){
             sliderSwitches[i] = new DigitalInput(sliderSwitchesIds[i]);
         }
@@ -132,16 +133,12 @@ public class HatchPanel {
         }
     }
 
-    private void openHatch() {
-        solSide.set(DoubleSolenoid.Value.kReverse);
-    }
-    private void closeHatch() {
+    public void openHatch() { solSide.set(DoubleSolenoid.Value.kReverse); }
+    public void closeHatch() {
         solSide.set(DoubleSolenoid.Value.kForward);
     }
-    private void goHatchForward() {
-        solForward.set(DoubleSolenoid.Value.kForward);
-    }
-    private void goHatchBackward() {
+    public void goHatchForward() { solForward.set(DoubleSolenoid.Value.kForward); }
+    public void goHatchBackward() {
         solForward.set(DoubleSolenoid.Value.kReverse);
     }
 
@@ -170,7 +167,7 @@ public class HatchPanel {
     }
 
 
-    private void limitSwitchSafety(){
+    public void limitSwitchSafety(){
         while (sliderSwitches[0].get()){
             slideTalon.set(ControlMode.PercentOutput, 0.2);
         }
