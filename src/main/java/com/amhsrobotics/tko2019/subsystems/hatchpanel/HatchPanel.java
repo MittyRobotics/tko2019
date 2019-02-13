@@ -2,6 +2,7 @@ package com.amhsrobotics.tko2019.subsystems.hatchpanel;
 
 import com.amhsrobotics.tko2019.controls.ControllerID;
 import com.amhsrobotics.tko2019.controls.Controls;
+import com.amhsrobotics.tko2019.controls.DigitalInput;
 import com.amhsrobotics.tko2019.controls.DigitalType;
 import com.amhsrobotics.tko2019.hardware.Switches;
 import com.amhsrobotics.tko2019.settings.ControlsConfig;
@@ -24,8 +25,6 @@ public class HatchPanel implements Subsystem {
 
 	@Override
 	public void init() {
-
-
 		grabber = new DoubleSolenoid(SolenoidIds.GRABBER[0], SolenoidIds.GRABBER[1]);
 		pushForward = new DoubleSolenoid(SolenoidIds.PUSH_FORWARD[0], SolenoidIds.PUSH_FORWARD[1]);
 		slideTalon = new WPI_TalonSRX(TalonIds.SLIDE_TALON);
@@ -77,7 +76,7 @@ public class HatchPanel implements Subsystem {
 			}
 		});
 
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), com.amhsrobotics.tko2019.controls.DigitalInput.Joystick3, DigitalType.DigitalPress, () -> {
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.RELEASE_HATCH, DigitalType.DigitalPress, () -> {
 			if (Switches.getInstance().hatchSwitch.get() && Switches.getInstance().wallSwitch.get()) {
 				if (!manual) {
 					processDone = true;
@@ -88,7 +87,7 @@ public class HatchPanel implements Subsystem {
 			}
 		});
 
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), com.amhsrobotics.tko2019.controls.DigitalInput.JoystickTrigger, DigitalType.DigitalPress, () -> {
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.GRAB_HATCH, DigitalType.DigitalPress, () -> {
 			if (!Switches.getInstance().hatchSwitch.get() && Switches.getInstance().wallSwitch.get()) {
 				if (!manual) {
 					processDone = true;
@@ -97,6 +96,9 @@ public class HatchPanel implements Subsystem {
 					openHatch();
 				}
 			}
+		});
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.CONFIG_ENCODER, DigitalType.DigitalPress, ()->{
+			resetEncoder();
 		});
 	}
 
@@ -121,9 +123,15 @@ public class HatchPanel implements Subsystem {
 	//resets encoder when slider is to the left
 	private void resetEncoder() {
 		slideTalon.set(ControlMode.PercentOutput, 0.1);
-		if (slideTalon.getSensorCollection().isFwdLimitSwitchClosed()) {
-			slideTalon.setSelectedSensorPosition(0);
+		while (!slideTalon.getSensorCollection().isFwdLimitSwitchClosed()) {
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
+		slideTalon.set(ControlMode.PercentOutput, 0);
+		slideTalon.setSelectedSensorPosition(0);
 	}
 
 

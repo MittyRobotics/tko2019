@@ -109,6 +109,9 @@ public class Cargo implements Subsystem {
 					}
 
             });
+			Controls.getInstance().registerDigitalCommand(ControllerID.Joystick2.getId(), ControlsConfig.CONFIG_ENCODER, DigitalType.DigitalPress, ()->{
+				resetEncoder();
+			});
 		}
 
 	private void intakeOuttakeMacro() {
@@ -184,8 +187,15 @@ public class Cargo implements Subsystem {
 	}
 
 	private void resetEncoder() {
-		if(conveyorTalons[0].getSensorCollection().isFwdLimitSwitchClosed()){
-			conveyorTalons[0].setSelectedSensorPosition(0);
+		conveyorTalons[0].set(ControlMode.PercentOutput, 0.1);
+		while (!conveyorTalons[0].getSensorCollection().isFwdLimitSwitchClosed()){
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
+		conveyorTalons[0].setSelectedSensorPosition(0);
+		conveyorTalons[0].set(ControlMode.PercentOutput, 0);
 	}
 }

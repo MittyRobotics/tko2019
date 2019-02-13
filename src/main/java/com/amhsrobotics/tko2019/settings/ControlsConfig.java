@@ -5,6 +5,7 @@ import com.amhsrobotics.tko2019.controls.DigitalInput;
 
 public class ControlsConfig {
 	public static final DigitalInput SWITCH_MODE = DigitalInput.Joystick11;
+	public static final DigitalInput CONFIG_ENCODER = DigitalInput.Joystick6;
 	// Drive
 
 	public static final AnalogInput LEFT_WHEELS = AnalogInput.XboxLYJoystick;
@@ -22,7 +23,8 @@ public class ControlsConfig {
 
 	public static final DigitalInput SLIDE_LEFT = DigitalInput.Joystick4;
 	public static final DigitalInput SLIDE_RIGHT = DigitalInput.Joystick5;
-
+	public static final DigitalInput RELEASE_HATCH = DigitalInput.Joystick2;
+	public static final DigitalInput GRAB_HATCH = DigitalInput.JoystickTrigger;
 	//Climber
 
 	public static final DigitalInput RELEASE_CLIMBER = DigitalInput.XboxA;
