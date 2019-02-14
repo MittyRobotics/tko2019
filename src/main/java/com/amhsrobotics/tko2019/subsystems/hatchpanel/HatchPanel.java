@@ -9,6 +9,7 @@ import com.amhsrobotics.tko2019.settings.ControlsConfig;
 import com.amhsrobotics.tko2019.settings.subsystems.PID;
 import com.amhsrobotics.tko2019.settings.subsystems.SolenoidIds;
 import com.amhsrobotics.tko2019.settings.subsystems.TalonIds;
+import com.amhsrobotics.tko2019.settings.subsystems.TalonInversions;
 import com.amhsrobotics.tko2019.settings.subsystems.TicksPerInch;
 import com.amhsrobotics.tko2019.subsystems.Subsystem;
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -29,6 +30,7 @@ public class HatchPanel implements Subsystem {
 		pushForward = new DoubleSolenoid(SolenoidIds.PUSH_FORWARD[0], SolenoidIds.PUSH_FORWARD[1]);
 		slideTalon = new WPI_TalonSRX(TalonIds.SLIDE_TALON);
 		slideTalon.configClosedloopRamp(0.0);
+		slideTalon.setInverted(TalonInversions.SLIDER_INVERSION);
 		slideTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 1000);
 
 		//slideTalon.configurePID()

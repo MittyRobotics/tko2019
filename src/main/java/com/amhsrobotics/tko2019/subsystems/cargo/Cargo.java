@@ -8,6 +8,7 @@ import com.amhsrobotics.tko2019.hardware.Switches;
 import com.amhsrobotics.tko2019.settings.ControlsConfig;
 import com.amhsrobotics.tko2019.settings.subsystems.PID;
 import com.amhsrobotics.tko2019.settings.subsystems.TalonIds;
+import com.amhsrobotics.tko2019.settings.subsystems.TalonInversions;
 import com.amhsrobotics.tko2019.settings.subsystems.TicksPerInch;
 import com.amhsrobotics.tko2019.subsystems.Subsystem;
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -24,12 +25,14 @@ public class Cargo implements Subsystem {
 	public void init() {
 		for (int talonIdIndex = 0; talonIdIndex < TalonIds.INTAKE_TALON.length; talonIdIndex++) {
 			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.INTAKE_TALON[talonIdIndex]);
+			talon.setInverted(TalonInversions.INTAKE_TALON_INVERSIONS[talonIdIndex]);
 			talon.configFactoryDefault();
 			intakeTalons[talonIdIndex] = talon;
 			hardwareInit(talon);
 		}
 		for (int talonIdIndex = 0; talonIdIndex < TalonIds.CONVEYOR_TALON.length; talonIdIndex++) {
 			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.CONVEYOR_TALON[talonIdIndex]);
+			talon.setInverted(TalonInversions.CONVEYOR_TALON_INVERSIONS[talonIdIndex]);
 			talon.configFactoryDefault();
 			if (talonIdIndex == 0) {
 				talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);

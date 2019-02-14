@@ -5,18 +5,25 @@ import com.amhsrobotics.tko2019.controls.ControllerID;
 import com.amhsrobotics.tko2019.controls.Controls;
 import com.amhsrobotics.tko2019.controls.DigitalType;
 import com.amhsrobotics.tko2019.settings.ControlsConfig;
+import com.amhsrobotics.tko2019.settings.subsystems.PID;
 import com.amhsrobotics.tko2019.settings.subsystems.SolenoidIds;
 import com.amhsrobotics.tko2019.settings.subsystems.TalonIds;
+import com.amhsrobotics.tko2019.settings.subsystems.TalonInversions;
 import com.amhsrobotics.tko2019.settings.subsystems.TicksPerInch;
 import com.amhsrobotics.tko2019.subsystems.Subsystem;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PIDController;
 
 import java.util.logging.Logger;
 
 public final class Drive implements Subsystem {
+	private PIDController pidController;
+	private ADXRS450_Gyro gyro;
+	private final double threshold = 5; //TODO
 	private final WPI_TalonSRX[] lTalons = new WPI_TalonSRX[TalonIds.LEFT_DRIVE.length];
 	private final WPI_TalonSRX[] rTalons = new WPI_TalonSRX[TalonIds.RIGHT_DRIVE.length];
 
@@ -35,6 +42,7 @@ public final class Drive implements Subsystem {
 		hardware("Initializing Left Talons");
  		for (int talonIdIndex = 0; talonIdIndex < TalonIds.LEFT_DRIVE.length; talonIdIndex++) {
 			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.LEFT_DRIVE[talonIdIndex]);
+			talon.setInverted(TalonInversions.LEFT_DRIVE_INVERSIONS[talonIdIndex]);
 			talon.configFactoryDefault();
 			if (talonIdIndex == 0) {
 				talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
@@ -47,6 +55,7 @@ public final class Drive implements Subsystem {
 		hardware("Initializing Right Talons");
 		for (int talonIdIndex = 0; talonIdIndex < TalonIds.RIGHT_DRIVE.length; talonIdIndex++) {
 			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.RIGHT_DRIVE[talonIdIndex]);
+			talon.setInverted(TalonInversions.RIGHT_DRIVE_INVERSIONS[talonIdIndex]);
 			talon.configFactoryDefault();
 			if (talonIdIndex == 0) {
 				talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
@@ -60,7 +69,8 @@ public final class Drive implements Subsystem {
 		gearShifter = new DoubleSolenoid(SolenoidIds.DRIVE_SHIFTER[0], SolenoidIds.DRIVE_SHIFTER[1]);
 		gearShifter.setName("Gear Shifting Solenoid");
 		hardwareInit(gearShifter);
-
+		gyro = new ADXRS450_Gyro();
+		pidController = new PIDController(PID.DRIVE[0], PID.DRIVE[1], PID.DRIVE[2], gyro, lTalons[0]);
 
 		exiting("<init>");
 	}
@@ -131,7 +141,32 @@ public final class Drive implements Subsystem {
 
 	public void turn(final double degrees) {
 		entering("turn");
-
+		pidController.setAbsoluteTolerance(threshold);
+		pidController.setInputRange(0, 360);
+		pidController.setOutputRange(-1, 1);
+		pidController.setContinuous(true);
+		rTalons[0].set(ControlMode.Follower, lTalons[0].getDeviceID());
+		rTalons[0].setInverted(!TalonInversions.RIGHT_DRIVE_INVERSIONS[0]);
+		rTalons[1].setInverted(!TalonInversions.RIGHT_DRIVE_INVERSIONS[1]);
+		double angle = degrees + gyro.getAngle();
+		if(angle >= 360){
+			angle -= 360;
+		}
+		else if(angle < 0){
+			angle += 360;
+		}
+		pidController.setSetpoint(angle);
+		pidController.enable();
+		while (pidController.getError() > threshold){
+			try {
+				Thread.sleep(20);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		pidController.disable();
+		lTalons[0].set(ControlMode.PercentOutput, 0);
+		rTalons[0].set(ControlMode.PercentOutput, 0);
 		getLogger().severe("TURN NOT IMPLEMENTED!");   // TODO
 
 		exiting("turn");

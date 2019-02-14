@@ -4,8 +4,10 @@ import com.amhsrobotics.tko2019.controls.Controls;
 import com.amhsrobotics.tko2019.hardware.Compressor;
 import com.amhsrobotics.tko2019.logging.LogCapable;
 import com.amhsrobotics.tko2019.subsystems.Subsystem;
+import com.amhsrobotics.tko2019.subsystems.cargo.Cargo;
 import com.amhsrobotics.tko2019.subsystems.climber.Climber;
 import com.amhsrobotics.tko2019.subsystems.drive.Drive;
+import com.amhsrobotics.tko2019.subsystems.hatchpanel.HatchPanel;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SampleRobot;
 
@@ -17,7 +19,9 @@ public final class Robot extends SampleRobot implements LogCapable {
 
 	private final Subsystem[] subsystems = {
 			new Drive(),
-			new Climber()
+			new Climber(),
+			new Cargo(),
+			new HatchPanel()
 	};
 
 	@Override
