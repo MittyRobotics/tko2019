@@ -2,13 +2,18 @@ package com.amhsrobotics.tko2019.settings.subsystems;
 
 public class TalonInversions {
 	//Drive
-	public static final boolean[] LEFT_DRIVE_INVERSIONS = {false, false};
-	public static final boolean[] RIGHT_DRIVE_INVERSIONS = {false, false};
+
+	public static final boolean[] LEFT_DRIVE = {false, false};
+	public static final boolean[] RIGHT_DRIVE = {false, false};
+
 
 	//Hatch Panel
-	public static final boolean SLIDER_INVERSION = false;
+
+	public static final boolean SLIDER = false;
+
 
 	//CARGO
-	public static final boolean[] CONVEYOR_TALON_INVERSIONS = {false, false};
-	public static final boolean[] INTAKE_TALON_INVERSIONS = {false, true};
+
+	public static final boolean[] CONVEYOR = {false, false};
+	public static final boolean[] INTAKE = {false, true};
 }

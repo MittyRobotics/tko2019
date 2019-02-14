@@ -16,23 +16,23 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 public class Cargo implements Subsystem {
-	private final double threshold = 1 * TicksPerInch.CARGO_TPD;
+	private final double threshold = 1 * TicksPerInch.CARGO;
 	private boolean manual = false;
 	private int level = 0; //0 = ground, 1 = rocket, 2 = cargo, 3 = human player height
-	private WPI_TalonSRX[] intakeTalons = new WPI_TalonSRX[TalonIds.INTAKE_TALON.length];
-	private WPI_TalonSRX[] conveyorTalons = new WPI_TalonSRX[TalonIds.CONVEYOR_TALON.length];
+	private WPI_TalonSRX[] intakeTalons = new WPI_TalonSRX[TalonIds.INTAKE.length];
+	private WPI_TalonSRX[] conveyorTalons = new WPI_TalonSRX[TalonIds.CONVEYOR.length];
 
 	public void init() {
-		for (int talonIdIndex = 0; talonIdIndex < TalonIds.INTAKE_TALON.length; talonIdIndex++) {
-			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.INTAKE_TALON[talonIdIndex]);
-			talon.setInverted(TalonInversions.INTAKE_TALON_INVERSIONS[talonIdIndex]);
+		for (int talonIdIndex = 0; talonIdIndex < TalonIds.INTAKE.length; talonIdIndex++) {
+			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.INTAKE[talonIdIndex]);
+			talon.setInverted(TalonInversions.INTAKE[talonIdIndex]);
 			talon.configFactoryDefault();
 			intakeTalons[talonIdIndex] = talon;
 			hardwareInit(talon);
 		}
-		for (int talonIdIndex = 0; talonIdIndex < TalonIds.CONVEYOR_TALON.length; talonIdIndex++) {
-			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.CONVEYOR_TALON[talonIdIndex]);
-			talon.setInverted(TalonInversions.CONVEYOR_TALON_INVERSIONS[talonIdIndex]);
+		for (int talonIdIndex = 0; talonIdIndex < TalonIds.CONVEYOR.length; talonIdIndex++) {
+			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.CONVEYOR[talonIdIndex]);
+			talon.setInverted(TalonInversions.CONVEYOR[talonIdIndex]);
 			talon.configFactoryDefault();
 			if (talonIdIndex == 0) {
 				talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
@@ -72,11 +72,11 @@ public class Cargo implements Subsystem {
 			if (manual) {
 				conveyorTalons[0].set(ControlMode.Position, conveyorTalons[1].getSelectedSensorPosition() + 1);
 			} else {
-				if ((conveyorTalons[0].getSelectedSensorPosition() < IntakeHeights.ROCKET_HEIGHT * TicksPerInch.CARGO_TPD - 100)) {
+				if ((conveyorTalons[0].getSelectedSensorPosition() < IntakeHeights.ROCKET_HEIGHT * TicksPerInch.CARGO - 100)) {
 					rocketConveyor();
 					level = 1;
 					System.out.println("Rocket Height");
-				} else if (conveyorTalons[0].getSelectedSensorPosition() < IntakeHeights.CARGO_HEIGHT * TicksPerInch.CARGO_TPD - 100) {
+				} else if (conveyorTalons[0].getSelectedSensorPosition() < IntakeHeights.CARGO_HEIGHT * TicksPerInch.CARGO - 100) {
 					cargoConveyor();
 					level = 2;
 					System.out.println("Cargo Height");
@@ -92,11 +92,11 @@ public class Cargo implements Subsystem {
 			if (manual) {
 				conveyorTalons[0].set(ControlMode.Position, conveyorTalons[1].getSelectedSensorPosition() - 1);
 			} else {
-				if ((conveyorTalons[0].getSelectedSensorPosition() > IntakeHeights.CARGO_HEIGHT * TicksPerInch.CARGO_TPD + 100)) {
+				if ((conveyorTalons[0].getSelectedSensorPosition() > IntakeHeights.CARGO_HEIGHT * TicksPerInch.CARGO + 100)) {
 					cargoConveyor();
 					level = 2;
 					System.out.println("Cargo Height");
-				} else if (conveyorTalons[0].getSelectedSensorPosition() > IntakeHeights.ROCKET_HEIGHT * TicksPerInch.CARGO_TPD + 100) {
+				} else if (conveyorTalons[0].getSelectedSensorPosition() > IntakeHeights.ROCKET_HEIGHT * TicksPerInch.CARGO + 100) {
 					rocketConveyor();
 					level = 1;
 					System.out.println("Rocket Height");
@@ -152,7 +152,7 @@ public class Cargo implements Subsystem {
 	private void moveConveyor(double neededPos) {
 		double error1 = conveyorTalons[0].getClosedLoopError();
 		neededPos += conveyorTalons[0].getSelectedSensorPosition();
-		conveyorTalons[0].set(ControlMode.Position, neededPos * TicksPerInch.CARGO_TPD);
+		conveyorTalons[0].set(ControlMode.Position, neededPos * TicksPerInch.CARGO);
 
 		while ((Math.abs(error1) > threshold)) {
 			error1 = conveyorTalons[0].getClosedLoopError();

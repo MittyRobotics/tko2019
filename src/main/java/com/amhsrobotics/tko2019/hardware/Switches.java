@@ -1,7 +1,7 @@
 package com.amhsrobotics.tko2019.hardware;
 
 import com.amhsrobotics.tko2019.logging.LogCapable;
-import com.amhsrobotics.tko2019.settings.SwitcheIds;
+import com.amhsrobotics.tko2019.settings.SwitchIds;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 public class Switches implements LogCapable {
@@ -20,8 +20,8 @@ public class Switches implements LogCapable {
 	}
 
 	public void init() {
-		intakeSensor = new DigitalInput(SwitcheIds.INTAKE_SENSOR_ID);
-		hatchSwitch = new DigitalInput(SwitcheIds.HATCH_SWITCH_ID);
-		wallSwitch = new DigitalInput(SwitcheIds.WALL_SWITCH_ID);
+		intakeSensor = new DigitalInput(SwitchIds.INTAKE_SENSOR_ID);
+		hatchSwitch = new DigitalInput(SwitchIds.HATCH_SWITCH_ID);
+		wallSwitch = new DigitalInput(SwitchIds.WALL_SWITCH_ID);
 	}
 }

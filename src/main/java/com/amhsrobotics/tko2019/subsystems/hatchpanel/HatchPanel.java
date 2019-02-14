@@ -27,9 +27,9 @@ public class HatchPanel implements Subsystem {
 	public void init() {
 		grabber = new DoubleSolenoid(SolenoidIds.GRABBER[0], SolenoidIds.GRABBER[1]);
 		pushForward = new DoubleSolenoid(SolenoidIds.PUSH_FORWARD[0], SolenoidIds.PUSH_FORWARD[1]);
-		slideTalon = new WPI_TalonSRX(TalonIds.SLIDE_TALON);
+		slideTalon = new WPI_TalonSRX(TalonIds.SLIDE);
 		slideTalon.configClosedloopRamp(0.0);
-		slideTalon.setInverted(TalonInversions.SLIDER_INVERSION);
+		slideTalon.setInverted(TalonInversions.SLIDER);
 		slideTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 1000);
 
 		//slideTalon.configurePID()
@@ -180,7 +180,7 @@ public class HatchPanel implements Subsystem {
 
 	//how far the mechanism has to slide
 	private void slide(double position) { //position in inches
-		slideTalon.set(ControlMode.Position, (position * TicksPerInch.SLIDER_TPI));
+		slideTalon.set(ControlMode.Position, (position * TicksPerInch.SLIDER));
 		System.out.println("end error =" + slideTalon.getClosedLoopError());
 		System.out.println(slideTalon.getSelectedSensorPosition());
 	}

@@ -41,7 +41,7 @@ public final class Drive implements Subsystem {
 		hardware("Initializing Left Talons");
 		for (int talonIdIndex = 0; talonIdIndex < TalonIds.LEFT_DRIVE.length; talonIdIndex++) {
 			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.LEFT_DRIVE[talonIdIndex]);
-			talon.setInverted(TalonInversions.LEFT_DRIVE_INVERSIONS[talonIdIndex]);
+			talon.setInverted(TalonInversions.LEFT_DRIVE[talonIdIndex]);
 			talon.configFactoryDefault();
 			if (talonIdIndex == 0) {
 				talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
@@ -54,7 +54,7 @@ public final class Drive implements Subsystem {
 		hardware("Initializing Right Talons");
 		for (int talonIdIndex = 0; talonIdIndex < TalonIds.RIGHT_DRIVE.length; talonIdIndex++) {
 			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.RIGHT_DRIVE[talonIdIndex]);
-			talon.setInverted(TalonInversions.RIGHT_DRIVE_INVERSIONS[talonIdIndex]);
+			talon.setInverted(TalonInversions.RIGHT_DRIVE[talonIdIndex]);
 			talon.configFactoryDefault();
 			if (talonIdIndex == 0) {
 				talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
@@ -115,8 +115,8 @@ public final class Drive implements Subsystem {
 		entering("moveStraight");
 
 
-		final double setpoint = inches * TicksPerInch.DRIVE_TPI[gear];
-		final double threshold = TicksPerInch.DRIVE_TPI[gear] * 0.25;
+		final double setpoint = inches * TicksPerInch.DRIVE[gear];
+		final double threshold = TicksPerInch.DRIVE[gear] * 0.25;
 
 		lTalons[0].set(ControlMode.Position, lTalons[0].getSelectedSensorPosition() + setpoint);
 		rTalons[0].set(ControlMode.Position, rTalons[0].getSelectedSensorPosition() + setpoint);
@@ -145,8 +145,8 @@ public final class Drive implements Subsystem {
 		pidController.setOutputRange(-1, 1);
 		pidController.setContinuous(true);
 		rTalons[0].set(ControlMode.Follower, lTalons[0].getDeviceID());
-		rTalons[0].setInverted(!TalonInversions.RIGHT_DRIVE_INVERSIONS[0]);
-		rTalons[1].setInverted(!TalonInversions.RIGHT_DRIVE_INVERSIONS[1]);
+		rTalons[0].setInverted(!TalonInversions.RIGHT_DRIVE[0]);
+		rTalons[1].setInverted(!TalonInversions.RIGHT_DRIVE[1]);
 		double angle = degrees + gyro.getAngle();
 		if (angle >= 360) {
 			angle -= 360;
