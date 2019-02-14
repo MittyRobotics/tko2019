@@ -12,7 +12,7 @@ public class Switches implements LogCapable {
 	public DigitalInput wallSwitch;
 
 	private Switches() {
-		
+
 	}
 
 	public static Switches getInstance() {

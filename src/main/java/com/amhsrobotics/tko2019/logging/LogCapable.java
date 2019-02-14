@@ -15,8 +15,6 @@ public interface LogCapable {
 
 	Level SOFTWARE_TOGGLE = Level.FINER;
 
-	Level TRACE = Level.FINEST;
-
 	default Logger getLogger() {
 		return Logger.getLogger(getClass().getSimpleName());
 	}
