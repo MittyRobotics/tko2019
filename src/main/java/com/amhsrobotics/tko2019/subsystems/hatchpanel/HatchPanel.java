@@ -2,7 +2,6 @@ package com.amhsrobotics.tko2019.subsystems.hatchpanel;
 
 import com.amhsrobotics.tko2019.controls.ControllerID;
 import com.amhsrobotics.tko2019.controls.Controls;
-import com.amhsrobotics.tko2019.controls.DigitalInput;
 import com.amhsrobotics.tko2019.controls.DigitalType;
 import com.amhsrobotics.tko2019.hardware.Switches;
 import com.amhsrobotics.tko2019.settings.ControlsConfig;
@@ -50,13 +49,13 @@ public class HatchPanel implements Subsystem {
 				System.out.println("Automatic Mode");
 			}
 		});
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SLIDE_LEFT, DigitalType.DigitalRelease, ()->{
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SLIDE_LEFT, DigitalType.DigitalRelease, () -> {
 			if ((!Switches.getInstance().wallSwitch.get() && !Switches.getInstance().hatchSwitch.get()) && (processDone)) {
 				slideMiddle();
 				processDone = false;
 			}
 		});
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SLIDE_RIGHT, DigitalType.DigitalRelease, ()->{
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SLIDE_RIGHT, DigitalType.DigitalRelease, () -> {
 			if ((!Switches.getInstance().wallSwitch.get() && !Switches.getInstance().hatchSwitch.get()) && (processDone)) {
 				slideMiddle();
 				processDone = false;
@@ -99,7 +98,7 @@ public class HatchPanel implements Subsystem {
 				}
 			}
 		});
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.CONFIG_ENCODER, DigitalType.DigitalPress, ()->{
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.CONFIG_ENCODER, DigitalType.DigitalPress, () -> {
 			resetEncoder();
 		});
 	}
@@ -142,11 +141,11 @@ public class HatchPanel implements Subsystem {
 		slide(0);
 	}
 
-	private void manualSlideLeft(){
+	private void manualSlideLeft() {
 		slideTalon.set(ControlMode.PercentOutput, 0.5);
 	}
 
-	private void manualSlideRight(){
+	private void manualSlideRight() {
 		slideTalon.set(ControlMode.PercentOutput, -0.5);
 	}
 
@@ -167,12 +166,13 @@ public class HatchPanel implements Subsystem {
 			}
 		}
 	}
-	private void outtake(){
-		if(Switches.getInstance().hatchSwitch.get() && Switches.getInstance().wallSwitch.get()){
+
+	private void outtake() {
+		if (Switches.getInstance().hatchSwitch.get() && Switches.getInstance().wallSwitch.get()) {
 			goHatchForward();
 			closeHatch();
 			goHatchBackward();
-			if(Switches.getInstance().hatchSwitch.get()){
+			if (Switches.getInstance().hatchSwitch.get()) {
 				openHatch();
 			}
 		}

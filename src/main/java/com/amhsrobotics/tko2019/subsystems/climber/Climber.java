@@ -2,7 +2,6 @@ package com.amhsrobotics.tko2019.subsystems.climber;
 
 import com.amhsrobotics.tko2019.controls.ControllerID;
 import com.amhsrobotics.tko2019.controls.Controls;
-import com.amhsrobotics.tko2019.controls.DigitalInput;
 import com.amhsrobotics.tko2019.controls.DigitalType;
 import com.amhsrobotics.tko2019.settings.ControlsConfig;
 import com.amhsrobotics.tko2019.settings.subsystems.SolenoidIds;

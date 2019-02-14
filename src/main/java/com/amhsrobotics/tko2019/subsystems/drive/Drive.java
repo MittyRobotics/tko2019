@@ -21,12 +21,11 @@ import edu.wpi.first.wpilibj.PIDController;
 import java.util.logging.Logger;
 
 public final class Drive implements Subsystem {
-	private PIDController pidController;
-	private ADXRS450_Gyro gyro;
 	private final double threshold = 5; //TODO
 	private final WPI_TalonSRX[] lTalons = new WPI_TalonSRX[TalonIds.LEFT_DRIVE.length];
 	private final WPI_TalonSRX[] rTalons = new WPI_TalonSRX[TalonIds.RIGHT_DRIVE.length];
-
+	private PIDController pidController;
+	private ADXRS450_Gyro gyro;
 	private DoubleSolenoid gearShifter;
 	private int gear = 1;
 	private long lastSwitch = 0;
@@ -40,7 +39,7 @@ public final class Drive implements Subsystem {
 
 
 		hardware("Initializing Left Talons");
- 		for (int talonIdIndex = 0; talonIdIndex < TalonIds.LEFT_DRIVE.length; talonIdIndex++) {
+		for (int talonIdIndex = 0; talonIdIndex < TalonIds.LEFT_DRIVE.length; talonIdIndex++) {
 			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.LEFT_DRIVE[talonIdIndex]);
 			talon.setInverted(TalonInversions.LEFT_DRIVE_INVERSIONS[talonIdIndex]);
 			talon.configFactoryDefault();
@@ -93,18 +92,18 @@ public final class Drive implements Subsystem {
 				moveRight(value);
 			}
 		});
-        Controls.getInstance().registerDigitalCommand(ControllerID.XboxController.getId(), ControlsConfig.GEAR_SWITCH, DigitalType.DigitalPress, () -> {
-        	if (System.currentTimeMillis() - lastSwitch > 1000) {
-		        if (gear == 1) {
-			        shiftGear(0);
-		        } else {
-			        shiftGear(1);
-		        }
-		        lastSwitch = System.currentTimeMillis();
-	        } else {
-        		getLogger().warning("Shifter is on Cooldown.");
-	        }
-        });
+		Controls.getInstance().registerDigitalCommand(ControllerID.XboxController.getId(), ControlsConfig.GEAR_SWITCH, DigitalType.DigitalPress, () -> {
+			if (System.currentTimeMillis() - lastSwitch > 1000) {
+				if (gear == 1) {
+					shiftGear(0);
+				} else {
+					shiftGear(1);
+				}
+				lastSwitch = System.currentTimeMillis();
+			} else {
+				getLogger().warning("Shifter is on Cooldown.");
+			}
+		});
 		Controls.getInstance().registerDigitalCommand(ControllerID.XboxController.getId(), ControlsConfig.REVERSE_DIRECTION, DigitalType.DigitalPress, () -> {
 			toggleReverser(!shouldReverse);
 		});
@@ -149,15 +148,14 @@ public final class Drive implements Subsystem {
 		rTalons[0].setInverted(!TalonInversions.RIGHT_DRIVE_INVERSIONS[0]);
 		rTalons[1].setInverted(!TalonInversions.RIGHT_DRIVE_INVERSIONS[1]);
 		double angle = degrees + gyro.getAngle();
-		if(angle >= 360){
+		if (angle >= 360) {
 			angle -= 360;
-		}
-		else if(angle < 0){
+		} else if (angle < 0) {
 			angle += 360;
 		}
 		pidController.setSetpoint(angle);
 		pidController.enable();
-		while (pidController.getError() > threshold){
+		while (pidController.getError() > threshold) {
 			try {
 				Thread.sleep(20);
 			} catch (InterruptedException e) {

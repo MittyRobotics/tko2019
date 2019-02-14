@@ -13,16 +13,16 @@ import edu.wpi.first.wpilibj.SampleRobot;
 
 @SuppressWarnings("deprecation")
 public final class Robot extends SampleRobot implements LogCapable {
-	public static void main(final String... args) {
-		RobotBase.startRobot(Robot::new);
-	}
-
 	private final Subsystem[] subsystems = {
 			new Drive(),
 			new Climber(),
 			new Cargo(),
 			new HatchPanel()
 	};
+
+	public static void main(final String... args) {
+		RobotBase.startRobot(Robot::new);
+	}
 
 	@Override
 	protected final void robotInit() {

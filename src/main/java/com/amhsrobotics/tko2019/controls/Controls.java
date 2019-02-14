@@ -14,9 +14,8 @@ public class Controls implements LogCapable {
 
 	private final HashMap<String, DigitalControlCommand> registeredDigialControls = new HashMap<>();
 	private final HashMap<String, AnalogControlCommand> registeredAnalogControls = new HashMap<>();
-
-	private final Thread controlsThread = new Thread(this::checkControls);
 	private volatile boolean shouldRun = false;
+	private final Thread controlsThread = new Thread(this::checkControls);
 
 	private Controls() {
 		entering("<init>");

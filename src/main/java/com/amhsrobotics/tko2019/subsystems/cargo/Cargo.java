@@ -57,65 +57,62 @@ public class Cargo implements Subsystem {
 				System.out.println("Auton Mode");
 			}
 		});
-			Controls.getInstance().registerAnalogCommand(ControllerID.Joystick2.getId(), ControlsConfig.SPIN_INTAKE, AnalogType.OutOfThresholdMinor, (value) -> {
-				if(manual){
-					spinIntake(value, value);
+		Controls.getInstance().registerAnalogCommand(ControllerID.Joystick2.getId(), ControlsConfig.SPIN_INTAKE, AnalogType.OutOfThresholdMinor, (value) -> {
+			if (manual) {
+				spinIntake(value, value);
+			} else {
+				if ((value < 0.05 && (level == 0 || level == 3)) || (value > 0.05 && (level == 1 || level == 2))) {
+					intakeOuttakeMacro();
+				} else {
+					stopIntake();
 				}
-				else {
-					if((value < 0.05 && (level == 0 || level == 3)) || (value > 0.05 && (level == 1 || level == 2))){
-						intakeOuttakeMacro();
-					} else {
-						stopIntake();
-					}
+			}
+		});
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick2.getId(), ControlsConfig.ANGLE_UP, DigitalType.DigitalHold, () -> {
+			if (manual) {
+				conveyorTalons[0].set(ControlMode.Position, conveyorTalons[1].getSelectedSensorPosition() + 1);
+			} else {
+				if ((conveyorTalons[0].getSelectedSensorPosition() < IntakeHeights.ROCKET_HEIGHT * TicksPerInch.CARGO_TPD - 100)) {
+					rocketConveyor();
+					level = 1;
+					System.out.println("Rocket Height");
+				} else if (conveyorTalons[0].getSelectedSensorPosition() < IntakeHeights.CARGO_HEIGHT * TicksPerInch.CARGO_TPD - 100) {
+					cargoConveyor();
+					level = 2;
+					System.out.println("Cargo Height");
+				} else {
+					stationConveyor();
+					level = 3;
+					System.out.println("Human Player Height");
+					//0 = ground, 1 = rocket, 2 = cargo 3 = human player height
 				}
-			});
-			Controls.getInstance().registerDigitalCommand(ControllerID.Joystick2.getId(), ControlsConfig.ANGLE_UP, DigitalType.DigitalHold, () -> {
-				if(manual){
-					conveyorTalons[0].set(ControlMode.Position, conveyorTalons[1].getSelectedSensorPosition() + 1);
+			}
+		});
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick2.getId(), ControlsConfig.ANGLE_DOWN, DigitalType.DigitalHold, () -> {
+			if (manual) {
+				conveyorTalons[0].set(ControlMode.Position, conveyorTalons[1].getSelectedSensorPosition() - 1);
+			} else {
+				if ((conveyorTalons[0].getSelectedSensorPosition() > IntakeHeights.CARGO_HEIGHT * TicksPerInch.CARGO_TPD + 100)) {
+					cargoConveyor();
+					level = 2;
+					System.out.println("Cargo Height");
+				} else if (conveyorTalons[0].getSelectedSensorPosition() > IntakeHeights.ROCKET_HEIGHT * TicksPerInch.CARGO_TPD + 100) {
+					rocketConveyor();
+					level = 1;
+					System.out.println("Rocket Height");
+				} else {
+					groundConveyor();
+					level = 0;
+					System.out.println("Intake Height");
 				}
-				else {
-					if ((conveyorTalons[0].getSelectedSensorPosition() < IntakeHeights.ROCKET_HEIGHT * TicksPerInch.CARGO_TPD - 100)) {
-						rocketConveyor();
-						level = 1;
-						System.out.println("Rocket Height");
-					} else if (conveyorTalons[0].getSelectedSensorPosition() < IntakeHeights.CARGO_HEIGHT * TicksPerInch.CARGO_TPD - 100) {
-						cargoConveyor();
-						level = 2;
-						System.out.println("Cargo Height");
-					} else {
-						stationConveyor();
-						level = 3;
-						System.out.println("Human Player Height");
-						//0 = ground, 1 = rocket, 2 = cargo 3 = human player height
-					}
-				}
-            });
-			Controls.getInstance().registerDigitalCommand(ControllerID.Joystick2.getId(), ControlsConfig.ANGLE_DOWN, DigitalType.DigitalHold, () -> {
-				if(manual){
-					conveyorTalons[0].set(ControlMode.Position, conveyorTalons[1].getSelectedSensorPosition() - 1);
-				}
-				else {
-					if ((conveyorTalons[0].getSelectedSensorPosition() > IntakeHeights.CARGO_HEIGHT * TicksPerInch.CARGO_TPD + 100)) {
-						cargoConveyor();
-						level = 2;
-						System.out.println("Cargo Height");
-					} else if (conveyorTalons[0].getSelectedSensorPosition() > IntakeHeights.ROCKET_HEIGHT * TicksPerInch.CARGO_TPD + 100) {
-						rocketConveyor();
-						level = 1;
-						System.out.println("Rocket Height");
-					} else {
-						groundConveyor();
-						level = 0;
-						System.out.println("Intake Height");
-					}
-						//0 = ground, 1 = rocket, 2 = cargo 3 = human player height
-					}
+				//0 = ground, 1 = rocket, 2 = cargo 3 = human player height
+			}
 
-            });
-			Controls.getInstance().registerDigitalCommand(ControllerID.Joystick2.getId(), ControlsConfig.CONFIG_ENCODER, DigitalType.DigitalPress, ()->{
-				resetEncoder();
-			});
-		}
+		});
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick2.getId(), ControlsConfig.CONFIG_ENCODER, DigitalType.DigitalPress, () -> {
+			resetEncoder();
+		});
+	}
 
 	private void intakeOuttakeMacro() {
 		if (level == 0) {
@@ -191,7 +188,7 @@ public class Cargo implements Subsystem {
 
 	private void resetEncoder() {
 		conveyorTalons[0].set(ControlMode.PercentOutput, 0.1);
-		while (!conveyorTalons[0].getSensorCollection().isFwdLimitSwitchClosed()){
+		while (!conveyorTalons[0].getSensorCollection().isFwdLimitSwitchClosed()) {
 			try {
 				Thread.sleep(20);
 			} catch (InterruptedException e) {
