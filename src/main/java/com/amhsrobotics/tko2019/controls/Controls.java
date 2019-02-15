@@ -92,12 +92,14 @@ public class Controls {
 					cachedAnalogInputs.putIfAbsent(deviceID, new HashMap<>());
 					cachedAnalogInputs.get(deviceID).putIfAbsent(analogInput, value);
 					double cachedValue = cachedAnalogInputs.get(deviceID).get(analogInput);
-					if (Math.abs(value) > 0.1) {
+					if (Math.abs(value) > 0.15) {
 						ArrayList<AnalogControlCommand> outOfThresholdCommands = analogControls.get(deviceID).get(analogInput).get(AnalogType.OutOfThreshold);
 						if (outOfThresholdCommands != null) {
 							for (AnalogControlCommand controlCommand : outOfThresholdCommands) {
 								controlCommand.action(value);
 							}
+						}
+						else {
 						}
 					}
 				}

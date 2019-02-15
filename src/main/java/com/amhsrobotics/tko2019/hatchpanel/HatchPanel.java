@@ -16,7 +16,7 @@ public class HatchPanel {
     private final double p = 16; //TODO
     private final double i = 0; //TODO
     private final int d = 0; //TODO
-    private final double ticksPerInch = 151.7; //TODO
+    private final double ticksPerInch = (1607.68); //TODO
     private boolean processDone = false;
 
     private final int[] solSideId = {0, 1}; //TODO
@@ -31,7 +31,7 @@ public class HatchPanel {
     public DigitalInput[] sliderSwitches = new DigitalInput[2];
     private DigitalInput wallSwitch;
 
-    public final int slideTalonId = 0;
+    public final int slideTalonId = 2;
     public WPI_TalonSRX slideTalon;
 
     public void init(){
@@ -47,7 +47,7 @@ public class HatchPanel {
 
         slideTalon = new WPI_TalonSRX(slideTalonId);
         slideTalon.configClosedloopRamp(0.0);
-        slideTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 1000);
+//        slideTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 1000);
 
         slideTalon.config_kP(0, p, 0);
         slideTalon.config_kI(0,i, 0);
@@ -210,8 +210,8 @@ public class HatchPanel {
     }
 
     //how far the mechanism has to slide
-    private void slide(double position){ //position in inches
-        slideTalon.set(ControlMode.Position, (position * ticksPerInch));
+    public void slide(double position){ //position in inches
+        slideTalon.set(ControlMode.Position, (position));
         System.out.println("end error =" + slideTalon.getClosedLoopError());
         System.out.println(slideTalon.getSelectedSensorPosition());
     }

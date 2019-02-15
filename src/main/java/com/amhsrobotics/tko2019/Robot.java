@@ -3,6 +3,7 @@ package com.amhsrobotics.tko2019;
 import com.amhsrobotics.tko2019.controls.AnalogInput;
 import com.amhsrobotics.tko2019.controls.AnalogType;
 import com.amhsrobotics.tko2019.controls.Controls;
+import com.amhsrobotics.tko2019.controls.DigitalInput;
 import com.amhsrobotics.tko2019.controls.DigitalType;
 import com.amhsrobotics.tko2019.hatchpanel.HatchPanel;
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -10,8 +11,8 @@ import edu.wpi.first.wpilibj.*;
 
 @SuppressWarnings("deprecation")
 public final class Robot extends SampleRobot {
-	private final Compressor compressor = new Compressor();
-	public static Joystick joystick = new Joystick(1);
+//	private final Compressor compressor = new Compressor();
+//	public static Joystick joystick = new Joystick(1);
 
 	public static void main(final String... args) {
 		RobotBase.startRobot(Robot::new);
@@ -23,21 +24,33 @@ public final class Robot extends SampleRobot {
 	@Override
 	protected final void robotInit() {
 		hp.init();
-		Controls.getInstance().registerDigitalCommand(1, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick3, DigitalType.DigitalPress, () -> {
-			System.out.println("Button 3");
-			hp.goHatchForward();
+//		Controls.getInstance().registerDigitalCommand(1, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick3, DigitalType.DigitalPress, () -> {
+//			System.out.println("Button 3");
+//			hp.goHatchForward();
+//		});
+//
+//		Controls.getInstance().registerDigitalCommand(1, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick2, DigitalType.DigitalPress, () -> {
+//			System.out.println("Button 2");
+//			hp.goHatchBackward();
+//		});
+		Controls.getInstance().registerAnalogCommand(1, AnalogInput.JoystickY, AnalogType.OutOfThreshold, value -> {
+			hp.slideTalon.set(ControlMode.PercentOutput, value*0.5);		//50% speed
 		});
-
-		Controls.getInstance().registerDigitalCommand(1, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick2, DigitalType.DigitalPress, () -> {
-			System.out.println("Button 2");
-			hp.goHatchBackward();
+		Controls.getInstance().registerDigitalCommand(1, DigitalInput.Joystick3, DigitalType.DigitalPress, ()->{
+			hp.slide(18000);
 		});
-
 	}
 
 	@Override
 	public final void operatorControl() {
 		Controls.getInstance().enable();
+		while (isEnabled()){
+			if(hp.slideTalon.getSensorCollection().isRevLimitSwitchClosed()){
+				//System.out.println("Here");
+				hp.slideTalon.setSelectedSensorPosition(0);
+			}
+			System.out.println(hp.slideTalon.getClosedLoopTarget() + " " + hp.slideTalon.getSelectedSensorPosition());
+		}
 	}
 
 	@Override
@@ -101,7 +114,7 @@ public final class Robot extends SampleRobot {
 	}
 
 	private void enabled() {
-		compressor.start();
-		compressor.setClosedLoopControl(true);
+//		compressor.start();
+//		compressor.setClosedLoopControl(true);
 	}
 }
