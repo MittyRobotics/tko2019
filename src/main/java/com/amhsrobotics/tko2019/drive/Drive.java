@@ -9,8 +9,8 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 
 public class Drive {
-	private final int[] leftTalonIds = {2, 3};
-	private final int[] rightTalonIds = {0, 1};
+	private final int[] leftTalonIds = {0, 1};
+	private final int[] rightTalonIds = {2,3};
 	private final int[] gearShiftingIds = {0, 1};
 
 	private final double[] ticksPerInch = {0.0, 119.47};
@@ -41,9 +41,8 @@ public class Drive {
 //				talon.set(ControlMode.Follower, leftTalonIds[0]);
 //			}
 		}
-		rightDriveTalons[0].setInverted(false);
-		rightDriveTalons[1].setInverted(false);
-		leftDriveTalons[0].setInverted(false);
+		leftDriveTalons[0].setInverted(true);
+		leftDriveTalons[1].setInverted(true);
 
 //		gearShift = new DoubleSolenoid(gearShiftingIds[0], gearShiftingIds[1]);
 	}

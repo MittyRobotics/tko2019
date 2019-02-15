@@ -31,7 +31,7 @@ public class HatchPanel {
     public DigitalInput[] sliderSwitches = new DigitalInput[2];
     private DigitalInput wallSwitch;
 
-    public final int slideTalonId = 2; //TODO
+    public final int slideTalonId = 0;
     public WPI_TalonSRX slideTalon;
 
     public void init(){
