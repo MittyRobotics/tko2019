@@ -13,10 +13,10 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 public class HatchPanel {
 
     private boolean manual = false;
-    private final double p = 16; //TODO
+    private final double p = .1; //TODO
     private final double i = 0; //TODO
     private final int d = 0; //TODO
-    private final double ticksPerInch = (1607.68); //TODO
+    public final double ticksPerInch = (1700); //TODO 1607.68
     private boolean processDone = false;
 
     private final int[] solSideId = {0, 1}; //TODO
@@ -38,20 +38,21 @@ public class HatchPanel {
         solSide = new DoubleSolenoid(solSideId[0], solSideId[1]);
         solForward = new DoubleSolenoid(solForwardId[0], solForwardId[1]);
 
-        hatchSwitch = new DigitalInput(hatchSwitchId);
-        wallSwitch = new DigitalInput(wallSwitchId);
+//        hatchSwitch = new DigitalInput(hatchSwitchId);
+//        wallSwitch = new DigitalInput(wallSwitchId);
 
-        for(int i = 0; i < 2; i++){
-            sliderSwitches[i] = new DigitalInput(sliderSwitchesIds[i]);
-        }
+//        for(int i = 0; i < 2; i++){
+//            sliderSwitches[i] = new DigitalInput(sliderSwitchesIds[i]);
+//        }
 
         slideTalon = new WPI_TalonSRX(slideTalonId);
         slideTalon.configClosedloopRamp(0.0);
 //        slideTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 1000);
 
-        slideTalon.config_kP(0, p, 0);
+//        slideTalon.config_kP(0, p, 0);
         slideTalon.config_kI(0,i, 0);
         slideTalon.config_kD(0,d,0);
+//        slideTalon.setSafetyEnabled(true);
     }
     public void run(){
 
@@ -100,7 +101,8 @@ public class HatchPanel {
                 }
             }
             else {
-                slideMiddle();
+                slideTalon.config_kP(0, 0.2, 1);
+                slide(8);
             }
         });
 
@@ -115,10 +117,35 @@ public class HatchPanel {
             }
         });
 
+        Controls.getInstance().registerAnalogCommand(1, AnalogInput.JoystickX, AnalogType.OutOfThresholdMinor, value -> {
+            if (Math.abs(value) > 0.1) {
+                slideTalon.config_kP(0, 0.4, 0);
+                slide(slideTalon.getSelectedSensorPosition() / ticksPerInch + value);
+                System.out.println("Here");
+            }
+        });
+
+        Controls.getInstance().registerDigitalCommand(1, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick2, DigitalType.DigitalPress, ()->{
+            slideTalon.setSelectedSensorPosition(0);
+        });
+
+        if (slideTalon.getSensorCollection().isRevLimitSwitchClosed()){
+//				//System.out.println("Here");
+            slideTalon.setSelectedSensorPosition(0);
+        }
+
         if(manual){
 
             Controls.getInstance().registerDigitalCommand(1, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick2, DigitalType.DigitalPress, () -> {
                 closeHatch();
+            });
+
+            Controls.getInstance().registerAnalogCommand(1, AnalogInput.JoystickX, AnalogType.OutOfThresholdMinor, value -> {
+                if (Math.abs(value) > 0.1) {
+                    slideTalon.config_kP(0, 0.4, 0);
+                    slide(slideTalon.getSelectedSensorPosition() / ticksPerInch + value);
+                    System.out.println("Here");
+                }
             });
 
             Controls.getInstance().registerAnalogCommand(1, AnalogInput.JoystickY, AnalogType.OutOfThresholdMinor, (value) -> {
@@ -211,8 +238,8 @@ public class HatchPanel {
 
     //how far the mechanism has to slide
     public void slide(double position){ //position in inches
-        slideTalon.set(ControlMode.Position, (position));
-        System.out.println("end error =" + slideTalon.getClosedLoopError());
-        System.out.println(slideTalon.getSelectedSensorPosition());
+        slideTalon.set(ControlMode.Position, (position*ticksPerInch));
+//        System.out.println("end error =" + slideTalon.getClosedLoopError());
+//        System.out.println(slideTalon.getSelectedSensorPosition());
     }
 }

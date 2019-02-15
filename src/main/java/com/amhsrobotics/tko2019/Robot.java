@@ -34,13 +34,21 @@ public final class Robot extends SampleRobot {
 //			hp.goHatchBackward();
 //		});
 		Controls.getInstance().registerAnalogCommand(1, AnalogInput.JoystickY, AnalogType.OutOfThresholdMinor, value -> {
-			hp.slideTalon.set(ControlMode.PercentOutput, value*0.5);		//50% speed
+			if(Math.abs(value) > 0.1){
+				hp.slideTalon.config_kP(0, 0.4, 0);
+				hp.slide(hp.slideTalon.getSelectedSensorPosition() / hp.ticksPerInch + value);		//50% speed
+				System.out.println("Here");
+			}
+//			else {
+//				hp.slideTalon.set(ControlMode.PercentOutput, 0);
+//			}
 		});
-		Controls.getInstance().registerAnalogCommand(1, AnalogInput.JoystickY, AnalogType.InThresholdMinor, value -> {
-			hp.slideTalon.set(ControlMode.PercentOutput, 0);
+		Controls.getInstance().registerDigitalCommand(1, DigitalInput.Joystick3, DigitalType.DigitalPress, ()-> {
+			hp.slideTalon.config_kP(0, 0.2, 1);
+			hp.slide(8);
 		});
-		Controls.getInstance().registerDigitalCommand(1, DigitalInput.Joystick3, DigitalType.DigitalPress, ()->{
-			hp.slide(18000);
+		Controls.getInstance().registerDigitalCommand(1, DigitalInput.Joystick2, DigitalType.DigitalPress, ()->{
+			hp.slideTalon.setSelectedSensorPosition(0);
 		});
 	}
 
@@ -49,10 +57,15 @@ public final class Robot extends SampleRobot {
 		Controls.getInstance().enable();
 		while (isEnabled()){
 			if(hp.slideTalon.getSensorCollection().isRevLimitSwitchClosed()){
-				//System.out.println("Here");
+//				//System.out.println("Here");
 				hp.slideTalon.setSelectedSensorPosition(0);
 			}
 			System.out.println(hp.slideTalon.getClosedLoopTarget() + " " + hp.slideTalon.getSelectedSensorPosition());
+//////			try {
+//////				Thread.sleep(20);
+//////			} catch (InterruptedException e) {
+//////				e.printStackTrace();
+//////			}
 		}
 	}
 
@@ -103,11 +116,6 @@ public final class Robot extends SampleRobot {
 
 			//});
 
-			try {
-				Thread.sleep(20);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 		}
 	}
 
