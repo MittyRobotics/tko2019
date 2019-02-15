@@ -33,8 +33,11 @@ public final class Robot extends SampleRobot {
 //			System.out.println("Button 2");
 //			hp.goHatchBackward();
 //		});
-		Controls.getInstance().registerAnalogCommand(1, AnalogInput.JoystickY, AnalogType.OutOfThreshold, value -> {
+		Controls.getInstance().registerAnalogCommand(1, AnalogInput.JoystickY, AnalogType.OutOfThresholdMinor, value -> {
 			hp.slideTalon.set(ControlMode.PercentOutput, value*0.5);		//50% speed
+		});
+		Controls.getInstance().registerAnalogCommand(1, AnalogInput.JoystickY, AnalogType.InThresholdMinor, value -> {
+			hp.slideTalon.set(ControlMode.PercentOutput, 0);
 		});
 		Controls.getInstance().registerDigitalCommand(1, DigitalInput.Joystick3, DigitalType.DigitalPress, ()->{
 			hp.slide(18000);

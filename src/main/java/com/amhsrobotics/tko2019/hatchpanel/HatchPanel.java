@@ -121,7 +121,7 @@ public class HatchPanel {
                 closeHatch();
             });
 
-            Controls.getInstance().registerAnalogCommand(1, AnalogInput.JoystickY, AnalogType.OutOfThreshold, (value) -> {
+            Controls.getInstance().registerAnalogCommand(1, AnalogInput.JoystickY, AnalogType.OutOfThresholdMinor, (value) -> {
                 if(value < -0.5) {
                     goHatchBackward();
                 }

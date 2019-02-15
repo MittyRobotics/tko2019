@@ -50,7 +50,7 @@ public class Drive {
 	@Deprecated
 	public void run() {
 
-            Controls.getInstance().registerAnalogCommand(0, AnalogInput.XboxLYJoystick, AnalogType.OutOfThreshold, value -> {
+            Controls.getInstance().registerAnalogCommand(0, AnalogInput.XboxLYJoystick, AnalogType.OutOfThresholdMinor, value -> {
             	if(shouldReverse){
 					moveLeft(value);
 				}
@@ -58,7 +58,7 @@ public class Drive {
 					moveRight(-value);
 				}
             });
-            Controls.getInstance().registerAnalogCommand(0, AnalogInput.XboxRYJoystick, AnalogType.OutOfThreshold, value -> {
+            Controls.getInstance().registerAnalogCommand(0, AnalogInput.XboxRYJoystick, AnalogType.OutOfThresholdMinor, value -> {
                 if(shouldReverse){
 					moveRight(value);
 				}

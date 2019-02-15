@@ -97,7 +97,7 @@ public class Cargo {
             }
         });
         if (manual) {
-            Controls.getInstance().registerAnalogCommand(2, AnalogInput.JoystickY, AnalogType.OutOfThreshold, (value) -> {
+            Controls.getInstance().registerAnalogCommand(2, AnalogInput.JoystickY, AnalogType.OutOfThresholdMinor, (value) -> {
                 spinIntake(value, value);
             });
             Controls.getInstance().registerDigitalCommand(2, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick3, DigitalType.DigitalHold, () -> {
@@ -142,7 +142,7 @@ public class Cargo {
                 }
                 //1 = ground, 2 = rocket, 3 = cargo 4 = human player height
             });
-            Controls.getInstance().registerAnalogCommand(2, AnalogInput.JoystickY, AnalogType.OutOfThreshold, (value) -> {
+            Controls.getInstance().registerAnalogCommand(2, AnalogInput.JoystickY, AnalogType.OutOfThresholdMinor, (value) -> {
                 if ((intakeThreshold) && (value < -0.5)){
                     spinIntake(intakeSpeed, intakeSpeed);  //TODO
                 }

@@ -93,13 +93,18 @@ public class Controls {
 					cachedAnalogInputs.get(deviceID).putIfAbsent(analogInput, value);
 					double cachedValue = cachedAnalogInputs.get(deviceID).get(analogInput);
 					if (Math.abs(value) > 0.15) {
-						ArrayList<AnalogControlCommand> outOfThresholdCommands = analogControls.get(deviceID).get(analogInput).get(AnalogType.OutOfThreshold);
-						if (outOfThresholdCommands != null) {
-							for (AnalogControlCommand controlCommand : outOfThresholdCommands) {
+						ArrayList<AnalogControlCommand> outOfMinorThresholdCommands = analogControls.get(deviceID).get(analogInput).get(AnalogType.OutOfThresholdMinor);
+						if (outOfMinorThresholdCommands != null) {
+							for (AnalogControlCommand controlCommand : outOfMinorThresholdCommands) {
 								controlCommand.action(value);
 							}
 						}
-						else {
+					} else {
+						ArrayList<AnalogControlCommand> commands = analogControls.get(deviceID).get(analogInput).get(AnalogType.InThresholdMinor);
+						if (commands != null) {
+							for (AnalogControlCommand command : commands) {
+								command.action(value);
+							}
 						}
 					}
 				}
