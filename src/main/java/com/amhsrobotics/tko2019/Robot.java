@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.SampleRobot;
 
 @SuppressWarnings("deprecation")
 public final class Robot extends SampleRobot implements LogCapable {
+	private final Object lock = new Object();
+
 	private final Subsystem[] subsystems = {
 			new Drive(),
 			new Climber(),
@@ -78,25 +80,25 @@ public final class Robot extends SampleRobot implements LogCapable {
 	@Override
 	protected final void disabled() {
 		entering("disabled");
-
-		Controls.getInstance().disable();
-		for (final Subsystem subsystem : subsystems) {
-			subsystem.disable();
+		synchronized (lock) {
+			Controls.getInstance().disable();
+			for (final Subsystem subsystem : subsystems) {
+				subsystem.disable();
+			}
+			Compressor.getInstance().stop();
 		}
-		Compressor.getInstance().stop();
-
 		exiting("disabled");
 	}
 
 	private void enabled() {
 		entering("enabled");
-
-		Controls.getInstance().enable();
-		for (final Subsystem subsystem : subsystems) {
-			subsystem.enable();
+		synchronized (lock) {
+			Controls.getInstance().enable();
+			for (final Subsystem subsystem : subsystems) {
+				subsystem.enable();
+			}
+			Compressor.getInstance().start();
 		}
-		Compressor.getInstance().start();
-
 		exiting("disabled");
 	}
 }
