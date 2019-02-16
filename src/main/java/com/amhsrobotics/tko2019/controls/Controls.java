@@ -12,7 +12,7 @@ public class Controls implements LogCapable {
 	private final ConcurrentHashMap<Integer, ConcurrentHashMap<DigitalInput, ConcurrentHashMap<DigitalType, ArrayList<DigitalControlCommand>>>> buttonControls = new ConcurrentHashMap<>();
 	private final ConcurrentHashMap<Integer, ConcurrentHashMap<AnalogInput, ConcurrentHashMap<AnalogType, ArrayList<AnalogControlCommand>>>> analogControls = new ConcurrentHashMap<>();
 
-	private final HashMap<String, DigitalControlCommand> registeredDigialControls = new HashMap<>();
+	private final HashMap<String, DigitalControlCommand> registeredDigitalControls = new HashMap<>();
 	private final HashMap<String, AnalogControlCommand> registeredAnalogControls = new HashMap<>();
 	private volatile boolean shouldRun = false;
 	private final Thread controlsThread = new Thread(this::checkControls);
@@ -61,7 +61,7 @@ public class Controls implements LogCapable {
 		commands.get(digitalType).add(lambda);
 
 		if (commandName.length != 0) {
-			registeredDigialControls.put(commandName[0], lambda);
+			registeredDigitalControls.put(commandName[0], lambda);
 		}
 
 		exiting("registerDigitalCommand");
@@ -86,7 +86,7 @@ public class Controls implements LogCapable {
 	}
 
 	public void unregisterDigialCommand(int id, DigitalInput digitalInput, DigitalType digitalType, final String commandName) {
-		buttonControls.get(id).get(digitalInput).get(digitalType).remove(registeredDigialControls.get(commandName));
+		buttonControls.get(id).get(digitalInput).get(digitalType).remove(registeredDigitalControls.get(commandName));
 	}
 
 	public void unregisterAnalogCommand(int id, AnalogInput analogInput, AnalogType analogType, final String commandName) {
