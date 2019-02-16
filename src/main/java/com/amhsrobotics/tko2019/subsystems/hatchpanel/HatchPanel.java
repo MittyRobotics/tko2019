@@ -181,7 +181,7 @@ public class HatchPanel implements Subsystem {
 	//how far the mechanism has to slide
 	private void slide(double position) { //position in inches
 		slideTalon.set(ControlMode.Position, (position * TicksPerInch.SLIDER));
-		System.out.println("end error =" + slideTalon.getClosedLoopError());
-		System.out.println(slideTalon.getSelectedSensorPosition());
+		System.out.println("end error =" + slideTalon.getClosedLoopError()); // FIXME: 2019-02-14 
+		System.out.println(slideTalon.getSelectedSensorPosition()); // FIXME: 2019-02-14
 	}
 }

@@ -9,10 +9,10 @@ public class PID {
 
 	// Hatch Panel
 
-	public final static double[] SLIDER = {16, 0, 0, 0};
+	public final static double[] SLIDER = {16, 0, 0};
 
 
 	// Cargo
 
-	public final static double[] CARGO = {0.2, 0, 0, 0};
+	public final static double[] CARGO = {0.2, 0, 0};
 }
