@@ -14,10 +14,10 @@ public enum AnalogInput {
 		return genericHID.getRawAxis(4);
 	}),
 	XboxLYJoystick(genericHID -> {
-		return -genericHID.getRawAxis(1);
+		return -genericHID.getRawAxis(1); // XBox Controller is Reversed
 	}),
 	XboxRYJoystick(genericHID -> {
-		return -genericHID.getRawAxis(5);
+		return -genericHID.getRawAxis(5); // XBox Controller is Reversed
 	}),
 	JoystickX(genericHID -> {
 		return genericHID.getRawAxis(0);
