@@ -25,22 +25,28 @@ public class HatchPanel implements Subsystem {
 
 	@Override
 	public void init() {
+		entering("init");
+
+
+		slideTalon = new WPI_TalonSRX(TalonIds.SLIDE);
+		slideTalon.configFactoryDefault();
+		slideTalon.setInverted(TalonInversions.SLIDER);
+		slideTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+		slideTalon.config_kP(0, PID.SLIDER[0]);
+		slideTalon.config_kI(0, PID.SLIDER[1]);
+		slideTalon.config_kD(0, PID.SLIDER[2]);
+
 		grabber = new DoubleSolenoid(SolenoidIds.GRABBER[0], SolenoidIds.GRABBER[1]);
 		pushForward = new DoubleSolenoid(SolenoidIds.PUSH_FORWARD[0], SolenoidIds.PUSH_FORWARD[1]);
-		slideTalon = new WPI_TalonSRX(TalonIds.SLIDE);
-		slideTalon.configClosedloopRamp(0.0);
-		slideTalon.setInverted(TalonInversions.SLIDER);
-		slideTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 1000);
 
-		//slideTalon.configurePID()
 
-		slideTalon.config_kP(0, PID.SLIDER[0], 0);
-		slideTalon.config_kI(0, PID.SLIDER[1], 0);
-		slideTalon.config_kD(0, PID.SLIDER[2], 0);
+		exiting("init");
 	}
 
 	@Override
 	public void initControls() {
+		entering("initControls");
+
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SWITCH_MODE, DigitalType.DigitalPress, () -> {
 			manual = !manual;
 			if (manual) {
@@ -87,7 +93,6 @@ public class HatchPanel implements Subsystem {
 				}
 			}
 		});
-
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.GRAB_HATCH, DigitalType.DigitalPress, () -> {
 			if (!Switches.getInstance().hatchSwitch.get() && Switches.getInstance().wallSwitch.get()) {
 				if (!manual) {
@@ -101,6 +106,8 @@ public class HatchPanel implements Subsystem {
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.CONFIG_ENCODER, DigitalType.DigitalPress, () -> {
 			resetEncoder();
 		});
+
+		exiting("initControls");
 	}
 
 	private void openHatch() {
@@ -181,7 +188,7 @@ public class HatchPanel implements Subsystem {
 	//how far the mechanism has to slide
 	private void slide(double position) { //position in inches
 		slideTalon.set(ControlMode.Position, (position * TicksPerInch.SLIDER));
-		System.out.println("end error =" + slideTalon.getClosedLoopError()); // FIXME: 2019-02-14 
+		System.out.println("end error =" + slideTalon.getClosedLoopError()); // FIXME: 2019-02-14
 		System.out.println(slideTalon.getSelectedSensorPosition()); // FIXME: 2019-02-14
 	}
 }

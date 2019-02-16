@@ -19,37 +19,42 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 public class Cargo implements Subsystem { ;
+	private final WPI_TalonSRX[] intakeTalons = new WPI_TalonSRX[TalonIds.INTAKE.length];
+	private final WPI_TalonSRX[] conveyorTalons = new WPI_TalonSRX[TalonIds.CONVEYOR.length];
 	private boolean manual = false;
-	private int level = 0; //0 = ground, 1 = rocket, 2 = cargo, 3 = human player height
-	private WPI_TalonSRX[] intakeTalons = new WPI_TalonSRX[TalonIds.INTAKE.length];
-	private WPI_TalonSRX[] conveyorTalons = new WPI_TalonSRX[TalonIds.CONVEYOR.length];
+	private IntakeHeight height = IntakeHeight.Ground;
 
 	public void init() {
+		entering("init");
+
 		for (int talonIdIndex = 0; talonIdIndex < TalonIds.INTAKE.length; talonIdIndex++) {
 			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.INTAKE[talonIdIndex]);
-			talon.setInverted(TalonInversions.INTAKE[talonIdIndex]);
 			talon.configFactoryDefault();
+			talon.setInverted(TalonInversions.INTAKE[talonIdIndex]);
 			intakeTalons[talonIdIndex] = talon;
 			hardwareInit(talon);
 		}
 		for (int talonIdIndex = 0; talonIdIndex < TalonIds.CONVEYOR.length; talonIdIndex++) {
 			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.CONVEYOR[talonIdIndex]);
-			talon.setInverted(TalonInversions.CONVEYOR[talonIdIndex]);
 			talon.configFactoryDefault();
+			talon.setInverted(TalonInversions.CONVEYOR[talonIdIndex]);
 			if (talonIdIndex == 0) {
 				talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+				talon.config_kP(0, PID.CARGO[0]);
+				talon.config_kI(0, PID.CARGO[1]);
+				talon.config_kD(0, PID.CARGO[2]);
 			} else {
 				talon.follow(conveyorTalons[0]);
 			}
 			conveyorTalons[talonIdIndex] = talon;
 			hardwareInit(talon);
 		}
-		conveyorTalons[0].config_kP(0, PID.CARGO[0], 0);
-		conveyorTalons[0].config_kP(0, PID.CARGO[1], 0);
-		conveyorTalons[0].config_kP(0, PID.CARGO[2], 0);
+
+		exiting("init");
 	}
 
 	public void initControls() {
+		entering("initControls");
 
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick2.getId(), ControlsConfig.SWITCH_MODE, DigitalType.DigitalPress, () -> {
 			manual = !manual;
@@ -63,7 +68,7 @@ public class Cargo implements Subsystem { ;
 			if (manual) {
 				spinIntake(value, value);
 			} else {
-				if ((value < 0.05 && (level == 0 || level == 3)) || (value > 0.05 && (level == 1 || level == 2))) {
+				if ((value < 0.05 && (height == IntakeHeight.Ground || height == IntakeHeight.HumanPlayer)) || (value > 0.05 && (height == IntakeHeight.RocketHeight || height == IntakeHeight.Cargo))) {
 					intakeOuttakeMacro();
 				} else {
 					stopIntake();
@@ -76,17 +81,16 @@ public class Cargo implements Subsystem { ;
 			} else {
 				if ((conveyorTalons[0].getSelectedSensorPosition() < IntakeHeights.ROCKET_HEIGHT * TicksPerInch.CARGO - 100)) {
 					rocketConveyor();
-					level = 1;
+					height = IntakeHeight.RocketHeight;
 					System.out.println("Rocket Height");
 				} else if (conveyorTalons[0].getSelectedSensorPosition() < IntakeHeights.CARGO_HEIGHT * TicksPerInch.CARGO - 100) {
 					cargoConveyor();
-					level = 2;
+					height = IntakeHeight.Cargo;
 					System.out.println("Cargo Height");
 				} else {
 					stationConveyor();
-					level = 3;
+					height = IntakeHeight.HumanPlayer;
 					System.out.println("Human Player Height");
-					//0 = ground, 1 = rocket, 2 = cargo 3 = human player height
 				}
 			}
 		});
@@ -96,34 +100,33 @@ public class Cargo implements Subsystem { ;
 			} else {
 				if ((conveyorTalons[0].getSelectedSensorPosition() > IntakeHeights.CARGO_HEIGHT * TicksPerInch.CARGO + 100)) {
 					cargoConveyor();
-					level = 2;
+					height = IntakeHeight.Cargo;
 					System.out.println("Cargo Height");
 				} else if (conveyorTalons[0].getSelectedSensorPosition() > IntakeHeights.ROCKET_HEIGHT * TicksPerInch.CARGO + 100) {
 					rocketConveyor();
-					level = 1;
+					height = IntakeHeight.RocketHeight;
 					System.out.println("Rocket Height");
 				} else {
 					groundConveyor();
-					level = 0;
+					height = IntakeHeight.Ground;
 					System.out.println("Intake Height");
 				}
-				//0 = ground, 1 = rocket, 2 = cargo 3 = human player height
 			}
 
 		});
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick2.getId(), ControlsConfig.CONFIG_ENCODER, DigitalType.DigitalPress, () -> {
-			resetEncoder();
-		});
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick2.getId(), ControlsConfig.CONFIG_ENCODER, DigitalType.DigitalPress, this::resetEncoder);
+
+		exiting("initControls");
 	}
 
 	private void intakeOuttakeMacro() {
-		if (level == 0) {
+		if (height == IntakeHeight.Ground) {
 			spinIntake(IntakeSpeeds.GROUND_SPEED, IntakeSpeeds.GROUND_SPEED);
-		} else if (level == 1) {
+		} else if (height == IntakeHeight.RocketHeight) {
 			spinOuttake(IntakeSpeeds.ROCKET_SPEED, IntakeSpeeds.ROCKET_SPEED);
-		} else if (level == 2) {
+		} else if (height == IntakeHeight.Cargo) {
 			spinOuttake(-IntakeSpeeds.CARGO_SPEED, IntakeSpeeds.CARGO_SPEED);
-		} else if (level == 3) {
+		} else if (height == IntakeHeight.HumanPlayer) {
 			spinIntake(IntakeSpeeds.STATION_SPEED, IntakeSpeeds.STATION_SPEED);
 		} else {
 			stopIntake();
@@ -192,12 +195,30 @@ public class Cargo implements Subsystem { ;
 		conveyorTalons[0].set(ControlMode.PercentOutput, 0.1);
 		while (!conveyorTalons[0].getSensorCollection().isFwdLimitSwitchClosed()) {
 			try {
-				Thread.sleep(20);
+				Thread.sleep(5);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		conveyorTalons[0].setSelectedSensorPosition(0);
 		conveyorTalons[0].set(ControlMode.PercentOutput, 0);
+		conveyorTalons[0].setSelectedSensorPosition(0);
+	}
+
+	private enum IntakeHeight {
+		Ground(IntakeHeights.GROUND_HEIGHT),
+		RocketHeight(IntakeHeights.ROCKET_HEIGHT),
+		Cargo(IntakeHeights.CARGO_HEIGHT),
+		HumanPlayer(IntakeHeights.STATION_HEIGHT),
+		Vision(IntakeHeights.VISION_HEIGHT);
+
+		private final double height;
+
+		IntakeHeight(final double height) {
+			this.height = height;
+		}
+
+		public double getHeight() {
+			return height;
+		}
 	}
 }

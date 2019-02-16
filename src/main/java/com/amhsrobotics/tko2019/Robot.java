@@ -26,12 +26,16 @@ public final class Robot extends SampleRobot implements LogCapable {
 
 	@Override
 	protected final void robotInit() {
+		entering("robotInit");
+
+
 		final Thread[] subsystemThreads = new Thread[subsystems.length];
 		for (int subsystemNumber = 0; subsystemNumber < subsystems.length; subsystemNumber++) {
 			final Thread subsystemThread = new Thread(subsystems[subsystemNumber]::init);
 			subsystemThread.start();
 			subsystemThreads[subsystemNumber] = subsystemThread;
 		}
+
 		for (final Subsystem subsystem : subsystems) {
 			subsystem.initControls();
 		}
@@ -45,31 +49,54 @@ public final class Robot extends SampleRobot implements LogCapable {
 				throwing("robotInit", e);
 			}
 		}
+
+
+		exiting("robotInit");
 	}
 
 	@Override
 	public final void autonomous() {
+		entering("autonomous");
 		enabled();
+		exiting("autonomous");
 	}
 
 	@Override
 	public final void operatorControl() {
+		entering("operatorControl");
 		enabled();
+		exiting("operatorControl");
 	}
 
 	@Override
 	public final void test() {
+		entering("test");
 
+		exiting("test");
 	}
 
 	@Override
 	protected final void disabled() {
+		entering("disabled");
+
 		Controls.getInstance().disable();
+		for (final Subsystem subsystem : subsystems) {
+			subsystem.disable();
+		}
 		Compressor.getInstance().stop();
+
+		exiting("disabled");
 	}
 
 	private void enabled() {
+		entering("enabled");
+
 		Controls.getInstance().enable();
+		for (final Subsystem subsystem : subsystems) {
+			subsystem.enable();
+		}
 		Compressor.getInstance().start();
+
+		exiting("disabled");
 	}
 }

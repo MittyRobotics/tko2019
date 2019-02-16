@@ -7,6 +7,7 @@ public class ControlsConfig {
 	public static final DigitalInput SWITCH_MODE = DigitalInput.Joystick11;
 	public static final DigitalInput CONFIG_ENCODER = DigitalInput.Joystick6;
 
+
 	// Drive
 
 	public static final AnalogInput LEFT_WHEELS = AnalogInput.XboxLYJoystick;
