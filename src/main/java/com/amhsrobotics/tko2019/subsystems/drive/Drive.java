@@ -139,32 +139,38 @@ public final class Drive implements Subsystem {
 
 	public void turn(final double degrees) {
 		entering("turn");
-		pidController.setAbsoluteTolerance(threshold);
+
+
+		final PIDController pidController = new PIDController(PID.DRIVE[0], PID.DRIVE[1], PID.DRIVE[2], gyro, lTalons[0]);
 		pidController.setInputRange(0, 360);
 		pidController.setOutputRange(-1, 1);
 		pidController.setContinuous(true);
+
 		rTalons[0].set(ControlMode.Follower, lTalons[0].getDeviceID());
 		rTalons[0].setInverted(!TalonInversions.RIGHT_DRIVE[0]);
 		rTalons[1].setInverted(!TalonInversions.RIGHT_DRIVE[1]);
+
 		double angle = degrees + gyro.getAngle();
 		if (angle >= 360) {
 			angle -= 360;
 		} else if (angle < 0) {
 			angle += 360;
 		}
+
 		pidController.setSetpoint(angle);
 		pidController.enable();
-		while (pidController.getError() > threshold) {
+		while (pidController.getError() > Thresholds.TURN) {
 			try {
 				Thread.sleep(20);
-			} catch (InterruptedException e) {
+			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
 		pidController.disable();
-		lTalons[0].set(ControlMode.PercentOutput, 0);
-		rTalons[0].set(ControlMode.PercentOutput, 0);
-		getLogger().severe("TURN NOT IMPLEMENTED!");   // TODO
+
+		rTalons[0].setInverted(TalonInversions.RIGHT_DRIVE[0]);
+		rTalons[1].setInverted(TalonInversions.RIGHT_DRIVE[1]);
+
 
 		exiting("turn");
 	}
