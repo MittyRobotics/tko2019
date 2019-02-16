@@ -4,7 +4,7 @@ public class Thresholds {
 	// Drive
 
 	public static final double DRIVE = 5;
-	public static final double TURN = ;
+	public static final double TURN = 3;
 
 
 	// Cargo
