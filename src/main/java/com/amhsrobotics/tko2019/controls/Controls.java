@@ -135,7 +135,12 @@ public class Controls implements LogCapable {
 					double value = analogInput.getInputRequest().requestAnalog(ControllerID.getController(deviceID));
 					cachedAnalogInputs.putIfAbsent(deviceID, new HashMap<>());
 					cachedAnalogInputs.get(deviceID).putIfAbsent(analogInput, value);
-					double cachedValue = cachedAnalogInputs.get(deviceID).get(analogInput);
+					ArrayList<AnalogControlCommand> alwaysCommands = analogControls.get(deviceID).get(analogInput).get(AnalogType.Always);
+					if (alwaysCommands != null) {
+						for (AnalogControlCommand controlCommand : alwaysCommands) {
+							controlCommand.action(value);
+						}
+					}
 					if (Math.abs(value) > 0.05) {
 						ArrayList<AnalogControlCommand> outOfMinorThresholdCommands = analogControls.get(deviceID).get(analogInput).get(AnalogType.OutOfThresholdMinor);
 						if (outOfMinorThresholdCommands != null) {
