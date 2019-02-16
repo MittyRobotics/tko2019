@@ -6,7 +6,6 @@ import com.amhsrobotics.tko2019.controls.Controls;
 import com.amhsrobotics.tko2019.controls.DigitalInput;
 import com.amhsrobotics.tko2019.controls.DigitalType;
 import com.amhsrobotics.tko2019.hatchpanel.HatchPanel;
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.*;
 
 @SuppressWarnings("deprecation")
@@ -60,7 +59,7 @@ public final class Robot extends SampleRobot {
 //				//System.out.println("Here");
 				hp.slideTalon.setSelectedSensorPosition(0);
 			}
-			System.out.println(hp.slideTalon.getClosedLoopTarget() + " " + hp.slideTalon.getSelectedSensorPosition());
+//			System.out.println(hp.slideTalon.getClosedLoopTarget() + " " + hp.slideTalon.getSelectedSensorPosition());
 //////			try {
 //////				Thread.sleep(20);
 //////			} catch (InterruptedException e) {

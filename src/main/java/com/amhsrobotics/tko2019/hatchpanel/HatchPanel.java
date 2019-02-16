@@ -52,6 +52,7 @@ public class HatchPanel {
 //        slideTalon.config_kP(0, p, 0);
         slideTalon.config_kI(0,i, 0);
         slideTalon.config_kD(0,d,0);
+        slideTalon.setSafetyEnabled(false);
 //        slideTalon.setSafetyEnabled(true);
     }
     public void run(){
