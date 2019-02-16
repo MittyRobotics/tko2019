@@ -9,6 +9,7 @@ import com.amhsrobotics.tko2019.settings.ControlsConfig;
 import com.amhsrobotics.tko2019.settings.subsystems.PID;
 import com.amhsrobotics.tko2019.settings.subsystems.TalonIds;
 import com.amhsrobotics.tko2019.settings.subsystems.TalonInversions;
+import com.amhsrobotics.tko2019.settings.subsystems.Thresholds;
 import com.amhsrobotics.tko2019.settings.subsystems.TicksPerInch;
 import com.amhsrobotics.tko2019.settings.subsystems.cargo.IntakeHeights;
 import com.amhsrobotics.tko2019.settings.subsystems.cargo.IntakeSpeeds;
@@ -17,8 +18,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-public class Cargo implements Subsystem {
-	private final double threshold = 1 * TicksPerInch.CARGO;
+public class Cargo implements Subsystem { ;
 	private boolean manual = false;
 	private int level = 0; //0 = ground, 1 = rocket, 2 = cargo, 3 = human player height
 	private WPI_TalonSRX[] intakeTalons = new WPI_TalonSRX[TalonIds.INTAKE.length];
@@ -156,7 +156,7 @@ public class Cargo implements Subsystem {
 		neededPos += conveyorTalons[0].getSelectedSensorPosition();
 		conveyorTalons[0].set(ControlMode.Position, neededPos * TicksPerInch.CARGO);
 
-		while ((Math.abs(error1) > threshold)) {
+		while ((Math.abs(error1) > Thresholds.CARGO)) {
 			error1 = conveyorTalons[0].getClosedLoopError();
 			System.out.println("T1: " + conveyorTalons[0].getSelectedSensorPosition());
 			try {

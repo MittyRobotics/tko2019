@@ -9,6 +9,7 @@ import com.amhsrobotics.tko2019.settings.subsystems.PID;
 import com.amhsrobotics.tko2019.settings.subsystems.SolenoidIds;
 import com.amhsrobotics.tko2019.settings.subsystems.TalonIds;
 import com.amhsrobotics.tko2019.settings.subsystems.TalonInversions;
+import com.amhsrobotics.tko2019.settings.subsystems.Thresholds;
 import com.amhsrobotics.tko2019.settings.subsystems.TicksPerInch;
 import com.amhsrobotics.tko2019.subsystems.Subsystem;
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -21,10 +22,8 @@ import edu.wpi.first.wpilibj.PIDController;
 import java.util.logging.Logger;
 
 public final class Drive implements Subsystem {
-	private final double threshold = 5; //TODO
 	private final WPI_TalonSRX[] lTalons = new WPI_TalonSRX[TalonIds.LEFT_DRIVE.length];
 	private final WPI_TalonSRX[] rTalons = new WPI_TalonSRX[TalonIds.RIGHT_DRIVE.length];
-	private PIDController pidController;
 	private ADXRS450_Gyro gyro;
 	private DoubleSolenoid gearShifter;
 	private int gear = 1;
@@ -69,7 +68,7 @@ public final class Drive implements Subsystem {
 		gearShifter.setName("Gear Shifting Solenoid");
 		hardwareInit(gearShifter);
 		gyro = new ADXRS450_Gyro();
-		pidController = new PIDController(PID.DRIVE[0], PID.DRIVE[1], PID.DRIVE[2], gyro, lTalons[0]);
+
 
 		exiting("<init>");
 	}
