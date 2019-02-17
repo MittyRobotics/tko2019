@@ -12,8 +12,8 @@ public class ControlsConfig {
 
 	public static final AnalogInput LEFT_WHEELS = AnalogInput.XboxLYJoystick;
 	public static final AnalogInput RIGHT_WHEELS = AnalogInput.XboxRYJoystick;
-	public static final DigitalInput REVERSE_DIRECTION = DigitalInput.XboxRBumper;
-	public static final DigitalInput GEAR_SWITCH = DigitalInput.XboxLBumper;
+	public static final DigitalInput REVERSE_DIRECTION = DigitalInput.XboxRJoystick;
+	public static final DigitalInput GEAR_SWITCH = DigitalInput.XboxRBumper;
 
 
 	//Cargo

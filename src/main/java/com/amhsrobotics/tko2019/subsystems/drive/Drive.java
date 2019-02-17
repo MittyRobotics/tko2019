@@ -84,11 +84,27 @@ public final class Drive implements Subsystem {
 				moveLeft(value);
 			}
 		});
+		Controls.getInstance().registerAnalogCommand(ControllerID.XboxController.getId(), ControlsConfig.LEFT_WHEELS, AnalogType.InThresholdMinor, value -> {
+			if(shouldReverse){
+				moveRight(0);
+			}
+			else {
+				moveLeft(0);
+			}
+		});
 		Controls.getInstance().registerAnalogCommand(ControllerID.XboxController.getId(), ControlsConfig.RIGHT_WHEELS, AnalogType.OutOfThresholdMinor, value -> {
 			if (shouldReverse) {
 				moveLeft(-value);
 			} else {
 				moveRight(value);
+			}
+		});
+		Controls.getInstance().registerAnalogCommand(ControllerID.XboxController.getId(), ControlsConfig.RIGHT_WHEELS, AnalogType.InThresholdMinor, value -> {
+			if(shouldReverse){
+				moveLeft(0);
+			}
+			else {
+				moveRight(0);
 			}
 		});
 		Controls.getInstance().registerDigitalCommand(ControllerID.XboxController.getId(), ControlsConfig.GEAR_SWITCH, DigitalType.DigitalPress, () -> {
