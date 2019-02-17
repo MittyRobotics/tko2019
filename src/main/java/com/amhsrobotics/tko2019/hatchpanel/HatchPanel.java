@@ -79,7 +79,7 @@ public class HatchPanel {
         Controls.getInstance().registerDigitalCommand(1, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick4, DigitalType.DigitalPress, () -> {
             if(!manual) {
                 slideLeft();
-                if ((!wallSwitch.get() && !hatchSwitch.get()) && (processDone)) {
+                if (/*!wallSwitch.get() &&*/  !hatchSwitch.get() && (processDone)) {
                     slideMiddle();
                     processDone = false;
                 }
@@ -92,7 +92,7 @@ public class HatchPanel {
         Controls.getInstance().registerDigitalCommand(1, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick5, DigitalType.DigitalPress, () -> {
             if(!manual) {
                 slideRight();
-                if ((!wallSwitch.get() && !hatchSwitch.get()) && (processDone)) {
+                if (/*!wallSwitch.get() &&*/  !hatchSwitch.get() && (processDone)) {
                     slideMiddle();
                     processDone = false;
                 }
@@ -104,7 +104,7 @@ public class HatchPanel {
 
         Controls.getInstance().registerDigitalCommand(1, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick2, DigitalType.DigitalPress, () -> {
             if(!manual) {
-                if (hatchSwitch.get() && wallSwitch.get()) {
+                if (hatchSwitch.get() /*&& wallSwitch.get()*/) {
                     goHatchForward();
                     closeHatch();
                     goHatchBackward();
@@ -119,7 +119,7 @@ public class HatchPanel {
 
         Controls.getInstance().registerDigitalCommand(1, com.amhsrobotics.tko2019.controls.DigitalInput.JoystickTrigger, DigitalType.DigitalPress, () -> {
             if(!manual) {
-                if ((!hatchSwitch.get()) && (wallSwitch.get())) {
+                if (!hatchSwitch.get() /*&& (wallSwitch.get())*/) {
                     openHatch();
                 }
             }
@@ -169,7 +169,7 @@ public class HatchPanel {
 
     //outtake for the rocket
     private void rocketDrop() {
-        while (wallSwitch.get() && hatchSwitch.get()) {
+        while (/*wallSwitch.get() && */hatchSwitch.get()) {
             goHatchForward();
             closeHatch();
             goHatchBackward();
@@ -216,7 +216,7 @@ public class HatchPanel {
 
     //action for cargo outtake
     private void cargoDrop() {
-        while (hatchSwitch.get() && wallSwitch.get()) {
+        while (hatchSwitch.get() /*&& wallSwitch.get()*/) {
             closeHatch();
             if (hatchSwitch.get()){
                 openHatch();
@@ -226,7 +226,7 @@ public class HatchPanel {
 
     //take in the hatch panel *has safety measures*
     private void intake() {
-        if (!hatchSwitch.get() && wallSwitch.get()){
+        if (!hatchSwitch.get() /*&& wallSwitch.get()*/){
             openHatch();
             if(!hatchSwitch.get()){
                 closeHatch();
