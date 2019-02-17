@@ -29,6 +29,7 @@ public class ControlsConfig {
 	public static final DigitalInput SLIDE_RIGHT = DigitalInput.Joystick5;
 	public static final DigitalInput RELEASE_HATCH = DigitalInput.Joystick2;
 	public static final DigitalInput GRAB_HATCH = DigitalInput.JoystickTrigger;
+	public static final AnalogInput JOYTICK_SLIDE = AnalogInput.JoystickX;
 
 
 	//Climber
