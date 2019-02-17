@@ -8,7 +8,7 @@ public class TicksPerInch {
 
 	// Hatch Panel
 
-	public static final double SLIDER = 151.7;
+	public static final double SLIDER = 2500;
 
 
 	//Cargo

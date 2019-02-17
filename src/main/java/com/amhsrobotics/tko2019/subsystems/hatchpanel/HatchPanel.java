@@ -1,5 +1,6 @@
 package com.amhsrobotics.tko2019.subsystems.hatchpanel;
 
+import com.amhsrobotics.tko2019.controls.AnalogType;
 import com.amhsrobotics.tko2019.controls.ControllerID;
 import com.amhsrobotics.tko2019.controls.Controls;
 import com.amhsrobotics.tko2019.controls.DigitalType;
@@ -70,37 +71,41 @@ public class HatchPanel implements Subsystem {
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SLIDE_LEFT, DigitalType.DigitalPress, () -> {
 			if (!manual) {
 				slideLeft();
-			} else {
-				manualSlideLeft();
 			}
 		});
-
+		Controls.getInstance().registerAnalogCommand(ControllerID.Joystick1.getId(), ControlsConfig.JOYTICK_SLIDE, AnalogType.OutOfThresholdMinor, value -> {
+			if(!manual){
+				slide(slideTalon.getSelectedSensorPosition() / TicksPerInch.SLIDER + value);
+			}
+			else {
+				manualSlide(value * 0.5);
+			}
+		});
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SLIDE_RIGHT, DigitalType.DigitalPress, () -> {
 			if (!manual) {
 				slideRight();
-			} else {
-				manualSlideRight();
 			}
 		});
 
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.RELEASE_HATCH, DigitalType.DigitalPress, () -> {
-			if (Switches.getInstance().hatchSwitch.get() && Switches.getInstance().wallSwitch.get()) {
-				if (!manual) {
+			if (manual) {
+				if (!Switches.getInstance().hatchSwitch.get() && Switches.getInstance().wallSwitch.get()) {
 					processDone = true;
 					outtake();
-				} else {
-					closeHatch();
 				}
+			}
+			else {
+				closeHatch();
 			}
 		});
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.GRAB_HATCH, DigitalType.DigitalPress, () -> {
-			if (!Switches.getInstance().hatchSwitch.get() && Switches.getInstance().wallSwitch.get()) {
-				if (!manual) {
-					processDone = true;
+			if (!manual) {
+				if (!Switches.getInstance().hatchSwitch.get() && Switches.getInstance().wallSwitch.get()) {
 					intake();
-				} else {
-					openHatch();
 				}
+			}
+			else {
+				openHatch();
 			}
 		});
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.CONFIG_ENCODER, DigitalType.DigitalPress, () -> {
@@ -148,12 +153,8 @@ public class HatchPanel implements Subsystem {
 		slide(0);
 	}
 
-	private void manualSlideLeft() {
-		slideTalon.set(ControlMode.PercentOutput, 0.5);
-	}
-
-	private void manualSlideRight() {
-		slideTalon.set(ControlMode.PercentOutput, -0.5);
+	private void manualSlide(double percent){
+		slideTalon.set(ControlMode.PercentOutput, percent);
 	}
 
 	private void slideMiddle() {

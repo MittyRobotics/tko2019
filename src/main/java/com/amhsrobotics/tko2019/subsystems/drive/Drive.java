@@ -84,11 +84,27 @@ public final class Drive implements Subsystem {
 				moveLeft(value);
 			}
 		});
+		Controls.getInstance().registerAnalogCommand(ControllerID.XboxController.getId(), ControlsConfig.LEFT_WHEELS, AnalogType.InThresholdMinor, value -> {
+			if(shouldReverse){
+				moveRight(0);
+			}
+			else {
+				moveLeft(0);
+			}
+		});
 		Controls.getInstance().registerAnalogCommand(ControllerID.XboxController.getId(), ControlsConfig.RIGHT_WHEELS, AnalogType.OutOfThresholdMinor, value -> {
 			if (shouldReverse) {
 				moveLeft(-value);
 			} else {
 				moveRight(value);
+			}
+		});
+		Controls.getInstance().registerAnalogCommand(ControllerID.XboxController.getId(), ControlsConfig.RIGHT_WHEELS, AnalogType.InThresholdMinor, value -> {
+			if(shouldReverse){
+				moveLeft(0);
+			}
+			else {
+				moveRight(0);
 			}
 		});
 		Controls.getInstance().registerDigitalCommand(ControllerID.XboxController.getId(), ControlsConfig.GEAR_SWITCH, DigitalType.DigitalPress, () -> {
@@ -143,7 +159,7 @@ public final class Drive implements Subsystem {
 
 		final PIDController pidController = new PIDController(PID.DRIVE[0], PID.DRIVE[1], PID.DRIVE[2], gyro, lTalons[0]);
 		pidController.setInputRange(0, 360);
-		pidController.setOutputRange(-1, 1);
+		pidController.setOutputRange(-0.35, 0.35);
 		pidController.setContinuous(true);
 
 		rTalons[0].set(ControlMode.Follower, lTalons[0].getDeviceID());

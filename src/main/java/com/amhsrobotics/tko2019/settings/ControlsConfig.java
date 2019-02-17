@@ -12,8 +12,8 @@ public class ControlsConfig {
 
 	public static final AnalogInput LEFT_WHEELS = AnalogInput.XboxLYJoystick;
 	public static final AnalogInput RIGHT_WHEELS = AnalogInput.XboxRYJoystick;
-	public static final DigitalInput REVERSE_DIRECTION = DigitalInput.XboxRBumper;
-	public static final DigitalInput GEAR_SWITCH = DigitalInput.XboxLBumper;
+	public static final DigitalInput REVERSE_DIRECTION = DigitalInput.XboxRJoystick;
+	public static final DigitalInput GEAR_SWITCH = DigitalInput.XboxRBumper;
 
 
 	//Cargo
@@ -29,6 +29,7 @@ public class ControlsConfig {
 	public static final DigitalInput SLIDE_RIGHT = DigitalInput.Joystick5;
 	public static final DigitalInput RELEASE_HATCH = DigitalInput.Joystick2;
 	public static final DigitalInput GRAB_HATCH = DigitalInput.JoystickTrigger;
+	public static final AnalogInput JOYTICK_SLIDE = AnalogInput.JoystickX;
 
 
 	//Climber
