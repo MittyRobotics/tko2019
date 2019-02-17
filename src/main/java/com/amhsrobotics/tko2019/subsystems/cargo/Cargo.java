@@ -16,13 +16,14 @@ import com.amhsrobotics.tko2019.settings.subsystems.cargo.IntakeSpeeds;
 import com.amhsrobotics.tko2019.subsystems.Subsystem;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 public class Cargo implements Subsystem { ;
 	private final WPI_TalonSRX[] intakeTalons = new WPI_TalonSRX[TalonIds.INTAKE.length];
 	private final WPI_TalonSRX[] conveyorTalons = new WPI_TalonSRX[TalonIds.CONVEYOR.length];
 	private boolean manual = false;
-	private IntakeHeight height = IntakeHeight.Ground;
+	private IntakeHeight height = IntakeHeight.HumanPlayer;
 
 	public void init() {
 		entering("init");
@@ -30,6 +31,7 @@ public class Cargo implements Subsystem { ;
 		for (int talonIdIndex = 0; talonIdIndex < TalonIds.INTAKE.length; talonIdIndex++) {
 			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.INTAKE[talonIdIndex]);
 			talon.configFactoryDefault();
+			talon.setNeutralMode(NeutralMode.Coast);
 			talon.setInverted(TalonInversions.INTAKE[talonIdIndex]);
 			intakeTalons[talonIdIndex] = talon;
 			hardwareInit(talon);
@@ -37,6 +39,7 @@ public class Cargo implements Subsystem { ;
 		for (int talonIdIndex = 0; talonIdIndex < TalonIds.CONVEYOR.length; talonIdIndex++) {
 			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.CONVEYOR[talonIdIndex]);
 			talon.configFactoryDefault();
+			talon.setNeutralMode(NeutralMode.Coast);
 			talon.setInverted(TalonInversions.CONVEYOR[talonIdIndex]);
 			if (talonIdIndex == 0) {
 				talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
@@ -68,7 +71,7 @@ public class Cargo implements Subsystem { ;
 			if (manual) {
 				spinIntake(value, value);
 			} else {
-				if ((value < 0.05 && (height == IntakeHeight.Ground || height == IntakeHeight.HumanPlayer)) || (value > 0.05 && (height == IntakeHeight.RocketHeight || height == IntakeHeight.Cargo))) {
+				if ((value < 0.05 && (height == IntakeHeight.Ground || height == IntakeHeight.HumanPlayer)) || (value > 0.05 && (height == IntakeHeight.Rocket || height == IntakeHeight.Cargo))) {
 					intakeOuttakeMacro();
 				} else {
 					stopIntake();
@@ -79,11 +82,11 @@ public class Cargo implements Subsystem { ;
 			if (manual) {
 				conveyorTalons[0].set(ControlMode.Position, conveyorTalons[1].getSelectedSensorPosition() + 1);
 			} else {
-				if ((conveyorTalons[0].getSelectedSensorPosition() < IntakeHeights.ROCKET_HEIGHT * TicksPerInch.CARGO - 100)) {
+				if ((conveyorTalons[0].getSelectedSensorPosition() < IntakeHeight.Rocket.getHeight() * TicksPerInch.CARGO - 100)) {
 					rocketConveyor();
-					height = IntakeHeight.RocketHeight;
+					height = IntakeHeight.Rocket;
 					System.out.println("Rocket Height");
-				} else if (conveyorTalons[0].getSelectedSensorPosition() < IntakeHeights.CARGO_HEIGHT * TicksPerInch.CARGO - 100) {
+				} else if (conveyorTalons[0].getSelectedSensorPosition() < IntakeHeight.Cargo.getHeight() * TicksPerInch.CARGO - 100) {
 					cargoConveyor();
 					height = IntakeHeight.Cargo;
 					System.out.println("Cargo Height");
@@ -98,13 +101,13 @@ public class Cargo implements Subsystem { ;
 			if (manual) {
 				conveyorTalons[0].set(ControlMode.Position, conveyorTalons[1].getSelectedSensorPosition() - 1);
 			} else {
-				if ((conveyorTalons[0].getSelectedSensorPosition() > IntakeHeights.CARGO_HEIGHT * TicksPerInch.CARGO + 100)) {
+				if ((conveyorTalons[0].getSelectedSensorPosition() > IntakeHeight.Cargo.getHeight() * TicksPerInch.CARGO + 100)) {
 					cargoConveyor();
 					height = IntakeHeight.Cargo;
 					System.out.println("Cargo Height");
-				} else if (conveyorTalons[0].getSelectedSensorPosition() > IntakeHeights.ROCKET_HEIGHT * TicksPerInch.CARGO + 100) {
+				} else if (conveyorTalons[0].getSelectedSensorPosition() > IntakeHeight.Rocket.getHeight() * TicksPerInch.CARGO + 100) {
 					rocketConveyor();
-					height = IntakeHeight.RocketHeight;
+					height = IntakeHeight.Rocket;
 					System.out.println("Rocket Height");
 				} else {
 					groundConveyor();
@@ -122,7 +125,7 @@ public class Cargo implements Subsystem { ;
 	private void intakeOuttakeMacro() {
 		if (height == IntakeHeight.Ground) {
 			spinIntake(IntakeSpeeds.GROUND_SPEED, IntakeSpeeds.GROUND_SPEED);
-		} else if (height == IntakeHeight.RocketHeight) {
+		} else if (height == IntakeHeight.Rocket) {
 			spinOuttake(IntakeSpeeds.ROCKET_SPEED, IntakeSpeeds.ROCKET_SPEED);
 		} else if (height == IntakeHeight.Cargo) {
 			spinOuttake(-IntakeSpeeds.CARGO_SPEED, IntakeSpeeds.CARGO_SPEED);
@@ -172,23 +175,23 @@ public class Cargo implements Subsystem { ;
 	}
 
 	private void rocketConveyor() {
-		moveConveyor(IntakeHeights.ROCKET_HEIGHT);
+		moveConveyor(IntakeHeight.Rocket.getHeight());
 	}
 
 	private void cargoConveyor() {
-		moveConveyor(IntakeHeights.CARGO_HEIGHT);
+		moveConveyor(IntakeHeight.Cargo.getHeight());
 	}
 
 	private void stationConveyor() {
-		moveConveyor(IntakeHeights.STATION_HEIGHT);
+		moveConveyor(IntakeHeight.HumanPlayer.getHeight());
 	}
 
 	private void visionConveyor() {
-		moveConveyor(IntakeHeights.VISION_HEIGHT);
+		moveConveyor(IntakeHeight.Vision.getHeight());
 	}
 
 	private void groundConveyor() {
-		moveConveyor(IntakeHeights.GROUND_HEIGHT);
+		moveConveyor(IntakeHeight.Ground.getHeight());
 	}
 
 	private void resetEncoder() {
@@ -206,7 +209,7 @@ public class Cargo implements Subsystem { ;
 
 	private enum IntakeHeight {
 		Ground(IntakeHeights.GROUND_HEIGHT),
-		RocketHeight(IntakeHeights.ROCKET_HEIGHT),
+		Rocket(IntakeHeights.ROCKET_HEIGHT),
 		Cargo(IntakeHeights.CARGO_HEIGHT),
 		HumanPlayer(IntakeHeights.STATION_HEIGHT),
 		Vision(IntakeHeights.VISION_HEIGHT);
