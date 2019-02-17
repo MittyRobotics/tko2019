@@ -85,7 +85,7 @@ public class Controls implements LogCapable {
 		exiting("registerAnalogCommand");
 	}
 
-	public void unregisterDigialCommand(int id, DigitalInput digitalInput, DigitalType digitalType, final String commandName) {
+	public void unregisterDigitalCommand(int id, DigitalInput digitalInput, DigitalType digitalType, final String commandName) {
 		buttonControls.get(id).get(digitalInput).get(digitalType).remove(registeredDigitalControls.get(commandName));
 	}
 

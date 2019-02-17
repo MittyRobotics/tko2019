@@ -11,6 +11,7 @@ import com.amhsrobotics.tko2019.settings.subsystems.SolenoidIds;
 import com.amhsrobotics.tko2019.settings.subsystems.TalonIds;
 import com.amhsrobotics.tko2019.settings.subsystems.TalonInversions;
 import com.amhsrobotics.tko2019.settings.subsystems.TicksPerInch;
+import com.amhsrobotics.tko2019.settings.subsystems.hatchpanel.SliderPositions;
 import com.amhsrobotics.tko2019.subsystems.Subsystem;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -110,9 +111,7 @@ public class HatchPanel implements Subsystem {
 				openHatch();
 			}
 		});
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.CONFIG_ENCODER, DigitalType.DigitalPress, () -> {
-			resetEncoder();
-		});
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.CONFIG_ENCODER, DigitalType.DigitalPress, this::resetEncoder);
 
 		exiting("initControls");
 	}
@@ -152,19 +151,19 @@ public class HatchPanel implements Subsystem {
 
 	//work on position numbers
 	private void slideLeft() {
-		slide(0);
+		slide(SliderPositions.SLIDE_LEFT);
+	}
+
+	public void slideMiddle() {
+		slide(SliderPositions.SLIDE_MIDDLE);
+	}
+
+	private void slideRight() {
+		slide(SliderPositions.SLIDE_RIGHT);
 	}
 
 	private void manualSlide(double percent){
 		slideTalon.set(ControlMode.PercentOutput, percent);
-	}
-
-	private void slideMiddle() {
-		slide(8);
-	}
-
-	private void slideRight() {
-		slide(16);
 	}
 
 	//take in the hatch panel *has safety measures*
