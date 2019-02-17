@@ -159,7 +159,7 @@ public final class Drive implements Subsystem {
 
 		final PIDController pidController = new PIDController(PID.DRIVE[0], PID.DRIVE[1], PID.DRIVE[2], gyro, lTalons[0]);
 		pidController.setInputRange(0, 360);
-		pidController.setOutputRange(-1, 1);
+		pidController.setOutputRange(-0.35, 0.35);
 		pidController.setContinuous(true);
 
 		rTalons[0].set(ControlMode.Follower, lTalons[0].getDeviceID());
