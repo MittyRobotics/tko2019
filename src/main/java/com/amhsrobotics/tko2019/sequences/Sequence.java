@@ -20,34 +20,11 @@ public class Sequence {
     public boolean completedPath = false;
 
 
-    public Coordinate currCoord;
 
     NetworkTableEntry networkTableEntry;
 
     public void SequenceMain(String... args){
 
-        NetworkTables.getInstance().registerToTableChange(NetworkTableKey.Mode, event -> {
-            if(event instanceof NetworkTableNewEvent){
-                networkTableEntry = event.getEntry();
-
-            }
-        });
-        NetworkTables.getInstance().registerToTableChange(NetworkTableKey.Coordinte, event -> {
-            if (event instanceof NetworkTableUpdateEvent) {
-                ObjectInputStream in;
-                try {
-                    FileInputStream file = new FileInputStream(event.getValue().getString());
-                    in = new ObjectInputStream(file);
-                    currCoord = (Coordinate) in.readObject();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-
-
-            }
-        });
 
 
         state = State.IDLE;
