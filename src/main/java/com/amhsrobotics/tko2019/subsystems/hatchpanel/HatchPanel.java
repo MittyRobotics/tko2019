@@ -167,7 +167,7 @@ public class HatchPanel implements Subsystem {
 
 
 	//work on position numbers
-	private void slideLeft() {
+	public void slideLeft() {
 		slide(SliderPositions.SLIDE_LEFT);
 	}
 
@@ -175,7 +175,7 @@ public class HatchPanel implements Subsystem {
 		slide(SliderPositions.SLIDE_MIDDLE);
 	}
 
-	private void slideRight() {
+	public void slideRight() {
 		slide(SliderPositions.SLIDE_RIGHT);
 	}
 
@@ -184,7 +184,7 @@ public class HatchPanel implements Subsystem {
 	}
 
 	//take in the hatch panel *has safety measures*
-	private void intake() {
+	public void intake() {
 		if (!Switches.getInstance().hatchSwitch.get() && Switches.getInstance().wallSwitch.get()) {
 			openHatch();
 			if (!Switches.getInstance().hatchSwitch.get()) {
@@ -193,7 +193,7 @@ public class HatchPanel implements Subsystem {
 		}
 	}
 
-	private void outtake() {
+	public void outtake() {
 		if (Switches.getInstance().hatchSwitch.get() && Switches.getInstance().wallSwitch.get()) {
 			goHatchForward();
 			closeHatch();

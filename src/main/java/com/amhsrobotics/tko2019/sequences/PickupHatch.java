@@ -1,12 +1,10 @@
 package com.amhsrobotics.tko2019.sequences;
 
-import com.amhsrobotics.tko2019.cargo.Cargo;
-import com.amhsrobotics.tko2019.drive.Drive;
-import com.amhsrobotics.tko2019.drive.PathFollower;
-import com.amhsrobotics.tko2019.hatchpanel.HatchPanel;
+import com.amhsrobotics.tko2019.subsystems.drive.Drive;
+import com.amhsrobotics.tko2019.subsystems.drive.PathFollower;
 import com.amhsrobotics.tko2019.sequences.States.Check;
 import com.amhsrobotics.tko2019.sequences.States.State;
-import com.amhsrobotics.tko2019.serializeddata.Coordinate;
+import com.amhsrobotics.tko2019.subsystems.hatchpanel.HatchPanel;
 
 public class PickupHatch {
     static HatchPanel hatch = new HatchPanel();
@@ -29,7 +27,6 @@ public class PickupHatch {
     public static void FollowingTarget() {
         System.out.println(Sequence.state);
         while(sequence.completedPath == false){
-            pathFollower.FollowPath(sequence.currCoord);
         }
         sequence.completedPath = false;
         Sequence.Transition(State.FOLLOWING_TARGET, State.SCORING, new Check[]{Check.HAS_NO_HATCH, Check.RELATIVE_POS});
@@ -39,9 +36,9 @@ public class PickupHatch {
         System.out.println(Sequence.state);
         double moveDist = 0; //TODO
         hatch.slideMiddle();
-        drive.move(moveDist);
+        drive.moveStraight(moveDist);
         hatch.intake();
-        drive.move(-moveDist);
+        drive.moveStraight(-moveDist);
         Sequence.Transition(State.SCORING, State.EXIT_VISION,new Check[]{Check.HAS_HATCH});
     }
 

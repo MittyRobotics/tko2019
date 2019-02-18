@@ -1,11 +1,10 @@
-package com.amhsrobotics.tko2019.drive;
+package com.amhsrobotics.tko2019.subsystems.drive;
 
 import com.amhsrobotics.tko2019.sequences.Sequence;
-import com.amhsrobotics.tko2019.serializeddata.Coordinate;
 
 public class PathFollower {
     Sequence sequence = new Sequence();
-    public void FollowPath(Coordinate coordinate){
+    public void FollowPath(){
         //Generate path using Pathfinder library
         //Follow path
         //if done
