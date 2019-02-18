@@ -15,7 +15,7 @@ object PeerSync : Serializable {
 	@Volatile
 	private var isRunning = false
 
-	internal fun run() {
+	fun run() {
 		isRunning = true
 		thread {
 			while (isRunning) {
@@ -33,7 +33,7 @@ object PeerSync : Serializable {
 		isRunning = false
 	}
 
-	internal fun addPeer(peer: Socket) {
+	fun addPeer(peer: Socket) {
 		peers.add(peer)
 	}
 
