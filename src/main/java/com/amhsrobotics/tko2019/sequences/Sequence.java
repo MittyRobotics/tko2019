@@ -14,9 +14,12 @@ public class Sequence {
 
     public boolean completedPath = false;
 
+
+
     NetworkTableEntry networkTableEntry;
 
     public void SequenceMain(String... args){
+
 
 
         state = State.IDLE;
@@ -173,87 +176,87 @@ public class Sequence {
     public static void Transition(State prev, State newState, Check[] checks){
         System.out.println("Transition From: " + prev.toString() + " To: " + newState.toString());
         if(state == prev){
-             switch(currSequence){
-                 case PICKUP_CARGO:
-                     PickupCargo.lastState = prev;
-                     break;
-                 case PICKUP_HATCH:
-                     PickupHatch.lastState = prev;
-                     break;
-                 case SCORE_CARGO_CS:
-                     ScoreCargoCS.lastState = prev;
-                     break;
-                 case SCORE_CARGO_RS:
-                     ScoreCargoRS.lastState = prev;
-                     break;
-                 case SCORE_HATCH_CS:
-                     ScoreHatchCS.lastState = prev;
-                     break;
-                 case SCORE_HATCH_LEFT:
-                     ScoreHatchLeft.lastState = prev;
-                     break;
-                 case SCORE_HATCH_RIGHT:
-                     ScoreHatchRight.lastState = prev;
-                     break;
-                }
-
+            switch(currSequence){
+                case PICKUP_CARGO:
+                    PickupCargo.lastState = prev;
+                    break;
+                case PICKUP_HATCH:
+                    PickupHatch.lastState = prev;
+                    break;
+                case SCORE_CARGO_CS:
+                    ScoreCargoCS.lastState = prev;
+                    break;
+                case SCORE_CARGO_RS:
+                    ScoreCargoRS.lastState = prev;
+                    break;
+                case SCORE_HATCH_CS:
+                    ScoreHatchCS.lastState = prev;
+                    break;
+                case SCORE_HATCH_LEFT:
+                    ScoreHatchLeft.lastState = prev;
+                    break;
+                case SCORE_HATCH_RIGHT:
+                    ScoreHatchRight.lastState = prev;
+                    break;
             }
 
-            boolean continueSequence = true;
-            for(int i = 0; i < checks.length; i++){
-                switch (checks[i]){
-                    case HAS_CARGO:
-                        if(false){
-                            continueSequence = false;
-                        }
-                        break;
-                    case HAS_HATCH:
-                        if(false){
-                            continueSequence = false;
-                        }
-                        break;
-                    case HAS_TARGET:
-                        if(false){
-                            continueSequence = false;
-                        }
-                        break;
-                    case RELATIVE_POS:
-                        if(false){
-                            continueSequence = false;
-                        }
-                }
-            }
-            if(continueSequence == true){
-                state = newState;
-                System.out.println("Success!");
-            }
-            else{
-                switch(currSequence){
-                    case PICKUP_CARGO:
-                        PickupCargo.ExitVision();
-                        break;
-                    case PICKUP_HATCH:
-                        PickupHatch.ExitVision();
-                        break;
-                    case SCORE_CARGO_CS:
-                        ScoreCargoCS.ExitVision();
-                        break;
-                    case SCORE_CARGO_RS:
-                        ScoreCargoRS.ExitVision();
-                        break;
-                    case SCORE_HATCH_CS:
-                        ScoreHatchCS.ExitVision();
-                        break;
-                    case SCORE_HATCH_LEFT:
-                        ScoreHatchLeft.ExitVision();
-                        break;
-                    case SCORE_HATCH_RIGHT:
-                        ScoreHatchRight.ExitVision();
-                        break;
-                }
-                System.out.println("Failed");
+        }
+
+        boolean continueSequence = true;
+        for(int i = 0; i < checks.length; i++){
+            switch (checks[i]){
+                case HAS_CARGO:
+                    if(false){
+                        continueSequence = false;
+                    }
+                    break;
+                case HAS_HATCH:
+                    if(false){
+                        continueSequence = false;
+                    }
+                    break;
+                case HAS_TARGET:
+                    if(false){
+                        continueSequence = false;
+                    }
+                    break;
+                case RELATIVE_POS:
+                    if(false){
+                        continueSequence = false;
+                    }
             }
         }
+        if(continueSequence == true){
+            state = newState;
+            System.out.println("Success!");
+        }
+        else{
+            switch(currSequence){
+                case PICKUP_CARGO:
+                    PickupCargo.ExitVision();
+                    break;
+                case PICKUP_HATCH:
+                    PickupHatch.ExitVision();
+                    break;
+                case SCORE_CARGO_CS:
+                    ScoreCargoCS.ExitVision();
+                    break;
+                case SCORE_CARGO_RS:
+                    ScoreCargoRS.ExitVision();
+                    break;
+                case SCORE_HATCH_CS:
+                    ScoreHatchCS.ExitVision();
+                    break;
+                case SCORE_HATCH_LEFT:
+                    ScoreHatchLeft.ExitVision();
+                    break;
+                case SCORE_HATCH_RIGHT:
+                    ScoreHatchRight.ExitVision();
+                    break;
+            }
+            System.out.println("Failed");
+        }
+    }
 
     public void pickupCargo(){
         currSequence = VisionMode.PICKUP_CARGO;
