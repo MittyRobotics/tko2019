@@ -122,7 +122,7 @@ public class Cargo implements Subsystem { ;
 		exiting("initControls");
 	}
 
-	private void intakeOuttakeMacro() {
+	public void intakeOuttakeMacro() {
 		if (height == IntakeHeight.Ground) {
 			spinIntake(IntakeSpeeds.GROUND_SPEED, IntakeSpeeds.GROUND_SPEED);
 		} else if (height == IntakeHeight.Rocket) {
@@ -152,7 +152,7 @@ public class Cargo implements Subsystem { ;
 		intakeTalons[1].set(ControlMode.PercentOutput, bottomSpeed);
 	}
 
-	private void stopIntake() {
+	public void stopIntake() {
 		intakeTalons[0].set(ControlMode.PercentOutput, 0);
 		intakeTalons[1].set(ControlMode.PercentOutput, 0);
 	}
@@ -174,15 +174,15 @@ public class Cargo implements Subsystem { ;
 		conveyorTalons[0].set(ControlMode.PercentOutput, 0);
 	}
 
-	private void rocketConveyor() {
+	public void rocketConveyor() {
 		moveConveyor(IntakeHeight.Rocket.getHeight());
 	}
 
-	private void cargoConveyor() {
+	public void cargoConveyor() {
 		moveConveyor(IntakeHeight.Cargo.getHeight());
 	}
 
-	private void stationConveyor() {
+	public void stationConveyor() {
 		moveConveyor(IntakeHeight.HumanPlayer.getHeight());
 	}
 
