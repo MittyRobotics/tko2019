@@ -59,7 +59,9 @@ public class HatchPanel implements Subsystem {
 		});
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SLIDE_LEFT, DigitalType.DigitalRelease, () -> {
 			if(!manual){
-				if ((!Switches.getInstance().wallSwitch.get() && !Switches.getInstance().hatchSwitch.get()) && (processDone)) {
+				if ((
+//						!Switches.getInstance().wallSwitch.get() &&
+								!Switches.getInstance().hatchSwitch.get()) && (processDone)) {
 					slideMiddle();
 					processDone = false;
 				}
@@ -67,7 +69,9 @@ public class HatchPanel implements Subsystem {
 		});
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SLIDE_RIGHT, DigitalType.DigitalRelease, () -> {
 			if(!manual){
-				if ((!Switches.getInstance().wallSwitch.get() && !Switches.getInstance().hatchSwitch.get()) && (processDone)) {
+				if ((
+//						!Switches.getInstance().wallSwitch.get() &&
+								!Switches.getInstance().hatchSwitch.get()) && (processDone)) {
 					slideMiddle();
 					processDone = false;
 				}
@@ -99,7 +103,9 @@ public class HatchPanel implements Subsystem {
 
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.RELEASE_HATCH, DigitalType.DigitalPress, () -> {
 			if (!manual) {
-				if (!Switches.getInstance().hatchSwitch.get() && Switches.getInstance().wallSwitch.get()) {
+				if (!Switches.getInstance().hatchSwitch.get()
+//						&& Switches.getInstance().wallSwitch.get()
+				) {
 					processDone = true;
 					outtake();
 				}
@@ -110,7 +116,9 @@ public class HatchPanel implements Subsystem {
 		});
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.GRAB_HATCH, DigitalType.DigitalPress, () -> {
 			if (!manual) {
-				if (!Switches.getInstance().hatchSwitch.get() && Switches.getInstance().wallSwitch.get()) {
+				if (!Switches.getInstance().hatchSwitch.get()
+//						&& Switches.getInstance().wallSwitch.get()
+				) {
 					intake();
 				}
 			}
