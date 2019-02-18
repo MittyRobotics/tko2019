@@ -5,7 +5,7 @@ import com.amhsrobotics.tko2019.controls.DigitalInput;
 
 public class ControlsConfig {
 	public static final DigitalInput SWITCH_MODE = DigitalInput.Joystick11;
-	public static final DigitalInput CONFIG_ENCODER = DigitalInput.Joystick6;
+	public static final DigitalInput CONFIG_ENCODER = DigitalInput.Joystick10;
 
 
 	// Drive

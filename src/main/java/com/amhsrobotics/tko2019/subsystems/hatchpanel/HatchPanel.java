@@ -60,15 +60,19 @@ public class HatchPanel implements Subsystem {
 			}
 		});
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SLIDE_LEFT, DigitalType.DigitalRelease, () -> {
-			if ((!Switches.getInstance().wallSwitch.get() && !Switches.getInstance().hatchSwitch.get()) && (processDone)) {
-				slideMiddle();
-				processDone = false;
+			if(!manual){
+				if ((!Switches.getInstance().wallSwitch.get() && !Switches.getInstance().hatchSwitch.get()) && (processDone)) {
+					slideMiddle();
+					processDone = false;
+				}
 			}
 		});
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SLIDE_RIGHT, DigitalType.DigitalRelease, () -> {
-			if ((!Switches.getInstance().wallSwitch.get() && !Switches.getInstance().hatchSwitch.get()) && (processDone)) {
-				slideMiddle();
-				processDone = false;
+			if(!manual){
+				if ((!Switches.getInstance().wallSwitch.get() && !Switches.getInstance().hatchSwitch.get()) && (processDone)) {
+					slideMiddle();
+					processDone = false;
+				}
 			}
 		});
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SLIDE_LEFT, DigitalType.DigitalPress, () -> {
@@ -84,6 +88,11 @@ public class HatchPanel implements Subsystem {
 				manualSlide(value * 0.5);
 			}
 		});
+		Controls.getInstance().registerAnalogCommand(ControllerID.Joystick1.getId(), ControlsConfig.JOYTICK_SLIDE, AnalogType.InThresholdMinor, value -> {
+			if(manual){
+				manualSlide(0);
+			}
+		});
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SLIDE_RIGHT, DigitalType.DigitalPress, () -> {
 			if (!manual) {
 				slideRight();
@@ -91,7 +100,7 @@ public class HatchPanel implements Subsystem {
 		});
 
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.RELEASE_HATCH, DigitalType.DigitalPress, () -> {
-			if (manual) {
+			if (!manual) {
 				if (!Switches.getInstance().hatchSwitch.get() && Switches.getInstance().wallSwitch.get()) {
 					processDone = true;
 					outtake();
