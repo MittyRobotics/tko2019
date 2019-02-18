@@ -77,6 +77,8 @@ public class Sequence {
                         case EXIT_VISION:
                             PickupCargo.ExitVision();
                             break;
+                        case VISION_REQUEST:
+                            PickupCargo.VisionRequest();
                     }
                     break;
                 case PICKUP_HATCH:
@@ -93,6 +95,8 @@ public class Sequence {
                         case EXIT_VISION:
                             PickupHatch.ExitVision();
                             break;
+                        case VISION_REQUEST:
+                            PickupHatch.VisionRequest();
                     }
                     break;
                 case SCORE_CARGO_CS:
@@ -109,6 +113,8 @@ public class Sequence {
                         case EXIT_VISION:
                             ScoreCargoCS.ExitVision();
                             break;
+                        case VISION_REQUEST:
+                            ScoreCargoCS.VisionRequest();
                     }
                     break;
                 case SCORE_CARGO_RS:
@@ -125,6 +131,8 @@ public class Sequence {
                         case EXIT_VISION:
                             ScoreCargoRS.ExitVision();
                             break;
+                        case VISION_REQUEST:
+                            ScoreCargoRS.VisionRequest();
                     }
                     break;
                 case SCORE_HATCH_CS:
@@ -141,6 +149,8 @@ public class Sequence {
                         case EXIT_VISION:
                             ScoreHatchCS.ExitVision();
                             break;
+                        case VISION_REQUEST:
+                            ScoreHatchCS.VisionRequest();
                     }
                     break;
                 case SCORE_HATCH_LEFT:
@@ -157,6 +167,8 @@ public class Sequence {
                         case EXIT_VISION:
                             ScoreHatchLeft.ExitVision();
                             break;
+                        case VISION_REQUEST:
+                            ScoreHatchLeft.VisionRequest();
                     }
                     break;
                 case SCORE_HATCH_RIGHT:
@@ -173,6 +185,8 @@ public class Sequence {
                         case EXIT_VISION:
                             ScoreHatchRight.ExitVision();
                             break;
+                        case VISION_REQUEST:
+                            ScoreHatchRight.VisionRequest();
                     }
                     break;
             }

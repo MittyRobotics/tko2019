@@ -20,13 +20,19 @@ public class ScoreCargoCS {
 
     }
 
+    public static void VisionRequest(){
+        //RECIEVE VISION STUFF
+
+        Sequence.Transition(State.VISION_REQUEST, State.FOLLOWING_TARGET, new Check[]{Check.HAS_CARGO});
+    }
+
     public static void FollowingTarget() {
         System.out.println(Sequence.state);
         while(sequence.completedPath == false){
             pathFollower.FollowPath(sequence.currCoord);
         }
         sequence.completedPath = false;
-        Sequence.Transition(State.FOLLOWING_TARGET, State.SCORING, new Check[]{Check.HAS_HATCH, Check.RELATIVE_POS});
+        Sequence.Transition(State.FOLLOWING_TARGET, State.SCORING, new Check[]{Check.HAS_CARGO, Check.RELATIVE_POS});
     }
 
     public static  void Scoring(){
@@ -37,7 +43,7 @@ public class ScoreCargoCS {
         cargo.intakeOuttakeMacro();
         drive.move(-moveDist);
         cargo.stopIntake();
-        Sequence.Transition(State.SCORING, State.EXIT_VISION,new Check[]{Check.HAS_NO_HATCH});
+        Sequence.Transition(State.SCORING, State.EXIT_VISION,new Check[]{Check.HAS_NO_CARGO});
     }
 
 

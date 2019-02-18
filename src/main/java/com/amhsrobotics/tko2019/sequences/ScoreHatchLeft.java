@@ -21,6 +21,12 @@ public class ScoreHatchLeft {
 
     }
 
+    public static void VisionRequest(){
+        //RECIEVE VISION STUFF
+
+        Sequence.Transition(State.VISION_REQUEST, State.FOLLOWING_TARGET, new Check[]{Check.HAS_HATCH});
+    }
+
     public static void FollowingTarget() {
         System.out.println(Sequence.state);
         while(sequence.completedPath == false){
