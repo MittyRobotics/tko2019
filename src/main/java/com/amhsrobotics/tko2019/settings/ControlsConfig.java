@@ -1,6 +1,7 @@
 package com.amhsrobotics.tko2019.settings;
 
 import com.amhsrobotics.tko2019.controls.AnalogInput;
+import com.amhsrobotics.tko2019.controls.AnalogType;
 import com.amhsrobotics.tko2019.controls.DigitalInput;
 
 public class ControlsConfig {
@@ -30,6 +31,7 @@ public class ControlsConfig {
 	public static final DigitalInput RELEASE_HATCH = DigitalInput.Joystick2;
 	public static final DigitalInput GRAB_HATCH = DigitalInput.JoystickTrigger;
 	public static final AnalogInput JOYTICK_SLIDE = AnalogInput.JoystickX;
+	public static final AnalogInput PUSH_HATCH_MECHANISM = AnalogInput.JoystickY;
 
 
 	//Climber
