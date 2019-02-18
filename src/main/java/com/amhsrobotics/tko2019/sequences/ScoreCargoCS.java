@@ -21,7 +21,9 @@ public class ScoreCargoCS {
     }
 
     public static void VisionRequest(){
-        //RECIEVE VISION STUFF
+        //////////////////////
+        //Recieve Coordinate//
+        //////////////////////
 
         Sequence.Transition(State.VISION_REQUEST, State.FOLLOWING_TARGET, new Check[]{Check.HAS_CARGO});
     }
