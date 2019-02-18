@@ -1,13 +1,8 @@
 package com.amhsrobotics.tko2019.sequences;
 
-import com.amhsrobotics.tko2019.networktables.NetworkTableKey;
-import com.amhsrobotics.tko2019.networktables.NetworkTables;
-import com.amhsrobotics.tko2019.networktables.events.NetworkTableNewEvent;
-import com.amhsrobotics.tko2019.networktables.events.NetworkTableUpdateEvent;
 import com.amhsrobotics.tko2019.sequences.States.Check;
 import com.amhsrobotics.tko2019.sequences.States.VisionMode;
 import com.amhsrobotics.tko2019.sequences.States.State;
-import com.amhsrobotics.tko2019.serializeddata.Coordinate;
 import edu.wpi.first.networktables.NetworkTableEntry;
 
 import java.io.*;
