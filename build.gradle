@@ -2,7 +2,6 @@ import edu.wpi.first.gradlerio.GradleRIOPlugin
 
 plugins {
     id 'java'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.21'
     id "edu.wpi.first.GradleRIO" version "2019.2.1"
 }
 
@@ -26,8 +25,6 @@ dependencies {
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
     //noinspection GroovyAssignabilityCheck
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
-
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
 }
 
 deploy {
@@ -62,15 +59,4 @@ jar {
     }
     //noinspection GroovyAssignabilityCheck
     manifest GradleRIOPlugin.javaManifest(ROBOT_MAIN_CLASS)
-}
-
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-}
-compileTestKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
 }
