@@ -9,8 +9,8 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 
 public class Drive {
-	private final int[] leftTalonIds = {0, 1};
-	private final int[] rightTalonIds = {2,3};
+	private final int[] leftTalonIds = {20, 21};
+	private final int[] rightTalonIds = {22,23};
 	private final int[] gearShiftingIds = {0, 1};
 
 	private final double[] ticksPerInch = {0.0, 119.47};
@@ -30,28 +30,29 @@ public class Drive {
 		for (int talonId = 0; talonId < leftTalonIds.length; talonId++) {
 			leftDriveTalons[talonId] = new WPI_TalonSRX(leftTalonIds[talonId]);
 			rightDriveTalons[talonId] = new WPI_TalonSRX(rightTalonIds[talonId]);
+			leftDriveTalons[talonId].setInverted(true);
+//			leftDriveTalons[talonId].configClosedloopRamp(0);
+//			rightDriveTalons[talonId].configClosedloopRamp(0);
+			leftDriveTalons[talonId].configFactoryDefault();
+			rightDriveTalons[talonId].configFactoryDefault();
 
 //			talon.config_kP(0, p);
 //			talon.config_kI(0, i);
 //			talon.config_kD(0, d);
 //
-//			if (talonId == 0) {
-//				talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-//			} else {
-//				talon.set(ControlMode.Follower, leftTalonIds[0]);
-//			}
 		}
-		leftDriveTalons[0].setInverted(true);
-		leftDriveTalons[1].setInverted(true);
 
-//		gearShift = new DoubleSolenoid(gearShiftingIds[0], gearShiftingIds[1]);
+		gearShift = new DoubleSolenoid(gearShiftingIds[0], gearShiftingIds[1]);
+		leftDriveTalons[1].set(ControlMode.Follower, leftDriveTalons[0].getDeviceID());
+		rightDriveTalons[1].set(ControlMode.Follower, rightDriveTalons[0].getDeviceID());
 	}
 
 	@Deprecated
 	public void run() {
 
             Controls.getInstance().registerAnalogCommand(0, AnalogInput.XboxLYJoystick, AnalogType.OutOfThresholdMinor, value -> {
-            	if(shouldReverse){
+            	System.out.println("Left");
+            	if(!shouldReverse){
 					moveLeft(value);
 				}
             	else {
@@ -59,17 +60,37 @@ public class Drive {
 				}
             });
             Controls.getInstance().registerAnalogCommand(0, AnalogInput.XboxRYJoystick, AnalogType.OutOfThresholdMinor, value -> {
-                if(shouldReverse){
+            	System.out.println("Right");
+                if(!shouldReverse){
 					moveRight(value);
 				}
                 else {
                 	moveLeft(-value);
 				}
             });
-//        Controls.getInstance().registerDigitalCommand(0, DigitalInput.XboxLBumper, DigitalType.DigitalPress, ()->{
-//            shiftGear(1);
-//        });
-		Controls.getInstance().registerDigitalCommand(0, DigitalInput.XboxLJoystick, DigitalType.DigitalPress, () ->{
+		Controls.getInstance().registerAnalogCommand(0, AnalogInput.XboxLYJoystick, AnalogType.InThresholdMinor, value -> {
+			if(!shouldReverse){
+				moveLeft(0);
+			}
+			else {
+				moveRight(0);
+			}
+		});
+            Controls.getInstance().registerAnalogCommand(0, AnalogInput.XboxRYJoystick, AnalogType.InThresholdMinor, value -> {
+            	if(!shouldReverse){
+            		moveRight(0);
+				}
+            	else {
+            		moveLeft(0);
+				}
+			});
+        Controls.getInstance().registerDigitalCommand(0, DigitalInput.XboxLBumper, DigitalType.DigitalPress, ()->{
+            shiftGear(1);
+        });
+        Controls.getInstance().registerDigitalCommand(0, DigitalInput.XboxRBumper, DigitalType.DigitalPress, ()->{
+        	shiftGear(0);
+		});
+		Controls.getInstance().registerDigitalCommand(0, DigitalInput.XboxRJoystick, DigitalType.DigitalPress, () ->{
 			System.out.println("Here");
 			toggleReverser(!shouldReverse);
 		});

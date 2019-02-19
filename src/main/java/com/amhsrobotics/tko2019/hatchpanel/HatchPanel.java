@@ -26,8 +26,8 @@ public class HatchPanel {
     public final double ticksPerInch = (2500); //TODO 1607.68
     private boolean processDone = false;
 
-    private final int[] solSideId = {2, 3}; //TODO
-    private final int[] solForwardId = {0, 1}; //TODO
+    private final int[] solSideId = {4, 5}; //TODO
+    private final int[] solForwardId = {2, 3}; //TODO
     private DoubleSolenoid solSide;
     private DoubleSolenoid solForward;
 
@@ -38,7 +38,7 @@ public class HatchPanel {
     public DigitalInput[] sliderSwitches = new DigitalInput[2];
     private DigitalInput wallSwitch;
 
-    public final int slideTalonId = 2;
+    public final int slideTalonId = 13;
     public WPI_TalonSRX slideTalon;
 
     public void init(){
@@ -54,7 +54,7 @@ public class HatchPanel {
 //        }
 
         slideTalon = new WPI_TalonSRX(slideTalonId);
-        slideTalon.configClosedloopRamp(0.0);
+        slideTalon.configFactoryDefault();
 //        slideTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 1000);
 
 //        slideTalon.config_kP(0, p, 0);

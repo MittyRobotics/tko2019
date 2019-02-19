@@ -6,8 +6,8 @@ import com.amhsrobotics.tko2019.controls.DigitalType;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class Climber {
-	private final int[] climberId = {0, 1}; //TODO
-	private DoubleSolenoid climber;
+	private final int[] climberId = {6, 7}; //TODO
+	public DoubleSolenoid climber;
 
 	public void init(){
 		climber = new DoubleSolenoid(climberId[0], climberId[1]);

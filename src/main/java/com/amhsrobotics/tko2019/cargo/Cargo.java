@@ -37,15 +37,15 @@ public class Cargo {
     private boolean manual = false;
     private int level = 1; //1 = ground, 2 = rocket, 3 = cargo, 4 = human player height
 
-    private final int intakeSensorId = 0; //TODO
+    public final int intakeSensorId = 0; //TODO
     private final int[] conveyorLimitIds = {1, 2}; //TODO
-    private DigitalInput intakeSensor;
+    public DigitalInput intakeSensor;
     private DigitalInput[] conveyorLimits = new DigitalInput[conveyorLimitIds.length];
 
-    private final int[] intakeTalonsIds = {26, 27};
-    private final int[] conveyorTalonIds = {24, 25};
+    private final int[] intakeTalonsIds = {30, 31};
+    private final int[] conveyorTalonIds = {32, 33};
     private WPI_TalonSRX[] intakeTalons = new WPI_TalonSRX[intakeTalonsIds.length];
-    private WPI_TalonSRX[] conveyorTalons = new WPI_TalonSRX[conveyorTalonIds.length];
+    public WPI_TalonSRX[] conveyorTalons = new WPI_TalonSRX[conveyorTalonIds.length];
 
     public void init() {
         for (int i = 0; i < intakeTalonsIds.length; i++) {
@@ -56,17 +56,17 @@ public class Cargo {
         }
 
         intakeSensor = new DigitalInput(intakeSensorId);
-        for (int i = 0; i < conveyorLimits.length; i++) {
-            conveyorLimits[i] = new DigitalInput(conveyorLimitIds[i]);
-        }
+//        for (int i = 0; i < conveyorLimits.length; i++) {
+//            conveyorLimits[i] = new DigitalInput(conveyorLimitIds[i]);
+//        }
 
         conveyorTalons[0].configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
 
         conveyorTalons[1].set(ControlMode.Follower, conveyorTalons[0].getDeviceID());
-
-        conveyorTalons[0].config_kP(0, p, 0);
-        conveyorTalons[0].config_kP(0, i, 0);
-        conveyorTalons[0].config_kP(0, d, 0);
+        conveyorTalons[1].setInverted(true);
+//        conveyorTalons[0].config_kP(0, p, 0);
+//        conveyorTalons[0].config_kP(0, i, 0);
+//        conveyorTalons[0].config_kP(0, d, 0);
     }
 
     public void run() {
@@ -188,7 +188,7 @@ public class Cargo {
         intakeTalons[1].set(ControlMode.PercentOutput, bottomSpeed);
     }
 
-    private void spinOuttake ( double topSpeed, double bottomSpeed){
+    public void spinOuttake(double topSpeed, double bottomSpeed){
         intakeTalons[0].set(ControlMode.PercentOutput, topSpeed);
         intakeTalons[1].set(ControlMode.PercentOutput, bottomSpeed);
     }

@@ -1,11 +1,15 @@
 package com.amhsrobotics.tko2019;
 
+import com.amhsrobotics.tko2019.cargo.Cargo;
+import com.amhsrobotics.tko2019.climber.Climber;
 import com.amhsrobotics.tko2019.controls.AnalogInput;
 import com.amhsrobotics.tko2019.controls.AnalogType;
 import com.amhsrobotics.tko2019.controls.Controls;
 import com.amhsrobotics.tko2019.controls.DigitalInput;
 import com.amhsrobotics.tko2019.controls.DigitalType;
+import com.amhsrobotics.tko2019.drive.Drive;
 import com.amhsrobotics.tko2019.hatchpanel.HatchPanel;
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import edu.wpi.first.wpilibj.*;
 
 @SuppressWarnings("deprecation")
@@ -17,13 +21,44 @@ public final class Robot extends SampleRobot {
 		RobotBase.startRobot(Robot::new);
 	}
 
-	HatchPanel hp = new HatchPanel();
+	Drive drive = new Drive();
+	Cargo cargo = new Cargo();
+	HatchPanel hatchPanel = new HatchPanel();
+	Climber climber = new Climber();
 
 
 	@Override
 	protected final void robotInit() {
-		hp.init();
-		hp.run();
+		climber.init();
+		drive.init();
+		cargo.init();
+		hatchPanel.init();
+		drive.run();
+//		Controls.getInstance().registerDigitalCommand(0, DigitalInput.XboxB, DigitalType.DigitalPress, ()->{
+//			climber.climber.set(DoubleSolenoid.Value.kForward);
+//		});
+//		Controls.getInstance().registerDigitalCommand(0, DigitalInput.XboxA, DigitalType.DigitalPress, ()->{
+//			climber.climber.set(DoubleSolenoid.Value.kReverse);
+//		});
+		Controls.getInstance().registerAnalogCommand(1, AnalogInput.JoystickX, AnalogType.OutOfThresholdMinor, value -> {
+			hatchPanel.slideTalon.set(ControlMode.PercentOutput, value);
+		});
+		Controls.getInstance().registerAnalogCommand(1, AnalogInput.JoystickX, AnalogType.InThresholdMinor, value -> {
+			hatchPanel.slideTalon.set(ControlMode.PercentOutput, 0);
+		});
+		Controls.getInstance().registerDigitalCommand(1, DigitalInput.Joystick3, DigitalType.DigitalPress, ()->{
+			hatchPanel.openHatch();
+		});
+		Controls.getInstance().registerDigitalCommand(1, DigitalInput.Joystick2, DigitalType.DigitalPress, ()->{
+			hatchPanel.closeHatch();
+		});
+		Controls.getInstance().registerDigitalCommand(1, DigitalInput.Joystick4, DigitalType.DigitalPress, ()->{
+			hatchPanel.goHatchBackward();
+		});
+		Controls.getInstance().registerDigitalCommand(1, DigitalInput.Joystick5, DigitalType.DigitalPress, ()->{
+			hatchPanel.goHatchForward();
+		});
+//		hatchPanel.run();
 //		Controls.getInstance().registerAnalogCommand(1, AnalogInput.JoystickY, AnalogType.OutOfThresholdMinor, value -> {
 //			if(Math.abs(value) > 0.1){
 ////				hp.slideTalon.config_kP(0, 0.4, 0);
@@ -44,25 +79,51 @@ public final class Robot extends SampleRobot {
 //		Controls.getInstance().registerDigitalCommand(1, DigitalInput.Joystick2, DigitalType.DigitalPress, ()->{
 //			hp.slideTalon.setSelectedSensorPosition(0);
 //		});
+//		Controls.getInstance().registerAnalogCommand(1, AnalogInput.JoystickY, AnalogType.OutOfThresholdMinor, value ->{
+//			if(!cargo.intakeSensor.get() && value > 0){
+//				cargo.spinOuttake(0, 0);
+//			}
+//			else {
+//				cargo.spinOuttake(value, -value);
+//			}
+//		});
+//		Controls.getInstance().registerAnalogCommand(1, AnalogInput.JoystickY, AnalogType.InThresholdMinor, value -> {
+//			cargo.spinOuttake(0, 0);
+//		});
+//		Controls.getInstance().registerAnalogCommand(2, AnalogInput.JoystickY, AnalogType.OutOfThresholdMinor, value -> {
+//			cargo.conveyorTalons[0].set(ControlMode.PercentOutput, value * 0.25);
+//		});
+//		Controls.getInstance().registerAnalogCommand(2, AnalogInput.JoystickY, AnalogType.InThresholdMinor, value -> {
+//			cargo.conveyorTalons[0].set(ControlMode.PercentOutput, 0);
+//		});
 	}
 
 	@Override
 	public final void operatorControl() {
 		Controls.getInstance().enable();
-//		disabled();
-		System.out.println("hp.run");
+		compressor.start();
+		compressor.setClosedLoopControl(true);
 		while (isEnabled()){
-			if(hp.slideTalon.getSensorCollection().isRevLimitSwitchClosed()){
-//				//System.out.println("Here");
-				hp.slideTalon.setSelectedSensorPosition(0);
+			if(hatchPanel.slideTalon.getSensorCollection().isFwdLimitSwitchClosed()){
+				System.out.println("FWD");
 			}
+			if(hatchPanel.slideTalon.getSensorCollection().isRevLimitSwitchClosed()){
+				System.out.println("REV");
+			}
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+//		disabled();
+//		System.out.println("hp.run");
 //			System.out.println(hp.slideTalon.getClosedLoopTarget() + " " + hp.slideTalon.getSelectedSensorPosition());
 //			try {
 //				Thread.sleep(20);
 //			} catch (InterruptedException e) {
 //				e.printStackTrace();
-//			}
-		}
+//
 	}
 
 	@Override
@@ -117,11 +178,11 @@ public final class Robot extends SampleRobot {
 
 	@Override
 	protected final void disabled() {
-//		compressor.stop();
+		Controls.getInstance().disable();
+		compressor.stop();
 	}
 
 	private void enabled() {
-		compressor.start();
-		compressor.setClosedLoopControl(true);
+
 	}
 }
