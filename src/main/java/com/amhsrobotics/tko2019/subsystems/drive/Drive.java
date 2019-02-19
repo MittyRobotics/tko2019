@@ -129,7 +129,7 @@ public final class Drive implements Subsystem {
 		exiting("initControls");
 	}
 
-	public void moveStraight(final double inches) {
+	public void moveStraight(final double inches, final double breakInches) {
 		entering("moveStraight");
 
 
@@ -137,11 +137,9 @@ public final class Drive implements Subsystem {
 		final double threshold = TicksPerInch.DRIVE[gear] * 0.25;
 
 		lTalons[0].set(ControlMode.Position, lTalons[0].getSelectedSensorPosition() + setpoint);
-		rTalons[0].set(ControlMode.Position, rTalons[0].getSelectedSensorPosition() + setpoint);
-		while ((Math.abs(lTalons[0].getClosedLoopError()) > threshold) || (Math.abs(rTalons[0].getClosedLoopError()) > threshold)) {
-			Logger.getLogger("drive").finer("(Left) T1:\t" + lTalons[0].getSelectedSensorPosition());
-			Logger.getLogger("drive").finer("(Right) T1:\t" + rTalons[0].getSelectedSensorPosition());
-
+		rTalons[0].set(ControlMode.Follower, lTalons[0].getDeviceID());
+		while (Math.abs(lTalons[0].getClosedLoopError()) > breakInches + threshold) {
+			Logger.getLogger("drive").finer("Error:\t" + lTalons[0].getClosedLoopError());
 			try {
 				Thread.sleep(20);
 			} catch (final InterruptedException e) {
@@ -160,7 +158,7 @@ public final class Drive implements Subsystem {
 		entering("turn");
 
 
-		final PIDController pidController = new PIDController(PID.DRIVE[0], PID.DRIVE[1], PID.DRIVE[2], gyro, lTalons[0]);
+		final PIDController pidController = new PIDController(PID.TURN[0], PID.TURN[1], PID.TURN[2], gyro, lTalons[0]);
 		pidController.setInputRange(0, 360);
 		pidController.setOutputRange(-0.35, 0.35);
 		pidController.setContinuous(true);
