@@ -10,7 +10,9 @@ import com.amhsrobotics.tko2019.controls.DigitalType;
 import com.amhsrobotics.tko2019.drive.Drive;
 import com.amhsrobotics.tko2019.hatchpanel.HatchPanel;
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.SampleRobot;
 
 @SuppressWarnings("deprecation")
 public final class Robot extends SampleRobot {
@@ -33,15 +35,18 @@ public final class Robot extends SampleRobot {
 		drive.init();
 		cargo.init();
 		hatchPanel.init();
+		//drive
 		drive.run();
-//		Controls.getInstance().registerDigitalCommand(0, DigitalInput.XboxB, DigitalType.DigitalPress, ()->{
-//			climber.climber.set(DoubleSolenoid.Value.kForward);
-//		});
-//		Controls.getInstance().registerDigitalCommand(0, DigitalInput.XboxA, DigitalType.DigitalPress, ()->{
-//			climber.climber.set(DoubleSolenoid.Value.kReverse);
-//		});
+		//Climber
+		climber.run();
+		//Hatch Panel
 		Controls.getInstance().registerAnalogCommand(1, AnalogInput.JoystickX, AnalogType.OutOfThresholdMinor, value -> {
-			hatchPanel.slideTalon.set(ControlMode.PercentOutput, value);
+			if (Math.abs(value) > 0.2) {
+				hatchPanel.slideTalon.set(ControlMode.PercentOutput, value * 0.5);
+			}
+			else {
+				hatchPanel.slideTalon.set(ControlMode.PercentOutput, 0);
+			}
 		});
 		Controls.getInstance().registerAnalogCommand(1, AnalogInput.JoystickX, AnalogType.InThresholdMinor, value -> {
 			hatchPanel.slideTalon.set(ControlMode.PercentOutput, 0);
@@ -52,50 +57,56 @@ public final class Robot extends SampleRobot {
 		Controls.getInstance().registerDigitalCommand(1, DigitalInput.Joystick2, DigitalType.DigitalPress, ()->{
 			hatchPanel.closeHatch();
 		});
-		Controls.getInstance().registerDigitalCommand(1, DigitalInput.Joystick4, DigitalType.DigitalPress, ()->{
-			hatchPanel.goHatchBackward();
+		Controls.getInstance().registerAnalogCommand(1, AnalogInput.JoystickY, AnalogType.OutOfThresholdMinor, value ->{
+			System.out.println("Here1");
+			if(value > 0.5){
+				System.out.println("Here2");
+				hatchPanel.goHatchBackward();
+			}
+			else if(value < -0.5){
+				System.out.println("here3");
+				hatchPanel.goHatchForward();
+			}
 		});
-		Controls.getInstance().registerDigitalCommand(1, DigitalInput.Joystick5, DigitalType.DigitalPress, ()->{
-			hatchPanel.goHatchForward();
+//		Controls.getInstance().registerDigitalCommand(1, DigitalInput.Joystick6, DigitalType.DigitalPress, ()->{
+//			hatchPanel.resetEncoder();
+//		});
+//		Controls.getInstance().registerDigitalCommand(1, DigitalInput.Joystick8, DigitalType.DigitalPress, ()->{
+//			hatchPanel.slide(8);
+//		});
+
+		//Cargo
+		Controls.getInstance().registerDigitalCommand(2, DigitalInput.Joystick3, DigitalType.DigitalHold, () -> {
+			if(!cargo.intakeSensor.get()){
+				cargo.spinOuttake(0, 0);
+			}
+			else {
+				cargo.spinOuttake(0.5, -0.5);
+			}
 		});
-//		hatchPanel.run();
-//		Controls.getInstance().registerAnalogCommand(1, AnalogInput.JoystickY, AnalogType.OutOfThresholdMinor, value -> {
-//			if(Math.abs(value) > 0.1){
-////				hp.slideTalon.config_kP(0, 0.4, 0);
-//				hp.slide(hp.slideTalon.getSelectedSensorPosition() / hp.ticksPerInch + value);		//50% speed
-//				System.out.println("Here");
-//			}
-//			else {
-//				hp.slide(hp.slideTalon.getSelectedSensorPosition() / hp.ticksPerInch);
-//			}
-//			else {
-//				hp.slideTalon.set(ControlMode.PercentOutput, 0);
-//			}
-//		});
-//		Controls.getInstance().registerDigitalCommand(1, DigitalInput.Joystick3, DigitalType.DigitalPress, ()-> {
-////			hp.slideTalon.config_kP(0, 0.2, 0); // value: 0.2
-//			hp.slide(8);
-//		});
-//		Controls.getInstance().registerDigitalCommand(1, DigitalInput.Joystick2, DigitalType.DigitalPress, ()->{
-//			hp.slideTalon.setSelectedSensorPosition(0);
-//		});
-//		Controls.getInstance().registerAnalogCommand(1, AnalogInput.JoystickY, AnalogType.OutOfThresholdMinor, value ->{
-//			if(!cargo.intakeSensor.get() && value > 0){
-//				cargo.spinOuttake(0, 0);
-//			}
-//			else {
-//				cargo.spinOuttake(value, -value);
-//			}
-//		});
-//		Controls.getInstance().registerAnalogCommand(1, AnalogInput.JoystickY, AnalogType.InThresholdMinor, value -> {
+		Controls.getInstance().registerDigitalCommand(2, DigitalInput.Joystick3, DigitalType.DigitalRelease, () ->{
+			cargo.spinOuttake(0, 0);
+		});
+		Controls.getInstance().registerDigitalCommand(2, DigitalInput.Joystick2, DigitalType.DigitalHold, () -> {
+			cargo.spinOuttake(-0.5, 0.5);
+		});
+		Controls.getInstance().registerDigitalCommand(2, DigitalInput.Joystick2, DigitalType.DigitalRelease, () ->{
+			 cargo.spinOuttake(0, 0);
+		});
+
+//		Controls.getInstance().registerDigitalCommand(2, DigitalInput.Joystick3, DigitalType.DigitalRelease, () ->{
 //			cargo.spinOuttake(0, 0);
 //		});
-//		Controls.getInstance().registerAnalogCommand(2, AnalogInput.JoystickY, AnalogType.OutOfThresholdMinor, value -> {
-//			cargo.conveyorTalons[0].set(ControlMode.PercentOutput, value * 0.25);
+//		Controls.getInstance().registerDigitalCommand(3, DigitalInput.Joystick3, DigitalType.DigitalRelease, () ->{
+//			cargo.spinOuttake(0, 0);
 //		});
-//		Controls.getInstance().registerAnalogCommand(2, AnalogInput.JoystickY, AnalogType.InThresholdMinor, value -> {
-//			cargo.conveyorTalons[0].set(ControlMode.PercentOutput, 0);
-//		});
+
+		Controls.getInstance().registerAnalogCommand(2, AnalogInput.JoystickY, AnalogType.OutOfThresholdMinor, value -> {
+			cargo.conveyorTalons[0].set(ControlMode.PercentOutput, value * 0.35);
+		});
+		Controls.getInstance().registerAnalogCommand(2, AnalogInput.JoystickY, AnalogType.InThresholdMinor, value -> {
+			cargo.conveyorTalons[0].set(ControlMode.PercentOutput, 0);
+		});
 	}
 
 	@Override
@@ -104,10 +115,8 @@ public final class Robot extends SampleRobot {
 		compressor.start();
 		compressor.setClosedLoopControl(true);
 		while (isEnabled()){
-			if(hatchPanel.slideTalon.getSensorCollection().isFwdLimitSwitchClosed()){
+			if(cargo.intakeSensor.get()){
 				System.out.println("FWD");
-			}
-			if(hatchPanel.slideTalon.getSensorCollection().isRevLimitSwitchClosed()){
 				System.out.println("REV");
 			}
 			try {

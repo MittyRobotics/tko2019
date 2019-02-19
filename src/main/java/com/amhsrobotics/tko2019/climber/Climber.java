@@ -13,11 +13,14 @@ public class Climber {
 		climber = new DoubleSolenoid(climberId[0], climberId[1]);
 	}
 	public void run(){
-		Controls.getInstance().registerDigitalCommand(0, DigitalInput.XboxA, DigitalType.DigitalPress, ()->{
+		Controls.getInstance().registerDigitalCommand(2, DigitalInput.Joystick6, DigitalType.DigitalPress, ()->{
 				openClimber();
+		});
+		Controls.getInstance().registerDigitalCommand(2, DigitalInput.Joystick7, DigitalType.DigitalPress, ()->{
+			climber.set(DoubleSolenoid.Value.kForward);
 		});
 	}
 	private void openClimber(){
-		climber.set(DoubleSolenoid.Value.kForward);
+		climber.set(DoubleSolenoid.Value.kReverse);
 	}
 }

@@ -164,7 +164,9 @@ public class HatchPanel {
 
     public void openHatch() { solSide.set(DoubleSolenoid.Value.kReverse); }
     public void closeHatch() { solSide.set(DoubleSolenoid.Value.kForward); }
-    public void goHatchForward() { solForward.set(DoubleSolenoid.Value.kForward); }
+    public void goHatchForward() {
+        solForward.set(DoubleSolenoid.Value.kForward);
+    }
     public void goHatchBackward() { solForward.set(DoubleSolenoid.Value.kReverse); }
 
     //outtake for the rocket
@@ -183,7 +185,7 @@ public class HatchPanel {
     }
 
     //resets encoder when slider is to the left
-    private void resetEncoder(){
+    public void resetEncoder(){
         slideTalon.set(ControlMode.PercentOutput, 0.1);
         if(sliderSwitches[0].get()){
             slideTalon.setSelectedSensorPosition(0);
