@@ -15,24 +15,21 @@ public class PeerSync {
 
 	static void run() {
 		isRunning = true;
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				while (isRunning) {
-					for (final Socket peer : peers) {
-						if (!peer.isClosed()) {
-							try {
-								data = new ObjectInputStream(peer.getInputStream()).readInt();
-							} catch (final IOException e) {
-								e.printStackTrace();
-							}
+		new Thread(() -> {
+			while (isRunning) {
+				for (final Socket peer : peers) {
+					if (!peer.isClosed()) {
+						try {
+							data = new ObjectInputStream(peer.getInputStream()).readInt();
+						} catch (final IOException e) {
+							e.printStackTrace();
 						}
 					}
-					try {
-						Thread.sleep(1);
-					} catch (final InterruptedException e) {
-						e.printStackTrace();
-					}
+				}
+				try {
+					Thread.sleep(1);
+				} catch (final InterruptedException e) {
+					e.printStackTrace();
 				}
 			}
 		}).start();
