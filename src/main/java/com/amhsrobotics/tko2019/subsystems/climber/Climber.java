@@ -12,16 +12,17 @@ import edu.wpi.first.wpilibj.DriverStation;
 
 public class Climber implements Subsystem {
 	private final static Climber INSTANCE = new Climber();
-	public static Climber getInstance() {
-		return INSTANCE;
-	}
+	private DoubleSolenoid climberSolenoid;
+	private HatchPanel hatchPanel = HatchPanel.getInstance();
 
 	private Climber() {
 
 	}
 
-	private DoubleSolenoid climberSolenoid;
-	private HatchPanel hatchPanel = HatchPanel.getInstance();
+	public static Climber getInstance() {
+		return INSTANCE;
+	}
+
 	@Override
 	public void init() {
 		entering("init");

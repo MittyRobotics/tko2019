@@ -24,22 +24,20 @@ import java.util.logging.Logger;
 
 public final class Drive implements Subsystem {
 	private final static Drive INSTANCE = new Drive();
-	public static Drive getInstance() {
-		return INSTANCE;
-	}
-
-	private Drive() {
-
-	}
-
 	private final WPI_TalonSRX[] lTalons = new WPI_TalonSRX[TalonIds.LEFT_DRIVE.length];
 	private final WPI_TalonSRX[] rTalons = new WPI_TalonSRX[TalonIds.RIGHT_DRIVE.length];
 	private ADXRS450_Gyro gyro;
 	private DoubleSolenoid gearShifter;
 	private int gear = 1;
 	private long lastSwitch = 0;
-
 	private boolean shouldReverse = false;
+	private Drive() {
+
+	}
+
+	public static Drive getInstance() {
+		return INSTANCE;
+	}
 
 	@SuppressWarnings("Duplicates")
 	@Override
@@ -97,10 +95,9 @@ public final class Drive implements Subsystem {
 			}
 		});
 		Controls.getInstance().registerAnalogCommand(ControllerID.XboxController.getId(), ControlsConfig.LEFT_WHEELS, AnalogType.InThresholdMinor, value -> {
-			if(shouldReverse){
+			if (shouldReverse) {
 				moveRight(0);
-			}
-			else {
+			} else {
 				moveLeft(0);
 			}
 		});
@@ -112,10 +109,9 @@ public final class Drive implements Subsystem {
 			}
 		});
 		Controls.getInstance().registerAnalogCommand(ControllerID.XboxController.getId(), ControlsConfig.RIGHT_WHEELS, AnalogType.InThresholdMinor, value -> {
-			if(shouldReverse){
+			if (shouldReverse) {
 				moveLeft(0);
-			}
-			else {
+			} else {
 				moveRight(0);
 			}
 		});

@@ -1,7 +1,6 @@
 package com.amhsrobotics.tko2019.settings;
 
 import com.amhsrobotics.tko2019.controls.AnalogInput;
-import com.amhsrobotics.tko2019.controls.AnalogType;
 import com.amhsrobotics.tko2019.controls.DigitalInput;
 
 public class ControlsConfig {

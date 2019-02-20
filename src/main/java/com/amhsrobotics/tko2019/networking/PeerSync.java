@@ -38,12 +38,12 @@ public class PeerSync {
 		}).start();
 	}
 
-	private void stop() {
-		isRunning = false;
-	}
-
 	static void addPeer(final Socket peer) {
 		peers.add(peer);
+	}
+
+	private void stop() {
+		isRunning = false;
 	}
 
 	void updateData(final int value) {

@@ -7,49 +7,48 @@ import com.amhsrobotics.tko2019.subsystems.drive.Drive;
 import com.amhsrobotics.tko2019.subsystems.drive.PathFollower;
 
 public class PickupCargo {
-    static Cargo cargo = Cargo.getInstance();
-    static Drive drive = Drive.getInstance();
-    static Sequence sequence = new Sequence();
-    static PathFollower pathFollower = new PathFollower();
+	public static State lastState;
+	static Cargo cargo = Cargo.getInstance();
+	static Drive drive = Drive.getInstance();
+	static Sequence sequence = new Sequence();
+	static PathFollower pathFollower = new PathFollower();
 
-    public static State lastState;
+	public static void Idle() {
 
-    public static  void Idle(){
+	}
 
-    }
+	public static void VisionRequest() {
+		//RECIEVE VISION STUFF
 
-    public static void VisionRequest(){
-        //RECIEVE VISION STUFF
+		Sequence.Transition(State.VISION_REQUEST, State.FOLLOWING_TARGET, new Check[]{Check.HAS_NO_CARGO});
+	}
 
-        Sequence.Transition(State.VISION_REQUEST, State.FOLLOWING_TARGET, new Check[]{Check.HAS_NO_CARGO});
-    }
+	public static void FollowingTarget() {
+		System.out.println(Sequence.state);
+		while (sequence.completedPath == false) {
+		}
+		sequence.completedPath = false;
+		Sequence.Transition(State.FOLLOWING_TARGET, State.SCORING, new Check[]{Check.HAS_NO_CARGO, Check.RELATIVE_POS});
+	}
 
-    public static void FollowingTarget() {
-        System.out.println(Sequence.state);
-        while(sequence.completedPath == false){
-        }
-        sequence.completedPath = false;
-        Sequence.Transition(State.FOLLOWING_TARGET, State.SCORING, new Check[]{Check.HAS_NO_CARGO, Check.RELATIVE_POS});
-    }
-
-    public static  void Scoring(){
-        System.out.println(Sequence.state);
-        double moveDist = 0; //TODO
-        cargo.stationConveyor();
-        drive.moveStraight(moveDist);
-        cargo.intakeOuttakeMacro();
-        drive.moveStraight(-moveDist);
-        cargo.stopIntake();
-        Sequence.Transition(State.SCORING, State.EXIT_VISION,new Check[]{Check.HAS_CARGO});
-    }
+	public static void Scoring() {
+		System.out.println(Sequence.state);
+		double moveDist = 0; //TODO
+		cargo.stationConveyor();
+		drive.moveStraight(moveDist);
+		cargo.intakeOuttakeMacro();
+		drive.moveStraight(-moveDist);
+		cargo.stopIntake();
+		Sequence.Transition(State.SCORING, State.EXIT_VISION, new Check[]{Check.HAS_CARGO});
+	}
 
 
-    public static void ExitVision(){
-        System.out.println(Sequence.state);
-        Sequence.state = State.IDLE;
-        lastState = State.IDLE;
+	public static void ExitVision() {
+		System.out.println(Sequence.state);
+		Sequence.state = State.IDLE;
+		lastState = State.IDLE;
 
-    }
+	}
 
 
 }

@@ -21,20 +21,18 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class HatchPanel implements Subsystem {
 	private final static HatchPanel INSTANCE = new HatchPanel();
-	public static HatchPanel getInstance() {
-		return INSTANCE;
-	}
-
-	private HatchPanel() {
-
-	}
-
-
 	private boolean manual = false;
 	private boolean processDone = false;
 	private DoubleSolenoid grabber;
 	private DoubleSolenoid pushForward;
 	private WPI_TalonSRX slideTalon;
+	private HatchPanel() {
+
+	}
+
+	public static HatchPanel getInstance() {
+		return INSTANCE;
+	}
 
 	@Override
 	public void init() {
@@ -68,20 +66,20 @@ public class HatchPanel implements Subsystem {
 			}
 		});
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SLIDE_LEFT, DigitalType.DigitalRelease, () -> {
-			if(!manual){
+			if (!manual) {
 				if ((
 //						!Switches.getInstance().wallSwitch.get() &&
-								!Switches.getInstance().hatchSwitch.get()) && (processDone)) {
+						!Switches.getInstance().hatchSwitch.get()) && (processDone)) {
 					slideMiddle();
 					processDone = false;
 				}
 			}
 		});
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SLIDE_RIGHT, DigitalType.DigitalRelease, () -> {
-			if(!manual){
+			if (!manual) {
 				if ((
 //						!Switches.getInstance().wallSwitch.get() &&
-								!Switches.getInstance().hatchSwitch.get()) && (processDone)) {
+						!Switches.getInstance().hatchSwitch.get()) && (processDone)) {
 					slideMiddle();
 					processDone = false;
 				}
@@ -93,15 +91,14 @@ public class HatchPanel implements Subsystem {
 			}
 		});
 		Controls.getInstance().registerAnalogCommand(ControllerID.Joystick1.getId(), ControlsConfig.JOYTICK_SLIDE, AnalogType.OutOfThresholdMinor, value -> {
-			if(!manual){
+			if (!manual) {
 				slide(slideTalon.getSelectedSensorPosition() / TicksPerInch.SLIDER + value);
-			}
-			else {
+			} else {
 				manualSlide(value * 0.5);
 			}
 		});
 		Controls.getInstance().registerAnalogCommand(ControllerID.Joystick1.getId(), ControlsConfig.JOYTICK_SLIDE, AnalogType.InThresholdMinor, value -> {
-			if(manual){
+			if (manual) {
 				manualSlide(0);
 			}
 		});
@@ -119,8 +116,7 @@ public class HatchPanel implements Subsystem {
 					processDone = true;
 					outtake();
 				}
-			}
-			else {
+			} else {
 				closeHatch();
 			}
 		});
@@ -131,17 +127,15 @@ public class HatchPanel implements Subsystem {
 				) {
 					intake();
 				}
-			}
-			else {
+			} else {
 				openHatch();
 			}
 		});
-		Controls.getInstance().registerAnalogCommand(ControllerID.Joystick1.getId(), ControlsConfig.PUSH_HATCH_MECHANISM, AnalogType.OutOfThresholdMajor, value ->{
-			if(manual){
-				if(value > 0){
+		Controls.getInstance().registerAnalogCommand(ControllerID.Joystick1.getId(), ControlsConfig.PUSH_HATCH_MECHANISM, AnalogType.OutOfThresholdMajor, value -> {
+			if (manual) {
+				if (value > 0) {
 					goHatchForward();
-				}
-				else {
+				} else {
 					goHatchBackward();
 				}
 			}
@@ -197,7 +191,7 @@ public class HatchPanel implements Subsystem {
 		slide(SliderPositions.SLIDE_RIGHT);
 	}
 
-	private void manualSlide(double percent){
+	private void manualSlide(double percent) {
 		slideTalon.set(ControlMode.PercentOutput, percent);
 	}
 
