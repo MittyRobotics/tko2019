@@ -1,6 +1,8 @@
 package com.amhsrobotics.tko2019;
 
+import com.amhsrobotics.tko2019.hardware.Compressor;
 import com.amhsrobotics.tko2019.hardware.Enableable;
+import com.amhsrobotics.tko2019.hardware.Switches;
 import com.amhsrobotics.tko2019.hardware.subsystems.Cargo;
 import com.amhsrobotics.tko2019.hardware.subsystems.Climber;
 import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
@@ -17,6 +19,9 @@ public final class Robot extends SampleRobot {
 	@SuppressWarnings("ResultOfMethodCallIgnored")
 	@Override
 	protected final void robotInit() {
+		Compressor.getInstance();
+		Switches.getInstance();
+
 		Drive.getInstance();
 		Climber.getInstance();
 		Cargo.getInstance();
