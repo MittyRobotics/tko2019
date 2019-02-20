@@ -25,32 +25,20 @@ public class Climber implements Subsystem {
 
 	@Override
 	public void init() {
-		entering("init");
-
 		climberSolenoid = new DoubleSolenoid(SolenoidIds.CLIMBER[0], SolenoidIds.CLIMBER[1]);
-		exiting("init");
 	}
 
 	@Override
 	public void initControls() {
-		entering("initControls");
-
 		Controls.getInstance().registerDigitalCommand(ControllerID.XboxController.getId(), ControlsConfig.RELEASE_CLIMBER, DigitalType.DigitalPress, () -> {
 			if (DriverStation.getInstance().getMatchTime() < 30 && DriverStation.getInstance().isOperatorControl()) {
 				hatchPanel.slideMiddle();
 				release();
 			}
 		});
-
-		exiting("initControls");
 	}
 
 	private void release() {
-		entering("release");
-
-		solenoidSet(climberSolenoid, DoubleSolenoid.Value.kForward);
 		climberSolenoid.set(DoubleSolenoid.Value.kForward);
-
-		exiting("release");
 	}
 }

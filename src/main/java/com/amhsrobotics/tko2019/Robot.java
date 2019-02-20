@@ -2,7 +2,6 @@ package com.amhsrobotics.tko2019;
 
 import com.amhsrobotics.tko2019.controls.Controls;
 import com.amhsrobotics.tko2019.hardware.Compressor;
-import com.amhsrobotics.tko2019.logging.LogCapable;
 import com.amhsrobotics.tko2019.subsystems.Subsystem;
 import com.amhsrobotics.tko2019.subsystems.cargo.Cargo;
 import com.amhsrobotics.tko2019.subsystems.climber.Climber;
@@ -12,7 +11,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SampleRobot;
 
 @SuppressWarnings("deprecation")
-public final class Robot extends SampleRobot implements LogCapable {
+public final class Robot extends SampleRobot {
 	private volatile boolean disabled = true;
 
 	private final Subsystem[] subsystems = {
@@ -28,9 +27,6 @@ public final class Robot extends SampleRobot implements LogCapable {
 
 	@Override
 	protected final void robotInit() {
-		entering("robotInit");
-
-
 		final Thread[] subsystemThreads = new Thread[subsystems.length];
 		for (int subsystemNumber = 0; subsystemNumber < subsystems.length; subsystemNumber++) {
 			final Thread subsystemThread = new Thread(subsystems[subsystemNumber]::init);
@@ -48,38 +44,28 @@ public final class Robot extends SampleRobot implements LogCapable {
 			try {
 				subsystemThread.join();
 			} catch (final InterruptedException e) {
-				throwing("robotInit", e);
+				e.printStackTrace();
 			}
 		}
-
-
-		exiting("robotInit");
 	}
 
 	@Override
 	public final void autonomous() {
-		entering("autonomous");
 		enabled();
-		exiting("autonomous");
 	}
 
 	@Override
 	public final void operatorControl() {
-		entering("operatorControl");
 		enabled();
-		exiting("operatorControl");
 	}
 
 	@Override
 	public final void test() {
-		entering("test");
 
-		exiting("test");
 	}
 
 	@Override
 	protected final void disabled() {
-		entering("disabled");
 		while (disabled) {
 			Thread.onSpinWait();
 		}
@@ -89,11 +75,9 @@ public final class Robot extends SampleRobot implements LogCapable {
 		}
 		Compressor.getInstance().stop();
 		disabled = true;
-		exiting("disabled");
 	}
 
 	private void enabled() {
-		entering("enabled");
 		while (!disabled) {
 			Thread.onSpinWait();
 		}
@@ -103,6 +87,5 @@ public final class Robot extends SampleRobot implements LogCapable {
 		}
 		Compressor.getInstance().start();
 		disabled = false;
-		exiting("disabled");
 	}
 }

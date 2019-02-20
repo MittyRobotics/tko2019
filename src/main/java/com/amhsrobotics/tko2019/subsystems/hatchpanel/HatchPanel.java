@@ -36,8 +36,6 @@ public class HatchPanel implements Subsystem {
 
 	@Override
 	public void init() {
-		entering("init");
-
 		slideTalon = new WPI_TalonSRX(TalonIds.SLIDE);
 		slideTalon.setNeutralMode(NeutralMode.Coast);
 		slideTalon.configFactoryDefault();
@@ -49,14 +47,10 @@ public class HatchPanel implements Subsystem {
 
 		grabber = new DoubleSolenoid(SolenoidIds.GRABBER[0], SolenoidIds.GRABBER[1]);
 		pushForward = new DoubleSolenoid(SolenoidIds.PUSH_FORWARD[0], SolenoidIds.PUSH_FORWARD[1]);
-
-		exiting("init");
 	}
 
 	@Override
 	public void initControls() {
-		entering("initControls");
-
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SWITCH_MODE, DigitalType.DigitalPress, () -> {
 			manual = !manual;
 			if (manual) {
@@ -141,8 +135,6 @@ public class HatchPanel implements Subsystem {
 			}
 		});
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.CONFIG_ENCODER, DigitalType.DigitalPress, this::resetEncoder);
-
-		exiting("initControls");
 	}
 
 	private void openHatch() {

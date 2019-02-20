@@ -1,10 +1,9 @@
 package com.amhsrobotics.tko2019.hardware;
 
-import com.amhsrobotics.tko2019.logging.LogCapable;
 import com.amhsrobotics.tko2019.settings.SwitchIds;
 import edu.wpi.first.wpilibj.DigitalInput;
 
-public class Switches implements LogCapable {
+public class Switches {
 	private static Switches ourInstance = new Switches();
 
 	public DigitalInput intakeSensor;

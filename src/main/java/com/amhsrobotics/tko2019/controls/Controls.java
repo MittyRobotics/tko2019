@@ -1,12 +1,10 @@
 package com.amhsrobotics.tko2019.controls;
 
-import com.amhsrobotics.tko2019.logging.LogCapable;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class Controls implements LogCapable {
+public class Controls {
 	private final static Controls ourInstance = new Controls();
 
 	private final ConcurrentHashMap<Integer, ConcurrentHashMap<DigitalInput, ConcurrentHashMap<DigitalType, ArrayList<DigitalControlCommand>>>> buttonControls = new ConcurrentHashMap<>();
@@ -18,10 +16,8 @@ public class Controls implements LogCapable {
 	private final Thread controlsThread = new Thread(this::checkControls);
 
 	private Controls() {
-		entering("<init>");
 		controlsThread.setName("Controls Thread");
 		controlsThread.setPriority(Thread.MAX_PRIORITY);
-		exiting("<init>");
 	}
 
 	public static Controls getInstance() {
@@ -29,30 +25,22 @@ public class Controls implements LogCapable {
 	}
 
 	public synchronized void enable() {
-		entering("enable");
 		if (!shouldRun) {
 			//noinspection LoopConditionNotUpdatedInsideLoop
 			while (controlsThread.isAlive()) {
 				Thread.onSpinWait();
 			}
-			toggleSoftware("Enabled", true);
 			shouldRun = true;
 			controlsThread.start();
 		}
-		exiting("enable");
 	}
 
 	public void disable() {
-		entering("disable");
-		toggleSoftware("Enabled", false);
 		shouldRun = false;
-		exiting("disable");
 	}
 
 	@SuppressWarnings("Duplicates")
 	public void registerDigitalCommand(int id, DigitalInput digitalInput, DigitalType digitalType, DigitalControlCommand lambda, String... commandName) {
-		entering("registerDigitalCommand");
-
 		buttonControls.putIfAbsent(id, new ConcurrentHashMap<>());
 		final ConcurrentHashMap<DigitalInput, ConcurrentHashMap<DigitalType, ArrayList<DigitalControlCommand>>> inputs = buttonControls.get(id);
 		inputs.putIfAbsent(digitalInput, new ConcurrentHashMap<>());
@@ -63,14 +51,10 @@ public class Controls implements LogCapable {
 		if (commandName.length != 0) {
 			registeredDigitalControls.put(commandName[0], lambda);
 		}
-
-		exiting("registerDigitalCommand");
 	}
 
 	@SuppressWarnings("Duplicates")
 	public void registerAnalogCommand(int id, AnalogInput analogInput, AnalogType analogType, AnalogControlCommand lambda, String... commandName) {
-		entering("registerAnalogCommand");
-
 		analogControls.putIfAbsent(id, new ConcurrentHashMap<>());
 		final ConcurrentHashMap<AnalogInput, ConcurrentHashMap<AnalogType, ArrayList<AnalogControlCommand>>> inputs = analogControls.get(id);
 		inputs.putIfAbsent(analogInput, new ConcurrentHashMap<>());
@@ -81,8 +65,6 @@ public class Controls implements LogCapable {
 		if (commandName.length != 0) {
 			registeredAnalogControls.put(commandName[0], lambda);
 		}
-
-		exiting("registerAnalogCommand");
 	}
 
 	public void unregisterDigitalCommand(int id, DigitalInput digitalInput, DigitalType digitalType, final String commandName) {

@@ -42,10 +42,6 @@ public final class Drive implements Subsystem {
 	@SuppressWarnings("Duplicates")
 	@Override
 	public void init() {
-		entering("<init>");
-
-
-		hardware("Initializing Left Talons");
 		for (int talonIdIndex = 0; talonIdIndex < TalonIds.LEFT_DRIVE.length; talonIdIndex++) {
 			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.LEFT_DRIVE[talonIdIndex]);
 			talon.setInverted(TalonInversions.LEFT_DRIVE[talonIdIndex]);
@@ -57,9 +53,7 @@ public final class Drive implements Subsystem {
 				talon.follow(lTalons[0]);
 			}
 			lTalons[talonIdIndex] = talon;
-			hardwareInit(talon);
 		}
-		hardware("Initializing Right Talons");
 		for (int talonIdIndex = 0; talonIdIndex < TalonIds.RIGHT_DRIVE.length; talonIdIndex++) {
 			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.RIGHT_DRIVE[talonIdIndex]);
 			talon.setInverted(TalonInversions.RIGHT_DRIVE[talonIdIndex]);
@@ -71,22 +65,15 @@ public final class Drive implements Subsystem {
 				talon.follow(rTalons[0]);
 			}
 			rTalons[talonIdIndex] = talon;
-			hardwareInit(talon);
 		}
 
 		gearShifter = new DoubleSolenoid(SolenoidIds.DRIVE_SHIFTER[0], SolenoidIds.DRIVE_SHIFTER[1]);
 		gearShifter.setName("Gear Shifting Solenoid");
-		hardwareInit(gearShifter);
 		gyro = new ADXRS450_Gyro();
-
-
-		exiting("<init>");
 	}
 
 	@Override
 	public void initControls() {
-		entering("initControls");
-
 		Controls.getInstance().registerAnalogCommand(ControllerID.XboxController.getId(), ControlsConfig.LEFT_WHEELS, AnalogType.OutOfThresholdMinor, value -> {
 			if (shouldReverse) {
 				moveRight(-value);
@@ -124,20 +111,15 @@ public final class Drive implements Subsystem {
 				}
 				lastSwitch = System.currentTimeMillis();
 			} else {
-				getLogger().warning("Shifter is on Cooldown.");
+				System.err.println("Shifter is on Cooldown.");
 			}
 		});
 		Controls.getInstance().registerDigitalCommand(ControllerID.XboxController.getId(), ControlsConfig.REVERSE_DIRECTION, DigitalType.DigitalPress, () -> {
 			toggleReverser(!shouldReverse);
 		});
-
-		exiting("initControls");
 	}
 
 	public void moveStraight(final double inches) {
-		entering("moveStraight");
-
-
 		final double setpoint = inches * TicksPerInch.DRIVE[gear];
 		final double threshold = TicksPerInch.DRIVE[gear] * 0.25;
 
@@ -154,15 +136,9 @@ public final class Drive implements Subsystem {
 
 		lTalons[0].set(ControlMode.PercentOutput, 0);
 		rTalons[0].set(ControlMode.PercentOutput, 0);
-
-
-		exiting("moveStraight");
 	}
 
 	public void moveStraight(final double inches, final double breakInches) {
-		entering("moveStraight");
-
-
 		final double setpoint = inches * TicksPerInch.DRIVE[gear];
 		final double threshold = TicksPerInch.DRIVE[gear] * 0.25;
 
@@ -179,15 +155,9 @@ public final class Drive implements Subsystem {
 
 		lTalons[0].set(ControlMode.PercentOutput, 0);
 		rTalons[0].set(ControlMode.PercentOutput, 0);
-
-
-		exiting("moveStraight");
 	}
 
 	public void turn(final double degrees) {
-		entering("turn");
-
-
 		final PIDController pidController = new PIDController(PID.TURN[0], PID.TURN[1], PID.TURN[2], gyro, lTalons[0]);
 		pidController.setInputRange(0, 360);
 		pidController.setOutputRange(-0.35, 0.35);
@@ -217,43 +187,27 @@ public final class Drive implements Subsystem {
 
 		rTalons[0].setInverted(TalonInversions.RIGHT_DRIVE[0]);
 		rTalons[1].setInverted(TalonInversions.RIGHT_DRIVE[1]);
-
-
-		exiting("turn");
 	}
 
 	private synchronized void moveLeft(final double value) {
-		entering("moveLeft");
-		talonSet(lTalons[0], ControlMode.PercentOutput, value);
 		lTalons[0].set(ControlMode.PercentOutput, value);
-		exiting("moveLeft");
 	}
 
 	private synchronized void moveRight(final double value) {
-		entering("moveRight");
-		talonSet(rTalons[0], ControlMode.PercentOutput, value);
 		rTalons[0].set(ControlMode.PercentOutput, value);
-		exiting("moveRight");
 	}
 
 	private void toggleReverser(final boolean shouldReverse) {
-		entering("toggleReverser");
-		toggleSoftware("Reverse", shouldReverse);
 		this.shouldReverse = shouldReverse;
-		exiting("toggleReverser");
 	}
 
 	private synchronized void shiftGear(final int value) {
-		entering("shiftGear");
 		if (value == 0) {
-			solenoidSet(gearShifter, DoubleSolenoid.Value.kReverse);
 			gearShifter.set(DoubleSolenoid.Value.kReverse);
 			gear = 0;
 		} else if (value == 1) {
-			solenoidSet(gearShifter, DoubleSolenoid.Value.kForward);
 			gearShifter.set(DoubleSolenoid.Value.kForward);
 			gear = 1;
 		}
-		exiting("shiftGear");
 	}
 }

@@ -34,15 +34,12 @@ public class Cargo implements Subsystem {
 	}
 
 	public void init() {
-		entering("init");
-
 		for (int talonIdIndex = 0; talonIdIndex < TalonIds.INTAKE.length; talonIdIndex++) {
 			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.INTAKE[talonIdIndex]);
 			talon.configFactoryDefault();
 			talon.setNeutralMode(NeutralMode.Coast);
 			talon.setInverted(TalonInversions.INTAKE[talonIdIndex]);
 			intakeTalons[talonIdIndex] = talon;
-			hardwareInit(talon);
 		}
 		for (int talonIdIndex = 0; talonIdIndex < TalonIds.CONVEYOR.length; talonIdIndex++) {
 			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.CONVEYOR[talonIdIndex]);
@@ -58,15 +55,10 @@ public class Cargo implements Subsystem {
 				talon.follow(conveyorTalons[0]);
 			}
 			conveyorTalons[talonIdIndex] = talon;
-			hardwareInit(talon);
 		}
-
-		exiting("init");
 	}
 
 	public void initControls() {
-		entering("initControls");
-
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick2.getId(), ControlsConfig.SWITCH_MODE, DigitalType.DigitalPress, () -> {
 			manual = !manual;
 			if (manual) {
@@ -126,8 +118,6 @@ public class Cargo implements Subsystem {
 
 		});
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick2.getId(), ControlsConfig.CONFIG_ENCODER, DigitalType.DigitalPress, this::resetEncoder);
-
-		exiting("initControls");
 	}
 
 	public void intakeOuttakeMacro() {
