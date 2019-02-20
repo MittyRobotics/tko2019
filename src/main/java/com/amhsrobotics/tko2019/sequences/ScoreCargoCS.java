@@ -3,9 +3,8 @@ package com.amhsrobotics.tko2019.sequences;
 
 import com.amhsrobotics.tko2019.sequences.States.Check;
 import com.amhsrobotics.tko2019.sequences.States.State;
-import com.amhsrobotics.tko2019.subsystems.cargo.Cargo;
-import com.amhsrobotics.tko2019.subsystems.drive.Drive;
-import com.amhsrobotics.tko2019.subsystems.drive.PathFollower;
+import com.amhsrobotics.tko2019.hardware.subsystems.Cargo;
+import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
 
 public class ScoreCargoCS {
 	public static State lastState;

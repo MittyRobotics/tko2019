@@ -1,4 +1,4 @@
-package com.amhsrobotics.tko2019.subsystems;
+package com.amhsrobotics.tko2019.hardware;
 
 public interface Subsystem {
 	default void init() {

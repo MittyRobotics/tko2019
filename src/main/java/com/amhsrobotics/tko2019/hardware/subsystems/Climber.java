@@ -1,12 +1,11 @@
-package com.amhsrobotics.tko2019.subsystems.climber;
+package com.amhsrobotics.tko2019.hardware.subsystems;
 
 import com.amhsrobotics.tko2019.controls.ControllerID;
 import com.amhsrobotics.tko2019.controls.Controls;
 import com.amhsrobotics.tko2019.controls.DigitalType;
 import com.amhsrobotics.tko2019.settings.ControlsConfig;
 import com.amhsrobotics.tko2019.settings.subsystems.SolenoidIds;
-import com.amhsrobotics.tko2019.subsystems.Subsystem;
-import com.amhsrobotics.tko2019.subsystems.hatchpanel.HatchPanel;
+import com.amhsrobotics.tko2019.hardware.Subsystem;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 

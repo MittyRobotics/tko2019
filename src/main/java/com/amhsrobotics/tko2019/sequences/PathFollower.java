@@ -1,6 +1,4 @@
-package com.amhsrobotics.tko2019.subsystems.drive;
-
-import com.amhsrobotics.tko2019.sequences.Sequence;
+package com.amhsrobotics.tko2019.sequences;
 
 public class PathFollower {
 	Sequence sequence = new Sequence();

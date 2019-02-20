@@ -2,11 +2,11 @@ package com.amhsrobotics.tko2019;
 
 import com.amhsrobotics.tko2019.controls.Controls;
 import com.amhsrobotics.tko2019.hardware.Compressor;
-import com.amhsrobotics.tko2019.subsystems.Subsystem;
-import com.amhsrobotics.tko2019.subsystems.cargo.Cargo;
-import com.amhsrobotics.tko2019.subsystems.climber.Climber;
-import com.amhsrobotics.tko2019.subsystems.drive.Drive;
-import com.amhsrobotics.tko2019.subsystems.hatchpanel.HatchPanel;
+import com.amhsrobotics.tko2019.hardware.Subsystem;
+import com.amhsrobotics.tko2019.hardware.subsystems.Cargo;
+import com.amhsrobotics.tko2019.hardware.subsystems.Climber;
+import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
+import com.amhsrobotics.tko2019.hardware.subsystems.HatchPanel;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SampleRobot;
 
