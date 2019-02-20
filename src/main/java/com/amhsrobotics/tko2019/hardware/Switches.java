@@ -3,7 +3,7 @@ package com.amhsrobotics.tko2019.hardware;
 import com.amhsrobotics.tko2019.settings.SwitchIds;
 import edu.wpi.first.wpilibj.DigitalInput;
 
-public class Switches {
+public class Switches implements Initable {
 	private static Switches ourInstance = new Switches();
 
 	public DigitalInput intakeSensor;
@@ -18,6 +18,7 @@ public class Switches {
 		return ourInstance;
 	}
 
+	@Override
 	public void init() {
 		intakeSensor = new DigitalInput(SwitchIds.INTAKE_SENSOR_ID);
 		hatchSwitch = new DigitalInput(SwitchIds.HATCH_SWITCH_ID);
