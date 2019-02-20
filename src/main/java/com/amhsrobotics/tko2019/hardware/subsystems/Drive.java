@@ -63,14 +63,8 @@ public final class Drive implements Subsystem {
 		gearShifter = new DoubleSolenoid(SolenoidIds.DRIVE_SHIFTER[0], SolenoidIds.DRIVE_SHIFTER[1]);
 		gearShifter.setName("Gear Shifting Solenoid");
 		gyro = new ADXRS450_Gyro();
-	}
 
-	public static Drive getInstance() {
-		return INSTANCE;
-	}
 
-	@Override
-	public void initControls() {
 		Controls.getInstance().registerAnalogCommand(ControllerID.XboxController.getId(), ControlsConfig.LEFT_WHEELS, AnalogType.OutOfThresholdMinor, value -> {
 			if (shouldReverse) {
 				moveRight(-value);

@@ -41,14 +41,8 @@ public class HatchPanel implements Subsystem {
 
 		grabber = new DoubleSolenoid(SolenoidIds.GRABBER[0], SolenoidIds.GRABBER[1]);
 		pushForward = new DoubleSolenoid(SolenoidIds.PUSH_FORWARD[0], SolenoidIds.PUSH_FORWARD[1]);
-	}
 
-	public static HatchPanel getInstance() {
-		return INSTANCE;
-	}
 
-	@Override
-	public void initControls() {
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SWITCH_MODE, DigitalType.DigitalPress, () -> {
 			manual = !manual;
 			if (manual) {
@@ -133,6 +127,10 @@ public class HatchPanel implements Subsystem {
 			}
 		});
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.CONFIG_ENCODER, DigitalType.DigitalPress, this::resetEncoder);
+	}
+
+	public static HatchPanel getInstance() {
+		return INSTANCE;
 	}
 
 	private void openHatch() {

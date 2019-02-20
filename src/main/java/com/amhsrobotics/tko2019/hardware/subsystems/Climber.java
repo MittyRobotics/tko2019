@@ -15,20 +15,17 @@ public class Climber implements Subsystem {
 
 	private Climber() {
 		climberSolenoid = new DoubleSolenoid(SolenoidIds.CLIMBER[0], SolenoidIds.CLIMBER[1]);
-	}
 
-	public static Climber getInstance() {
-		return INSTANCE;
-	}
-
-	@Override
-	public void initControls() {
 		Controls.getInstance().registerDigitalCommand(ControllerID.XboxController.getId(), ControlsConfig.RELEASE_CLIMBER, DigitalType.DigitalPress, () -> {
 			if (DriverStation.getInstance().getMatchTime() < 30 && DriverStation.getInstance().isOperatorControl()) {
 				HatchPanel.getInstance().slideMiddle();
 				release();
 			}
 		});
+	}
+
+	public static Climber getInstance() {
+		return INSTANCE;
 	}
 
 	private void release() {

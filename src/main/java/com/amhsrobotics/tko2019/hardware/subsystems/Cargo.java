@@ -49,13 +49,8 @@ public class Cargo implements Subsystem {
 			}
 			conveyorTalons[talonIdIndex] = talon;
 		}
-	}
 
-	public static Cargo getInstance() {
-		return INSTANCE;
-	}
 
-	public void initControls() {
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick2.getId(), ControlsConfig.SWITCH_MODE, DigitalType.DigitalPress, () -> {
 			manual = !manual;
 			if (manual) {
@@ -115,6 +110,10 @@ public class Cargo implements Subsystem {
 
 		});
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick2.getId(), ControlsConfig.CONFIG_ENCODER, DigitalType.DigitalPress, this::resetEncoder);
+	}
+
+	public static Cargo getInstance() {
+		return INSTANCE;
 	}
 
 	public void intakeOuttakeMacro() {

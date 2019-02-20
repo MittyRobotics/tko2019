@@ -1,8 +1,6 @@
 package com.amhsrobotics.tko2019.hardware;
 
-import com.amhsrobotics.tko2019.controls.Controllable;
-
-public interface Subsystem extends Controllable, Enableable {
+public interface Subsystem extends Enableable {
 	@Override
 	default void enable() {
 	}
