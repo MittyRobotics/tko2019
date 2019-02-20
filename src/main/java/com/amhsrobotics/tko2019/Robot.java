@@ -9,8 +9,6 @@ import edu.wpi.first.wpilibj.SampleRobot;
 
 @SuppressWarnings("deprecation")
 public final class Robot extends SampleRobot {
-	private volatile boolean disabled = true;
-
 	public static void main(final String... args) {
 		//RobotBase.startRobot(Robot::new);
 	}
@@ -41,22 +39,14 @@ public final class Robot extends SampleRobot {
 
 	@Override
 	protected final void disabled() {
-		while (disabled) {
-			Thread.onSpinWait();
-		}
 		for (final Enableable enableable : Enableable.ENABLEABLES) {
 			enableable.disable();
 		}
-		disabled = true;
 	}
 
 	private void enabled() {
-		while (!disabled) {
-			Thread.onSpinWait();
-		}
 		for (final Enableable enableable : Enableable.ENABLEABLES) {
 			enableable.enable();
 		}
-		disabled = false;
 	}
 }
