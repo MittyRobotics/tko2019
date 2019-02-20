@@ -1,9 +1,9 @@
 package com.amhsrobotics.tko2019.sequences;
 
-import com.amhsrobotics.tko2019.sequences.States.Check;
-import com.amhsrobotics.tko2019.sequences.States.State;
 import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
 import com.amhsrobotics.tko2019.hardware.subsystems.HatchPanel;
+import com.amhsrobotics.tko2019.sequences.States.Check;
+import com.amhsrobotics.tko2019.sequences.States.State;
 
 public class PickupHatch {
 	public static State lastState;

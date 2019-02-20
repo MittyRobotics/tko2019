@@ -1,9 +1,10 @@
 package com.amhsrobotics.tko2019.hardware.subsystems;
 
-import com.amhsrobotics.tko2019.controls.commands.AnalogType;
 import com.amhsrobotics.tko2019.controls.ControllerID;
 import com.amhsrobotics.tko2019.controls.Controls;
+import com.amhsrobotics.tko2019.controls.commands.AnalogType;
 import com.amhsrobotics.tko2019.controls.commands.DigitalType;
+import com.amhsrobotics.tko2019.hardware.Subsystem;
 import com.amhsrobotics.tko2019.hardware.Switches;
 import com.amhsrobotics.tko2019.settings.ControlsConfig;
 import com.amhsrobotics.tko2019.settings.subsystems.PID;
@@ -13,7 +14,6 @@ import com.amhsrobotics.tko2019.settings.subsystems.Thresholds;
 import com.amhsrobotics.tko2019.settings.subsystems.TicksPerInch;
 import com.amhsrobotics.tko2019.settings.subsystems.cargo.IntakeHeights;
 import com.amhsrobotics.tko2019.settings.subsystems.cargo.IntakeSpeeds;
-import com.amhsrobotics.tko2019.hardware.Subsystem;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
