@@ -68,97 +68,38 @@ public class HatchPanel {
 //        slideTalon.setInverted(true);
     }
     public void run(){
-        System.out.println("running");
-        Controls.getInstance().registerDigitalCommand(1, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick11, DigitalType.DigitalPress, () ->{
-            manual = !manual;
-            if(manual){
-                System.out.println("Manual Mode");
-            } else {
-                System.out.println("Automatic Mode");
-            }
-        });
-
-        Controls.getInstance().registerDigitalCommand(1, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick4, DigitalType.DigitalPress, () -> {
-            if(!manual) {
-                slideLeft();
-                if (/*!wallSwitch.get() &&*/  !hatchSwitch.get() && (processDone)) {
-                    slideMiddle();
-                    processDone = false;
-                }
-            }
-//            else{
-//                slideTalon.set(ControlMode.PercentOutput, -0.5);
-//            }
-        });
-
-        Controls.getInstance().registerDigitalCommand(1, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick5, DigitalType.DigitalPress, () -> {
-            if(!manual) {
-                slideRight();
-                if (/*!wallSwitch.get() &&*/  !hatchSwitch.get() && (processDone)) {
-                    slideMiddle();
-                    processDone = false;
-                }
-            }
-//            else{
-//                slideRight();
-//            }
-        });
-
-        Controls.getInstance().registerDigitalCommand(1, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick2, DigitalType.DigitalPress, () -> {
-            if(!manual) {
-                if (hatchSwitch.get() /*&& wallSwitch.get()*/) {
-                    goHatchForward();
-                    closeHatch();
-                    goHatchBackward();
-                    processDone = true;
-                }
-            }
-            else {
-//                slideTalon.config_kP(0, 0.2, 1);
-                closeHatch();
-            }
-        });
-
-        Controls.getInstance().registerDigitalCommand(1, com.amhsrobotics.tko2019.controls.DigitalInput.JoystickTrigger, DigitalType.DigitalPress, () -> {
-            if(!manual) {
-                if (!hatchSwitch.get() /*&& (wallSwitch.get())*/) {
-                    openHatch();
-                }
-            }
-            else {
-                openHatch();
-            }
-        });
-
-        Controls.getInstance().registerDigitalCommand(1, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick3, DigitalType.DigitalPress, ()->{
-            if(!manual) {
-                slideMiddle();
-            }
-        });
-
         Controls.getInstance().registerAnalogCommand(1, AnalogInput.JoystickX, AnalogType.OutOfThresholdMinor, value -> {
-            if(manual) {
-                if (Math.abs(value) > 0.1) {
-//                    slideTalon.config_kP(0, 0.4, 0);
-                    slideTalon.set(ControlMode.PercentOutput, value / 2);
-                } else {
-                    slideTalon.set(ControlMode.PercentOutput, 0);
-                }
-            } else {
-                if(Math.abs(value) > 0.1){
-                    slide(slideTalon.getSelectedSensorPosition() / ticksPerInch + value);		//50% speed
-                }
+            if (Math.abs(value) > 0.2) {
+                slide(slideTalon.getSelectedSensorPosition() / ticksPerInch - 0.5 *value);
+
             }
         });
-
-        Controls.getInstance().registerAnalogCommand(1, AnalogInput.JoystickY, AnalogType.OutOfThresholdMinor, (value) -> {
-            if (manual) {
-                if (value < -0.5) {
-                    goHatchBackward();
-                } else if (value > 0.5) {
-                    goHatchForward();
-                }
+//
+        Controls.getInstance().registerDigitalCommand(1, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick2, DigitalType.DigitalPress, ()->{
+            openHatch();
+        });
+        Controls.getInstance().registerDigitalCommand(1, com.amhsrobotics.tko2019.controls.DigitalInput.JoystickTrigger, DigitalType.DigitalPress, ()->{
+            closeHatch();
+        });
+        Controls.getInstance().registerAnalogCommand(1, AnalogInput.JoystickY, AnalogType.OutOfThresholdMinor, value ->{
+            if(value > 0.5){
+                goHatchForward();
             }
+            else if(value < -0.5){
+                goHatchBackward();
+            }
+        });
+        Controls.getInstance().registerDigitalCommand(1, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick8, DigitalType.DigitalPress, ()->{
+            resetEncoder();
+        });
+        Controls.getInstance().registerDigitalCommand(1, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick3, DigitalType.DigitalPress, ()->{
+            slide(-8); //middle
+        });
+        Controls.getInstance().registerDigitalCommand(1, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick4, DigitalType.DigitalPress, ()->{
+            slide(-13); //left
+        });
+        Controls.getInstance().registerDigitalCommand(1, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick5, DigitalType.DigitalPress, ()->{
+            slide(-3); //right
         });
 
 

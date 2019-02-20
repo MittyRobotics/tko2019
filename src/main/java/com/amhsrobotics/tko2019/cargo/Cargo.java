@@ -65,97 +65,49 @@ public class Cargo {
 
         conveyorTalons[1].set(ControlMode.Follower, conveyorTalons[0].getDeviceID());
         conveyorTalons[1].setInverted(true);
+        conveyorTalons[0].setSensorPhase(true);
+        conveyorTalons[0].config_kP(0, 0.1, 0);
+        conveyorTalons[0].config_kI(0, 0, 0);
+        conveyorTalons[0].config_kD(0, 0, 0);
     }
 
     public void run() {
 
-        if (conveyorTalons[0].getSelectedSensorPosition() > (groundHeight*ticksPerDegree-threshold) && (conveyorTalons[0].getSelectedSensorPosition() < (groundHeight*ticksPerDegree+threshold))){
-            groundThreshold = true;
-        }
-        else {groundThreshold = false;}
-        if (conveyorTalons[0].getSelectedSensorPosition() > (rocketHeight*ticksPerDegree-threshold) && (conveyorTalons[0].getSelectedSensorPosition() < (rocketHeight*ticksPerDegree+threshold))){
-            rocketThreshold = true;
-        }
-        else {rocketThreshold = false;}
-        if (conveyorTalons[0].getSelectedSensorPosition() > (cargoHeight*ticksPerDegree-threshold) && (conveyorTalons[0].getSelectedSensorPosition() < (cargoHeight*ticksPerDegree+threshold))){
-            cargoThreshold = true;
-        }
-        else {rocketThreshold = false;}
-        if (conveyorTalons[0].getSelectedSensorPosition() > (intakeHeight*ticksPerDegree-threshold) && (conveyorTalons[0].getSelectedSensorPosition() < (intakeHeight*ticksPerDegree+threshold))){
-            intakeThreshold = true;
-        }
-        else {intakeThreshold = false;}
-
-        Controls.getInstance().registerDigitalCommand(2, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick11, DigitalType.DigitalRelease, () -> {
-            manual = !manual;
-            if (manual) {
-                System.out.println("Manual Mode");
-            } else {
-                System.out.println("Auton Mode");
+        //heights need to be fixed
+        Controls.getInstance().registerDigitalCommand(2, com.amhsrobotics.tko2019.controls.DigitalInput.JoystickTrigger, DigitalType.DigitalHold, () -> {
+            if(!intakeSensor.get()){
+                spinOuttake(0, 0);
+            }
+            else {
+                spinOuttake(0.5, -0.5);
             }
         });
-        if (manual) {
-            Controls.getInstance().registerAnalogCommand(2, AnalogInput.JoystickY, AnalogType.OutOfThresholdMinor, (value) -> {
-                spinIntake(value, value);
-            });
-            Controls.getInstance().registerDigitalCommand(2, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick3, DigitalType.DigitalHold, () -> {
-                conveyorTalons[0].set(ControlMode.Position, conveyorTalons[1].getSelectedSensorPosition() + 1);;
-            });
-            Controls.getInstance().registerDigitalCommand(2, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick2, DigitalType.DigitalHold, () -> {
-                conveyorTalons[0].set(ControlMode.Position, conveyorTalons[1].getSelectedSensorPosition() - 1);;
-            });
-        } else if (!manual) {
-            Controls.getInstance().registerDigitalCommand(2, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick3, DigitalType.DigitalRelease, () -> {
-                if ((conveyorTalons[0].getSelectedSensorPosition() < rocketHeight*ticksPerDegree - 100)){
-                    rocketConveyor();
-                    groundThreshold = false;
-                    System.out.println("Rocket Height");
-                }
-                else if (conveyorTalons[0].getSelectedSensorPosition() < cargoHeight*ticksPerDegree - 100){
-                    cargoConveyor();
-                    rocketThreshold = false;
-                    System.out.println("Cargo Height");
-                }
-                else {
-                    intakeConveyor();
-                    System.out.println("Human Player Height");
-                }
-                //1 = ground, 2 = rocket, 3 = cargo 4 = human player height
-            });
-            Controls.getInstance().registerDigitalCommand(2, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick2, DigitalType.DigitalRelease, () -> {
-                if ((conveyorTalons[0].getSelectedSensorPosition() > cargoHeight*ticksPerDegree + 100)){
-                    cargoConveyor();
-                    intakeThreshold = false;
-                    System.out.println("Cargo Height");;
-                }
-                else if (conveyorTalons[0].getSelectedSensorPosition() > rocketHeight*ticksPerDegree + 100){
-                    rocketConveyor();
-                    cargoThreshold = false;
-                    System.out.println("Rocket Height");
-                }
-                else {
-                    intakeConveyor();
-                    rocketThreshold = false;
-                    System.out.println("Intake Height");
-                }
-                //1 = ground, 2 = rocket, 3 = cargo 4 = human player height
-            });
-            Controls.getInstance().registerAnalogCommand(2, AnalogInput.JoystickY, AnalogType.OutOfThresholdMinor, (value) -> {
-                if ((intakeThreshold) && (value < -0.5)){
-                    spinIntake(intakeSpeed, intakeSpeed);  //TODO
-                }
-                else if ((groundThreshold) && (value < -0.5)){
-                    spinIntake(groundSpeed, groundSpeed);  //TODO
-                }
-                else if ((rocketThreshold) && (value > 0.5)){
-                    spinOuttake(rocketSpeed, rocketSpeed);  //TODO
-                }
-                else if ((cargoThreshold) && (value > 0.5)){
-                    spinOuttake(cargoSpeed, cargoSpeed);  //TODO
-                }
-                else {stopIntake();}
-            });
-        }
+        Controls.getInstance().registerDigitalCommand(2, com.amhsrobotics.tko2019.controls.DigitalInput.JoystickTrigger, DigitalType.DigitalRelease, () ->{
+            spinOuttake(0, 0);
+        });
+        Controls.getInstance().registerDigitalCommand(2, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick2, DigitalType.DigitalHold, () -> {
+            spinOuttake(-0.5, 0.5);
+        });
+        Controls.getInstance().registerDigitalCommand(2, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick2, DigitalType.DigitalRelease, () ->{
+            spinOuttake(0, 0);
+        });
+
+        Controls.getInstance().registerAnalogCommand(2, AnalogInput.JoystickY, AnalogType.OutOfThresholdMinor, value -> {
+            conveyorTalons[0].set(ControlMode.Position, conveyorTalons[0].getSelectedSensorPosition() + value * 1000);
+
+        });
+        Controls.getInstance().registerDigitalCommand(2, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick8, DigitalType.DigitalPress, ()->{
+            calibrateConveyor();
+        });
+        Controls.getInstance().registerDigitalCommand(2, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick4, DigitalType.DigitalPress, ()->{
+            conveyorTalons[0].set(ControlMode.Position, -26200); //cargo height
+        });
+        Controls.getInstance().registerDigitalCommand(2, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick5, DigitalType.DigitalPress, ()->{
+           conveyorTalons[0].set(ControlMode.Position, -18800); //rocket height
+        });
+        Controls.getInstance().registerDigitalCommand(2, com.amhsrobotics.tko2019.controls.DigitalInput.Joystick6, DigitalType.DigitalPress, ()->{
+            conveyorTalons[0].set(ControlMode.Position, -200); //intake height
+        });
     }
 
     private void intakeOuttakeMacro(){
