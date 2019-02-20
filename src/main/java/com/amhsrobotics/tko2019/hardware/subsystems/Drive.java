@@ -1,9 +1,9 @@
 package com.amhsrobotics.tko2019.hardware.subsystems;
 
-import com.amhsrobotics.tko2019.controls.AnalogType;
+import com.amhsrobotics.tko2019.controls.commands.AnalogType;
 import com.amhsrobotics.tko2019.controls.ControllerID;
 import com.amhsrobotics.tko2019.controls.Controls;
-import com.amhsrobotics.tko2019.controls.DigitalType;
+import com.amhsrobotics.tko2019.controls.commands.DigitalType;
 import com.amhsrobotics.tko2019.settings.ControlsConfig;
 import com.amhsrobotics.tko2019.settings.subsystems.PID;
 import com.amhsrobotics.tko2019.settings.subsystems.SolenoidIds;

@@ -1,7 +1,7 @@
 package com.amhsrobotics.tko2019.settings;
 
-import com.amhsrobotics.tko2019.controls.AnalogInput;
-import com.amhsrobotics.tko2019.controls.DigitalInput;
+import com.amhsrobotics.tko2019.controls.input.AnalogInput;
+import com.amhsrobotics.tko2019.controls.input.DigitalInput;
 
 public class ControlsConfig {
 	public static final DigitalInput SWITCH_MODE = DigitalInput.Joystick11;

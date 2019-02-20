@@ -1,4 +1,4 @@
-package com.amhsrobotics.tko2019.controls;
+package com.amhsrobotics.tko2019.controls.input;
 
 public enum AnalogInput {
 	XboxLTrigger(genericHID -> {

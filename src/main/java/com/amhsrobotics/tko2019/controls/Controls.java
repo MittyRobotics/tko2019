@@ -1,5 +1,12 @@
 package com.amhsrobotics.tko2019.controls;
 
+import com.amhsrobotics.tko2019.controls.commands.AnalogControlCommand;
+import com.amhsrobotics.tko2019.controls.commands.AnalogType;
+import com.amhsrobotics.tko2019.controls.commands.DigitalControlCommand;
+import com.amhsrobotics.tko2019.controls.commands.DigitalType;
+import com.amhsrobotics.tko2019.controls.input.AnalogInput;
+import com.amhsrobotics.tko2019.controls.input.DigitalInput;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
