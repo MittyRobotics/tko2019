@@ -23,6 +23,15 @@ import edu.wpi.first.wpilibj.PIDController;
 import java.util.logging.Logger;
 
 public final class Drive implements Subsystem {
+	private final static Drive INSTANCE = new Drive();
+	public static Drive getInstance() {
+		return INSTANCE;
+	}
+
+	private Drive() {
+
+	}
+
 	private final WPI_TalonSRX[] lTalons = new WPI_TalonSRX[TalonIds.LEFT_DRIVE.length];
 	private final WPI_TalonSRX[] rTalons = new WPI_TalonSRX[TalonIds.RIGHT_DRIVE.length];
 	private ADXRS450_Gyro gyro;

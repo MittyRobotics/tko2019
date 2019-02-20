@@ -16,10 +16,10 @@ public final class Robot extends SampleRobot implements LogCapable {
 	private final Object lock = new Object();
 
 	private final Subsystem[] subsystems = {
-			new Drive(),
-			new Climber(),
-			new Cargo(),
-			new HatchPanel()
+			Drive.getInstance(),
+			Climber.getInstance(),
+			Cargo.getInstance(),
+			HatchPanel.getInstance()
 	};
 
 	public static void main(final String... args) {

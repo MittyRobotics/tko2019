@@ -19,7 +19,16 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-public class Cargo implements Subsystem { ;
+public class Cargo implements Subsystem {
+	private final static Cargo INSTANCE = new Cargo();
+	public static Cargo getInstance() {
+		return INSTANCE;
+	}
+
+	private Cargo() {
+
+	}
+
 	private final WPI_TalonSRX[] intakeTalons = new WPI_TalonSRX[TalonIds.INTAKE.length];
 	private final WPI_TalonSRX[] conveyorTalons = new WPI_TalonSRX[TalonIds.CONVEYOR.length];
 	private boolean manual = false;

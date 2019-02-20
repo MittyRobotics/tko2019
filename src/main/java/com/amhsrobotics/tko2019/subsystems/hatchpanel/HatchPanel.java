@@ -20,6 +20,16 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class HatchPanel implements Subsystem {
+	private final static HatchPanel INSTANCE = new HatchPanel();
+	public static HatchPanel getInstance() {
+		return INSTANCE;
+	}
+
+	private HatchPanel() {
+
+	}
+
+
 	private boolean manual = false;
 	private boolean processDone = false;
 	private DoubleSolenoid grabber;
