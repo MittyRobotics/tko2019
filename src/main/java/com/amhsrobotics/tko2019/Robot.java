@@ -36,10 +36,13 @@ public final class Robot extends SampleRobot {
 		cargo.init();
 		hatchPanel.init();
 		//drive
-//		drive.run();
+		drive.run();
 		//Climber
 		climber.run();
 		cargo.conveyorTalons[0].setSensorPhase(true);
+		cargo.conveyorTalons[0].config_kP(0, 0.1, 0);
+		cargo.conveyorTalons[0].config_kI(0, 0, 0);
+		cargo.conveyorTalons[0].config_kD(0, 0, 0);
 		//Hatch Panel
 		Controls.getInstance().registerAnalogCommand(1, AnalogInput.JoystickX, AnalogType.OutOfThresholdMinor, value -> {
 			if (Math.abs(value) > 0.2) {
@@ -104,25 +107,24 @@ public final class Robot extends SampleRobot {
 			cargo.spinOuttake(0, 0);
 		});
 
-//		Controls.getInstance().registerDigitalCommand(2, DigitalInput.Joystick3, DigitalType.DigitalRelease, () ->{
-//			cargo.spinOuttake(0, 0);
-//		});
-//		Controls.getInstance().registerDigitalCommand(3, DigitalInput.Joystick3, DigitalType.DigitalRelease, () ->{
-//			cargo.spinOuttake(0, 0);
-//		});
-
 		Controls.getInstance().registerAnalogCommand(2, AnalogInput.JoystickY, AnalogType.OutOfThresholdMinor, value -> {
-			cargo.conveyorTalons[0].set(ControlMode.PercentOutput, value * 0.5);
+			cargo.conveyorTalons[0].set(ControlMode.Position, cargo.conveyorTalons[0].getSelectedSensorPosition() + value * 1000);
 
 		});
-		Controls.getInstance().registerAnalogCommand(2, AnalogInput.JoystickY, AnalogType.InThresholdMinor, value -> {
-			cargo.conveyorTalons[0].set(ControlMode.PercentOutput, 0);
-		});
+//		Controls.getInstance().registerAnalogCommand(2, AnalogInput.JoystickY, AnalogType.InThresholdMinor, value -> {
+//			cargo.conveyorTalons[0].set(ControlMode.PercentOutput, 0);
+//		});
 		Controls.getInstance().registerDigitalCommand(2, DigitalInput.Joystick8, DigitalType.DigitalPress, ()->{
 			cargo.calibrateConveyor();
 		});
+		Controls.getInstance().registerDigitalCommand(2, DigitalInput.Joystick4, DigitalType.DigitalPress, ()->{
+			cargo.conveyorTalons[0].set(ControlMode.Position, -26200);
+		});
+		Controls.getInstance().registerDigitalCommand(2, DigitalInput.Joystick5, DigitalType.DigitalPress, ()->{
+			cargo.conveyorTalons[0].set(ControlMode.Position, -18800);
+		});
 		Controls.getInstance().registerDigitalCommand(2, DigitalInput.Joystick6, DigitalType.DigitalPress, ()->{
-			cargo.conveyorTalons[0].set(ControlMode.Position, 6000);
+			cargo.conveyorTalons[0].set(ControlMode.Position, -200);
 		});
 	}
 
@@ -139,11 +141,6 @@ public final class Robot extends SampleRobot {
 			}
 			if(cargo.conveyorTalons[0].getSensorCollection().isRevLimitSwitchClosed()){
 				System.out.println("REV");
-			}
-			try {
-				Thread.sleep(20);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
 			}
 //		disabled();
 //		System.out.println("hp.run");
