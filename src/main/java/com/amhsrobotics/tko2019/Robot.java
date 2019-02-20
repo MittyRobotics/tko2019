@@ -2,6 +2,7 @@ package com.amhsrobotics.tko2019;
 
 import com.amhsrobotics.tko2019.hardware.Compressor;
 import com.amhsrobotics.tko2019.hardware.Enableable;
+import com.amhsrobotics.tko2019.hardware.Gyro;
 import com.amhsrobotics.tko2019.hardware.Switches;
 import com.amhsrobotics.tko2019.hardware.subsystems.Cargo;
 import com.amhsrobotics.tko2019.hardware.subsystems.Climber;
@@ -21,6 +22,7 @@ public final class Robot extends SampleRobot {
 	protected final void robotInit() {
 		Compressor.getInstance();
 		Switches.getInstance();
+		Gyro.getInstance();
 
 		Drive.getInstance();
 		Climber.getInstance();

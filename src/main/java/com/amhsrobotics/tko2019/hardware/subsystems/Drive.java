@@ -4,7 +4,9 @@ import com.amhsrobotics.tko2019.controls.ControllerID;
 import com.amhsrobotics.tko2019.controls.Controls;
 import com.amhsrobotics.tko2019.controls.commands.AnalogType;
 import com.amhsrobotics.tko2019.controls.commands.DigitalType;
+import com.amhsrobotics.tko2019.hardware.Gyro;
 import com.amhsrobotics.tko2019.settings.ControlsConfig;
+import com.amhsrobotics.tko2019.settings.Restrictions;
 import com.amhsrobotics.tko2019.settings.subsystems.PID;
 import com.amhsrobotics.tko2019.settings.subsystems.SolenoidIds;
 import com.amhsrobotics.tko2019.settings.subsystems.TalonIds;
@@ -15,7 +17,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PIDController;
 
@@ -24,77 +25,78 @@ import java.util.logging.Logger;
 public final class Drive {
 	private final static Drive INSTANCE = new Drive();
 
-	private final WPI_TalonSRX[] lTalons = new WPI_TalonSRX[TalonIds.LEFT_DRIVE.length];
-	private final WPI_TalonSRX[] rTalons = new WPI_TalonSRX[TalonIds.RIGHT_DRIVE.length];
-	private final ADXRS450_Gyro gyro;
-	private final DoubleSolenoid gearShifter;
+	private final WPI_TalonSRX[] leftTalons = new WPI_TalonSRX[TalonIds.LEFT_DRIVE.length];
+	private final WPI_TalonSRX[] rightTalons = new WPI_TalonSRX[TalonIds.RIGHT_DRIVE.length];
+	private final DoubleSolenoid gearShifter =
+			new DoubleSolenoid(SolenoidIds.DRIVE_SHIFTER[0], SolenoidIds.DRIVE_SHIFTER[1]);
 
-	private int gear = 1;
+	private boolean isReversed = false;
+
+	private byte currentGear = 1;
 	private long lastSwitch = 0;
-	private boolean shouldReverse = false;
 
 	private Drive() {
-		for (int talonIdIndex = 0; talonIdIndex < TalonIds.LEFT_DRIVE.length; talonIdIndex++) {
-			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.LEFT_DRIVE[talonIdIndex]);
-			talon.setInverted(TalonInversions.LEFT_DRIVE[talonIdIndex]);
-			talon.setNeutralMode(NeutralMode.Coast);
+		for (int i = 0; i < TalonIds.LEFT_DRIVE.length; i++) {
+			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.LEFT_DRIVE[i]);
 			talon.configFactoryDefault();
-			if (talonIdIndex == 0) {
+			talon.setInverted(TalonInversions.LEFT_DRIVE[i]);
+			talon.setNeutralMode(NeutralMode.Coast); // FIXME: 2019-02-20 Isn't Coast Default?
+			if (i == 0) {
 				talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
 			} else {
-				talon.follow(lTalons[0]);
+				talon.follow(leftTalons[0]);
 			}
-			lTalons[talonIdIndex] = talon;
+			leftTalons[i] = talon;
 		}
-		for (int talonIdIndex = 0; talonIdIndex < TalonIds.RIGHT_DRIVE.length; talonIdIndex++) {
-			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.RIGHT_DRIVE[talonIdIndex]);
-			talon.setInverted(TalonInversions.RIGHT_DRIVE[talonIdIndex]);
-			talon.setNeutralMode(NeutralMode.Coast);
+		for (int i = 0; i < TalonIds.RIGHT_DRIVE.length; i++) {
+			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.RIGHT_DRIVE[i]);
 			talon.configFactoryDefault();
-			if (talonIdIndex == 0) {
+			talon.setInverted(TalonInversions.RIGHT_DRIVE[i]);
+			talon.setNeutralMode(NeutralMode.Coast); // FIXME: 2019-02-20 Isn't Coast Default?
+			if (i == 0) {
 				talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+				talon.config_kP(0, PID.DRIVE[0]);
+				talon.config_kI(0, PID.DRIVE[1]);
+				talon.config_kD(0, PID.DRIVE[2]);
 			} else {
-				talon.follow(rTalons[0]);
+				talon.follow(rightTalons[0]);
 			}
-			rTalons[talonIdIndex] = talon;
+			rightTalons[i] = talon;
 		}
 
-		gearShifter = new DoubleSolenoid(SolenoidIds.DRIVE_SHIFTER[0], SolenoidIds.DRIVE_SHIFTER[1]);
-		gearShifter.setName("Gear Shifting Solenoid");
-		gyro = new ADXRS450_Gyro();
 
-
-		Controls.getInstance().registerAnalogCommand(ControllerID.XboxController.getId(), ControlsConfig.LEFT_WHEELS, AnalogType.OutOfThresholdMinor, value -> {
-			if (shouldReverse) {
-				moveRight(-value);
+		Controls c = Controls.getInstance();
+		c.registerAnalogCommand(ControllerID.XboxController.getId(), ControlsConfig.LEFT_WHEELS, AnalogType.OutOfThresholdMinor, value -> {
+			if (isReversed) {
+				setRight(-value);
 			} else {
-				moveLeft(value);
+				setLeft(value);
 			}
 		});
-		Controls.getInstance().registerAnalogCommand(ControllerID.XboxController.getId(), ControlsConfig.LEFT_WHEELS, AnalogType.InThresholdMinor, value -> {
-			if (shouldReverse) {
-				moveRight(0);
+		c.registerAnalogCommand(ControllerID.XboxController.getId(), ControlsConfig.LEFT_WHEELS, AnalogType.InThresholdMinor, value -> {
+			if (isReversed) {
+				setRight(0);
 			} else {
-				moveLeft(0);
+				setLeft(0);
 			}
 		});
-		Controls.getInstance().registerAnalogCommand(ControllerID.XboxController.getId(), ControlsConfig.RIGHT_WHEELS, AnalogType.OutOfThresholdMinor, value -> {
-			if (shouldReverse) {
-				moveLeft(-value);
+		c.registerAnalogCommand(ControllerID.XboxController.getId(), ControlsConfig.RIGHT_WHEELS, AnalogType.OutOfThresholdMinor, value -> {
+			if (isReversed) {
+				setLeft(-value);
 			} else {
-				moveRight(value);
+				setRight(value);
 			}
 		});
-		Controls.getInstance().registerAnalogCommand(ControllerID.XboxController.getId(), ControlsConfig.RIGHT_WHEELS, AnalogType.InThresholdMinor, value -> {
-			if (shouldReverse) {
-				moveLeft(0);
+		c.registerAnalogCommand(ControllerID.XboxController.getId(), ControlsConfig.RIGHT_WHEELS, AnalogType.InThresholdMinor, value -> {
+			if (isReversed) {
+				setLeft(0);
 			} else {
-				moveRight(0);
+				setRight(0);
 			}
 		});
-		Controls.getInstance().registerDigitalCommand(ControllerID.XboxController.getId(), ControlsConfig.GEAR_SWITCH, DigitalType.DigitalPress, () -> {
-			if (System.currentTimeMillis() - lastSwitch > 1000) {
-				if (gear == 1) {
+		c.registerDigitalCommand(ControllerID.XboxController.getId(), ControlsConfig.GEAR_SWITCH, DigitalType.DigitalPress, () -> {
+			if (System.currentTimeMillis() - lastSwitch > Restrictions.DRIVE_GEAR_SHIFT_COOLDOWN_MILLIS) {
+				if (currentGear == 1) {
 					shiftGear(0);
 				} else {
 					shiftGear(1);
@@ -104,8 +106,8 @@ public final class Drive {
 				System.err.println("Shifter is on Cooldown.");
 			}
 		});
-		Controls.getInstance().registerDigitalCommand(ControllerID.XboxController.getId(), ControlsConfig.REVERSE_DIRECTION, DigitalType.DigitalPress, () -> {
-			toggleReverser(!shouldReverse);
+		c.registerDigitalCommand(ControllerID.XboxController.getId(), ControlsConfig.REVERSE_DIRECTION, DigitalType.DigitalPress, () -> {
+			toggleReverser(!isReversed);
 		});
 	}
 
@@ -113,18 +115,18 @@ public final class Drive {
 		return INSTANCE;
 	}
 
-	public void moveStraight(final double inches) {
+	public final void moveStraight(final double inches) {
 		moveStraight(inches, 0);
 	}
 
-	public void moveStraight(final double inches, final double breakInches) {
-		final double setpoint = inches * TicksPerInch.DRIVE[gear];
-		final double threshold = TicksPerInch.DRIVE[gear] * 0.25;
+	public final void moveStraight(final double inches, final double breakInches) {
+		final double setpoint = inches * getTicksPerInch();
+		final double threshold = 0.25 * getTicksPerInch();
 
-		lTalons[0].set(ControlMode.Position, lTalons[0].getSelectedSensorPosition() + setpoint);
-		rTalons[0].set(ControlMode.Follower, lTalons[0].getDeviceID());
-		while (Math.abs(lTalons[0].getClosedLoopError()) > breakInches + threshold) {
-			Logger.getLogger("drive").finer("Error:\t" + lTalons[0].getClosedLoopError());
+		leftTalons[0].set(ControlMode.Position, leftTalons[0].getSelectedSensorPosition() + setpoint);
+		rightTalons[0].follow(leftTalons[0]);
+		while (Math.abs(leftTalons[0].getClosedLoopError()) > breakInches + threshold) {
+			Logger.getLogger("drive").finer("Error:\t" + leftTalons[0].getClosedLoopError());
 			try {
 				Thread.sleep(20);
 			} catch (final InterruptedException e) {
@@ -132,21 +134,21 @@ public final class Drive {
 			}
 		}
 
-		lTalons[0].set(ControlMode.PercentOutput, 0);
-		rTalons[0].set(ControlMode.PercentOutput, 0);
+		leftTalons[0].set(ControlMode.PercentOutput, 0);
+		rightTalons[0].set(ControlMode.PercentOutput, 0);
 	}
 
-	public void turn(final double degrees) {
-		final PIDController pidController = new PIDController(PID.TURN[0], PID.TURN[1], PID.TURN[2], gyro, lTalons[0]);
+	public final void turn(final double degrees) {
+		final PIDController pidController = new PIDController(PID.TURN[0], PID.TURN[1], PID.TURN[2], Gyro.getInstance(), leftTalons[0]);
 		pidController.setInputRange(0, 360);
 		pidController.setOutputRange(-0.35, 0.35);
 		pidController.setContinuous(true);
 
-		rTalons[0].set(ControlMode.Follower, lTalons[0].getDeviceID());
-		rTalons[0].setInverted(!TalonInversions.RIGHT_DRIVE[0]);
-		rTalons[1].setInverted(!TalonInversions.RIGHT_DRIVE[1]);
+		rightTalons[0].follow(leftTalons[0]);
+		rightTalons[0].setInverted(!TalonInversions.RIGHT_DRIVE[0]);
+		rightTalons[1].setInverted(!TalonInversions.RIGHT_DRIVE[1]);
 
-		double angle = degrees + gyro.getAngle();
+		double angle = degrees + Gyro.getInstance().getAngle();
 		if (angle >= 360) {
 			angle -= 360;
 		} else if (angle < 0) {
@@ -164,29 +166,50 @@ public final class Drive {
 		}
 		pidController.disable();
 
-		rTalons[0].setInverted(TalonInversions.RIGHT_DRIVE[0]);
-		rTalons[1].setInverted(TalonInversions.RIGHT_DRIVE[1]);
+		rightTalons[0].setInverted(TalonInversions.RIGHT_DRIVE[0]);
+		rightTalons[1].setInverted(TalonInversions.RIGHT_DRIVE[1]);
 	}
 
-	private synchronized void moveLeft(final double value) {
-		lTalons[0].set(ControlMode.PercentOutput, value);
+	public synchronized void set(final double value) {
+		set(ControlMode.PercentOutput, value);
 	}
 
-	private synchronized void moveRight(final double value) {
-		rTalons[0].set(ControlMode.PercentOutput, value);
+	public synchronized void set(final ControlMode controlMode, final double value) {
+		leftTalons[0].set(controlMode, value);
+		rightTalons[0].set(controlMode, value);
+	}
+
+	public synchronized void setLeft(final double value) {
+		setLeft(ControlMode.PercentOutput, value);
+	}
+
+	public synchronized void setLeft(final ControlMode controlMode, final double value) {
+		leftTalons[0].set(controlMode, value);
+	}
+
+	public synchronized void setRight(final double value) {
+		setRight(ControlMode.PercentOutput, value);
+	}
+
+	public synchronized void setRight(final ControlMode controlMode, final double value) {
+		rightTalons[0].set(controlMode, value);
 	}
 
 	private void toggleReverser(final boolean shouldReverse) {
-		this.shouldReverse = shouldReverse;
+		isReversed = shouldReverse;
 	}
 
-	private synchronized void shiftGear(final int value) {
+	public synchronized void shiftGear(final int value) {
 		if (value == 0) {
 			gearShifter.set(DoubleSolenoid.Value.kReverse);
-			gear = 0;
+			currentGear = 0;
 		} else if (value == 1) {
 			gearShifter.set(DoubleSolenoid.Value.kForward);
-			gear = 1;
+			currentGear = 1;
 		}
+	}
+
+	private double getTicksPerInch() {
+		return TicksPerInch.DRIVE[currentGear];
 	}
 }
