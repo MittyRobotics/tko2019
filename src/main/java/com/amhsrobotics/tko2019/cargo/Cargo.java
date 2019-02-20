@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class Cargo {
     private final double ticksPerDegree = 0; //TODO
-    private final double cargoSpeed = 0.8; //TODO
+    private final double cargoSpeed = 5; //TODO
     private final double rocketSpeed = 0.8; //TODO  these speeds will change be positive or negative
     private final double intakeSpeed = 0.5; //TODO
     private final double groundSpeed = 0.5; //TODO
@@ -26,7 +26,7 @@ public class Cargo {
     private final double intakeHeight = 0; //TODO
     private final double cargoHeight = 0; //TODO
     private final double groundHeight = 0; //TODO
-    private final double p = 0.2; //TODO
+    private final double p = 20; //TODO
     private final double i = 0; //TODO
     private final double d = 0; //TODO
     private final double threshold = 1 * ticksPerDegree; //TODO
@@ -53,6 +53,7 @@ public class Cargo {
         }
         for (int i = 0; i < conveyorTalonIds.length; i++) {
             conveyorTalons[i] = new WPI_TalonSRX(conveyorTalonIds[i]);
+            conveyorTalons[i].configFactoryDefault();
         }
 
         intakeSensor = new DigitalInput(intakeSensorId);
@@ -64,9 +65,6 @@ public class Cargo {
 
         conveyorTalons[1].set(ControlMode.Follower, conveyorTalons[0].getDeviceID());
         conveyorTalons[1].setInverted(true);
-//        conveyorTalons[0].config_kP(0, p, 0);
-//        conveyorTalons[0].config_kP(0, i, 0);
-//        conveyorTalons[0].config_kP(0, d, 0);
     }
 
     public void run() {
@@ -199,20 +197,7 @@ public class Cargo {
     }
 
     private void moveConveyor ( double neededPos){
-        double error1 = conveyorTalons[0].getClosedLoopError();
-        neededPos += conveyorTalons[0].getSelectedSensorPosition();
-        conveyorTalons[0].set(ControlMode.Position, neededPos * ticksPerDegree);
-
-        while ((Math.abs(error1) > threshold)) {
-            error1 = conveyorTalons[0].getClosedLoopError();
-            System.out.println("T1: " + conveyorTalons[0].getSelectedSensorPosition());
-            try {
-                Thread.sleep(20);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        conveyorTalons[0].set(ControlMode.PercentOutput, 0);
+        conveyorTalons[0].set(ControlMode.Position, neededPos);
     }
 
     private void rocketConveyor () {
@@ -235,11 +220,12 @@ public class Cargo {
         moveConveyor(groundHeight);
     }
 
-    private void calibrateConveyor () {
-        while (!conveyorLimits[0].get()) {
-            conveyorTalons[0].set(ControlMode.PercentOutput, 0.5);
+    public void calibrateConveyor() {
+        while (!conveyorTalons[0].getSensorCollection().isFwdLimitSwitchClosed()){
+            conveyorTalons[0].set(ControlMode.PercentOutput, 0.1);
         }
-        conveyorTalons[0].setSelectedSensorPosition(90);
+        conveyorTalons[0].set(ControlMode.PercentOutput, 0);
+        conveyorTalons[0].setSelectedSensorPosition(0);
     }
 
     private void cargoLimitSafety () {

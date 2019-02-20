@@ -18,9 +18,9 @@ public class HatchPanel {
     3: center
     2: right extreme
      */
-
+//    private boolean notReset = true;
     private boolean manual = false;
-    private final double p = .1; //TODO
+    private final double p = .2; //TODO
     private final double i = 0; //TODO
     private final int d = 0; //TODO
     public final double ticksPerInch = (2500); //TODO 1607.68
@@ -31,10 +31,10 @@ public class HatchPanel {
     private DoubleSolenoid solSide;
     private DoubleSolenoid solForward;
 
-    private final int hatchSwitchId = 4; //TODO
+    private final int hatchSwitchId = 2; //TODO
     private final int[] sliderSwitchesIds = {0, 1}; //TODO
     private final int wallSwitchId = 3; //TODO
-    private DigitalInput hatchSwitch;
+    public DigitalInput hatchSwitch;
     public DigitalInput[] sliderSwitches = new DigitalInput[2];
     private DigitalInput wallSwitch;
 
@@ -46,7 +46,7 @@ public class HatchPanel {
         solForward = new DoubleSolenoid(solForwardId[0], solForwardId[1]);
 
 
-//        hatchSwitch = new DigitalInput(hatchSwitchId);
+        hatchSwitch = new DigitalInput(hatchSwitchId);
 //        wallSwitch = new DigitalInput(wallSwitchId);
 
 //        for(int i = 0; i < 2; i++){
@@ -58,12 +58,14 @@ public class HatchPanel {
 //        slideTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 1000);
 
 //        slideTalon.config_kP(0, p, 0);
-        slideTalon.config_kP(0, 0.2, 0);
+        slideTalon.config_kP(0, 0.1, 0);
         slideTalon.config_kI(0,i, 0);
         slideTalon.config_kD(0,d,0);
         slideTalon.setSafetyEnabled(false);
-//        slideTalon.setSafetyEnabled(true);
+        slideTalon.setSensorPhase(true);
         slideTalon.setInverted(true);
+//        slideTalon.setSafetyEnabled(true);
+//        slideTalon.setInverted(true);
     }
     public void run(){
         System.out.println("running");
@@ -162,12 +164,20 @@ public class HatchPanel {
 
     }
 
-    public void openHatch() { solSide.set(DoubleSolenoid.Value.kReverse); }
-    public void closeHatch() { solSide.set(DoubleSolenoid.Value.kForward); }
-    public void goHatchForward() {
-        solForward.set(DoubleSolenoid.Value.kForward);
+    public void openHatch() {
+//        if(hatchSwitch.get()){
+            solSide.set(DoubleSolenoid.Value.kReverse);
+//        }
     }
-    public void goHatchBackward() { solForward.set(DoubleSolenoid.Value.kReverse); }
+    public void closeHatch() {
+        if(!hatchSwitch.get()){
+            solSide.set(DoubleSolenoid.Value.kForward);
+        }
+    }
+    public void goHatchForward() {
+        solForward.set(DoubleSolenoid.Value.kReverse);
+    }
+    public void goHatchBackward() { solForward.set(DoubleSolenoid.Value.kForward); }
 
     //outtake for the rocket
     private void rocketDrop() {
@@ -186,11 +196,13 @@ public class HatchPanel {
 
     //resets encoder when slider is to the left
     public void resetEncoder(){
-        slideTalon.set(ControlMode.PercentOutput, 0.1);
-        if(sliderSwitches[0].get()){
-            slideTalon.setSelectedSensorPosition(0);
-            slideTalon.set(ControlMode.PercentOutput, 0);
+
+        while (!slideTalon.getSensorCollection().isFwdLimitSwitchClosed()){
+            slideTalon.set(ControlMode.PercentOutput, 0.1);
         }
+        slideTalon.set(ControlMode.PercentOutput, 0);
+        slideTalon.setSelectedSensorPosition(0);
+
     }
 
 
@@ -238,7 +250,7 @@ public class HatchPanel {
 
     //how far the mechanism has to slide
     public void slide(double position){ //position in inches
-        slideTalon.set(ControlMode.Position, (position*ticksPerInch));
+        slideTalon.set(ControlMode.Position, (position) * ticksPerInch);
 //        System.out.println("end error =" + slideTalon.getClosedLoopError());
 //        System.out.println(slideTalon.getSelectedSensorPosition());
     }

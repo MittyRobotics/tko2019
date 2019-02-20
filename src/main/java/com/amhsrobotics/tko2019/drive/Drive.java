@@ -22,7 +22,8 @@ public class Drive {
 	private final WPI_TalonSRX[] rightDriveTalons = new WPI_TalonSRX[rightTalonIds.length];
 
 	private DoubleSolenoid gearShift;
-	private int gear = 1;
+	private int gear = 0;
+	private int currentGear = 1;
 
 	private boolean shouldReverse = false;
 
@@ -84,11 +85,18 @@ public class Drive {
             		moveLeft(0);
 				}
 			});
-        Controls.getInstance().registerDigitalCommand(0, DigitalInput.XboxLBumper, DigitalType.DigitalPress, ()->{
-            shiftGear(1);
-        });
+//        Controls.getInstance().registerDigitalCommand(0, DigitalInput.XboxLBumper, DigitalType.DigitalPress, ()->{
+//            shiftGear(1);
+//        });
         Controls.getInstance().registerDigitalCommand(0, DigitalInput.XboxRBumper, DigitalType.DigitalPress, ()->{
-        	shiftGear(0);
+        	if(currentGear == 0){
+        		currentGear = 1;
+			}
+        	else {
+        		currentGear = 0;
+			}
+        	shiftGear(currentGear);
+
 		});
 		Controls.getInstance().registerDigitalCommand(0, DigitalInput.XboxRJoystick, DigitalType.DigitalPress, () ->{
 			System.out.println("Here");
