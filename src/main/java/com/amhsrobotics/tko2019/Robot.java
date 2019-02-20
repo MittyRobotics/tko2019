@@ -1,7 +1,6 @@
 package com.amhsrobotics.tko2019;
 
-import com.amhsrobotics.tko2019.controls.Controls;
-import com.amhsrobotics.tko2019.hardware.Compressor;
+import com.amhsrobotics.tko2019.hardware.Enableable;
 import com.amhsrobotics.tko2019.hardware.subsystems.Cargo;
 import com.amhsrobotics.tko2019.hardware.subsystems.Climber;
 import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
@@ -45,8 +44,9 @@ public final class Robot extends SampleRobot {
 		while (disabled) {
 			Thread.onSpinWait();
 		}
-		Controls.getInstance().disable();
-		Compressor.getInstance().disable();
+		for (final Enableable enableable : Enableable.ENABLEABLES) {
+			enableable.disable();
+		}
 		disabled = true;
 	}
 
@@ -54,8 +54,9 @@ public final class Robot extends SampleRobot {
 		while (!disabled) {
 			Thread.onSpinWait();
 		}
-		Controls.getInstance().enable();
-		Compressor.getInstance().enabled();
+		for (final Enableable enableable : Enableable.ENABLEABLES) {
+			enableable.enable();
+		}
 		disabled = false;
 	}
 }
