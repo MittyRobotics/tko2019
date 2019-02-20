@@ -1,16 +1,7 @@
 package com.amhsrobotics.tko2019.hardware;
 
-public interface Subsystem {
-	default void init() {
-	}
+import com.amhsrobotics.tko2019.controls.Controllable;
 
-	default void initControls() {
-	}
-
-
-	default void enable() {
-	}
-
-	default void disable() {
-	}
+public interface Subsystem extends Initable, Controllable {
+	
 }
