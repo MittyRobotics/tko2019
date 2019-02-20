@@ -138,6 +138,31 @@ public final class Drive implements Subsystem {
 		exiting("initControls");
 	}
 
+	public void moveStraight(final double inches) {
+		entering("moveStraight");
+
+
+		final double setpoint = inches * TicksPerInch.DRIVE[gear];
+		final double threshold = TicksPerInch.DRIVE[gear] * 0.25;
+
+		lTalons[0].set(ControlMode.Position, lTalons[0].getSelectedSensorPosition() + setpoint);
+		rTalons[0].set(ControlMode.Follower, lTalons[0].getDeviceID());
+		while (Math.abs(lTalons[0].getClosedLoopError()) > threshold) {
+			Logger.getLogger("drive").finer("Error:\t" + lTalons[0].getClosedLoopError());
+			try {
+				Thread.sleep(20);
+			} catch (final InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
+		lTalons[0].set(ControlMode.PercentOutput, 0);
+		rTalons[0].set(ControlMode.PercentOutput, 0);
+
+
+		exiting("moveStraight");
+	}
+
 	public void moveStraight(final double inches, final double breakInches) {
 		entering("moveStraight");
 

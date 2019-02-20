@@ -21,13 +21,12 @@ public class Climber implements Subsystem {
 	}
 
 	private DoubleSolenoid climberSolenoid;
-	private HatchPanel hatchPanel;
+	private HatchPanel hatchPanel = HatchPanel.getInstance();
 	@Override
 	public void init() {
 		entering("init");
 
 		climberSolenoid = new DoubleSolenoid(SolenoidIds.CLIMBER[0], SolenoidIds.CLIMBER[1]);
-		hatchPanel = new HatchPanel();
 		exiting("init");
 	}
 

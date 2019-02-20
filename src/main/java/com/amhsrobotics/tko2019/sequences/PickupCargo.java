@@ -7,8 +7,8 @@ import com.amhsrobotics.tko2019.subsystems.drive.Drive;
 import com.amhsrobotics.tko2019.subsystems.drive.PathFollower;
 
 public class PickupCargo {
-    static Cargo cargo = new Cargo();
-    static Drive drive = new Drive();
+    static Cargo cargo = Cargo.getInstance();
+    static Drive drive = Drive.getInstance();
     static Sequence sequence = new Sequence();
     static PathFollower pathFollower = new PathFollower();
 

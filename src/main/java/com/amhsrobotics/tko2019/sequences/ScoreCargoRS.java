@@ -7,8 +7,8 @@ import com.amhsrobotics.tko2019.sequences.States.Check;
 import com.amhsrobotics.tko2019.sequences.States.State;
 
 public class ScoreCargoRS {
-    static Cargo cargo = new Cargo();
-    static Drive drive = new Drive();
+    static Cargo cargo = Cargo.getInstance();
+    static Drive drive = Drive.getInstance();
     static Sequence sequence = new Sequence();
     static PathFollower pathFollower = new PathFollower();
 
