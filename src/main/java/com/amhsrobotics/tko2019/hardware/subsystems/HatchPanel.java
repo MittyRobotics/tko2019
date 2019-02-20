@@ -63,7 +63,7 @@ public class HatchPanel implements Subsystem {
 			if (!manual) {
 				if ((
 //						!Switches.getInstance().wallSwitch.get() &&
-						!Switches.getInstance().hatchSwitch.get()) && (processDone)) {
+						!Switches.getInstance().getHatchSwitch()) && (processDone)) {
 					slideMiddle();
 					processDone = false;
 				}
@@ -73,7 +73,7 @@ public class HatchPanel implements Subsystem {
 			if (!manual) {
 				if ((
 //						!Switches.getInstance().wallSwitch.get() &&
-						!Switches.getInstance().hatchSwitch.get()) && (processDone)) {
+						!Switches.getInstance().getHatchSwitch()) && (processDone)) {
 					slideMiddle();
 					processDone = false;
 				}
@@ -104,7 +104,7 @@ public class HatchPanel implements Subsystem {
 
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.RELEASE_HATCH, DigitalType.DigitalPress, () -> {
 			if (!manual) {
-				if (!Switches.getInstance().hatchSwitch.get()
+				if (!Switches.getInstance().getHatchSwitch()
 //						&& Switches.getInstance().wallSwitch.get()
 				) {
 					processDone = true;
@@ -116,7 +116,7 @@ public class HatchPanel implements Subsystem {
 		});
 		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.GRAB_HATCH, DigitalType.DigitalPress, () -> {
 			if (!manual) {
-				if (!Switches.getInstance().hatchSwitch.get()
+				if (!Switches.getInstance().getHatchSwitch()
 //						&& Switches.getInstance().wallSwitch.get()
 				) {
 					intake();
@@ -189,20 +189,20 @@ public class HatchPanel implements Subsystem {
 
 	//take in the hatch panel *has safety measures*
 	public void intake() {
-		if (!Switches.getInstance().hatchSwitch.get() && Switches.getInstance().wallSwitch.get()) {
+		if (!Switches.getInstance().getHatchSwitch() && Switches.getInstance().getWallSwitch()) {
 			openHatch();
-			if (!Switches.getInstance().hatchSwitch.get()) {
+			if (!Switches.getInstance().getHatchSwitch()) {
 				closeHatch();
 			}
 		}
 	}
 
 	public void outtake() {
-		if (Switches.getInstance().hatchSwitch.get() && Switches.getInstance().wallSwitch.get()) {
+		if (Switches.getInstance().getHatchSwitch() && Switches.getInstance().getWallSwitch()) {
 			goHatchForward();
 			closeHatch();
 			goHatchBackward();
-			if (Switches.getInstance().hatchSwitch.get()) {
+			if (Switches.getInstance().getHatchSwitch()) {
 				openHatch();
 			}
 		}

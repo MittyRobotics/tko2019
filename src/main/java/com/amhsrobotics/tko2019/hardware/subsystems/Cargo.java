@@ -136,7 +136,7 @@ public class Cargo implements Subsystem {
 
 
 	private void spinIntake(double topSpeed, double bottomSpeed) {
-		if (Switches.getInstance().intakeSensor.get()) {
+		if (Switches.getInstance().getIntakeSensor()) {
 			visionConveyor();
 			stopIntake();
 		}
