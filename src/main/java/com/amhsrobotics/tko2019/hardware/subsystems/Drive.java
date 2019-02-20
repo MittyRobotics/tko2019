@@ -1,9 +1,10 @@
 package com.amhsrobotics.tko2019.hardware.subsystems;
 
-import com.amhsrobotics.tko2019.controls.commands.AnalogType;
 import com.amhsrobotics.tko2019.controls.ControllerID;
 import com.amhsrobotics.tko2019.controls.Controls;
+import com.amhsrobotics.tko2019.controls.commands.AnalogType;
 import com.amhsrobotics.tko2019.controls.commands.DigitalType;
+import com.amhsrobotics.tko2019.hardware.Subsystem;
 import com.amhsrobotics.tko2019.settings.ControlsConfig;
 import com.amhsrobotics.tko2019.settings.subsystems.PID;
 import com.amhsrobotics.tko2019.settings.subsystems.SolenoidIds;
@@ -11,7 +12,6 @@ import com.amhsrobotics.tko2019.settings.subsystems.TalonIds;
 import com.amhsrobotics.tko2019.settings.subsystems.TalonInversions;
 import com.amhsrobotics.tko2019.settings.subsystems.Thresholds;
 import com.amhsrobotics.tko2019.settings.subsystems.TicksPerInch;
-import com.amhsrobotics.tko2019.hardware.Subsystem;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -24,24 +24,17 @@ import java.util.logging.Logger;
 
 public final class Drive implements Subsystem {
 	private final static Drive INSTANCE = new Drive();
+
 	private final WPI_TalonSRX[] lTalons = new WPI_TalonSRX[TalonIds.LEFT_DRIVE.length];
 	private final WPI_TalonSRX[] rTalons = new WPI_TalonSRX[TalonIds.RIGHT_DRIVE.length];
-	private ADXRS450_Gyro gyro;
-	private DoubleSolenoid gearShifter;
+	private final ADXRS450_Gyro gyro;
+	private final DoubleSolenoid gearShifter;
+
 	private int gear = 1;
 	private long lastSwitch = 0;
 	private boolean shouldReverse = false;
+
 	private Drive() {
-
-	}
-
-	public static Drive getInstance() {
-		return INSTANCE;
-	}
-
-	@SuppressWarnings("Duplicates")
-	@Override
-	public void init() {
 		for (int talonIdIndex = 0; talonIdIndex < TalonIds.LEFT_DRIVE.length; talonIdIndex++) {
 			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.LEFT_DRIVE[talonIdIndex]);
 			talon.setInverted(TalonInversions.LEFT_DRIVE[talonIdIndex]);
@@ -70,6 +63,10 @@ public final class Drive implements Subsystem {
 		gearShifter = new DoubleSolenoid(SolenoidIds.DRIVE_SHIFTER[0], SolenoidIds.DRIVE_SHIFTER[1]);
 		gearShifter.setName("Gear Shifting Solenoid");
 		gyro = new ADXRS450_Gyro();
+	}
+
+	public static Drive getInstance() {
+		return INSTANCE;
 	}
 
 	@Override

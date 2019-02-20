@@ -25,15 +25,8 @@ public class Cargo implements Subsystem {
 	private final WPI_TalonSRX[] conveyorTalons = new WPI_TalonSRX[TalonIds.CONVEYOR.length];
 	private boolean manual = false;
 	private IntakeHeight height = IntakeHeight.HumanPlayer;
+
 	private Cargo() {
-
-	}
-
-	public static Cargo getInstance() {
-		return INSTANCE;
-	}
-
-	public void init() {
 		for (int talonIdIndex = 0; talonIdIndex < TalonIds.INTAKE.length; talonIdIndex++) {
 			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.INTAKE[talonIdIndex]);
 			talon.configFactoryDefault();
@@ -56,6 +49,10 @@ public class Cargo implements Subsystem {
 			}
 			conveyorTalons[talonIdIndex] = talon;
 		}
+	}
+
+	public static Cargo getInstance() {
+		return INSTANCE;
 	}
 
 	public void initControls() {

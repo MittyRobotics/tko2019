@@ -1,9 +1,10 @@
 package com.amhsrobotics.tko2019.hardware.subsystems;
 
-import com.amhsrobotics.tko2019.controls.commands.AnalogType;
 import com.amhsrobotics.tko2019.controls.ControllerID;
 import com.amhsrobotics.tko2019.controls.Controls;
+import com.amhsrobotics.tko2019.controls.commands.AnalogType;
 import com.amhsrobotics.tko2019.controls.commands.DigitalType;
+import com.amhsrobotics.tko2019.hardware.Subsystem;
 import com.amhsrobotics.tko2019.hardware.Switches;
 import com.amhsrobotics.tko2019.settings.ControlsConfig;
 import com.amhsrobotics.tko2019.settings.subsystems.PID;
@@ -12,7 +13,6 @@ import com.amhsrobotics.tko2019.settings.subsystems.TalonIds;
 import com.amhsrobotics.tko2019.settings.subsystems.TalonInversions;
 import com.amhsrobotics.tko2019.settings.subsystems.TicksPerInch;
 import com.amhsrobotics.tko2019.settings.subsystems.hatchpanel.SliderPositions;
-import com.amhsrobotics.tko2019.hardware.Subsystem;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -21,21 +21,15 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class HatchPanel implements Subsystem {
 	private final static HatchPanel INSTANCE = new HatchPanel();
+
+	private final DoubleSolenoid grabber;
+	private final DoubleSolenoid pushForward;
+	private final WPI_TalonSRX slideTalon;
+
 	private boolean manual = false;
 	private boolean processDone = false;
-	private DoubleSolenoid grabber;
-	private DoubleSolenoid pushForward;
-	private WPI_TalonSRX slideTalon;
+
 	private HatchPanel() {
-
-	}
-
-	public static HatchPanel getInstance() {
-		return INSTANCE;
-	}
-
-	@Override
-	public void init() {
 		slideTalon = new WPI_TalonSRX(TalonIds.SLIDE);
 		slideTalon.setNeutralMode(NeutralMode.Coast);
 		slideTalon.configFactoryDefault();
@@ -47,6 +41,10 @@ public class HatchPanel implements Subsystem {
 
 		grabber = new DoubleSolenoid(SolenoidIds.GRABBER[0], SolenoidIds.GRABBER[1]);
 		pushForward = new DoubleSolenoid(SolenoidIds.PUSH_FORWARD[0], SolenoidIds.PUSH_FORWARD[1]);
+	}
+
+	public static HatchPanel getInstance() {
+		return INSTANCE;
 	}
 
 	@Override

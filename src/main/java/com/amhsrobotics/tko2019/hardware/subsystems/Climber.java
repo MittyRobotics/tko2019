@@ -11,11 +11,10 @@ import edu.wpi.first.wpilibj.DriverStation;
 
 public class Climber implements Subsystem {
 	private final static Climber INSTANCE = new Climber();
-	private DoubleSolenoid climberSolenoid;
-	private HatchPanel hatchPanel = HatchPanel.getInstance();
+	private final DoubleSolenoid climberSolenoid;
 
 	private Climber() {
-
+		climberSolenoid = new DoubleSolenoid(SolenoidIds.CLIMBER[0], SolenoidIds.CLIMBER[1]);
 	}
 
 	public static Climber getInstance() {
@@ -23,15 +22,10 @@ public class Climber implements Subsystem {
 	}
 
 	@Override
-	public void init() {
-		climberSolenoid = new DoubleSolenoid(SolenoidIds.CLIMBER[0], SolenoidIds.CLIMBER[1]);
-	}
-
-	@Override
 	public void initControls() {
 		Controls.getInstance().registerDigitalCommand(ControllerID.XboxController.getId(), ControlsConfig.RELEASE_CLIMBER, DigitalType.DigitalPress, () -> {
 			if (DriverStation.getInstance().getMatchTime() < 30 && DriverStation.getInstance().isOperatorControl()) {
-				hatchPanel.slideMiddle();
+				HatchPanel.getInstance().slideMiddle();
 				release();
 			}
 		});

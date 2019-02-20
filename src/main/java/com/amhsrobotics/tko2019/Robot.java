@@ -2,7 +2,6 @@ package com.amhsrobotics.tko2019;
 
 import com.amhsrobotics.tko2019.controls.Controls;
 import com.amhsrobotics.tko2019.hardware.Compressor;
-import com.amhsrobotics.tko2019.hardware.Subsystem;
 import com.amhsrobotics.tko2019.hardware.subsystems.Cargo;
 import com.amhsrobotics.tko2019.hardware.subsystems.Climber;
 import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
@@ -14,39 +13,17 @@ import edu.wpi.first.wpilibj.SampleRobot;
 public final class Robot extends SampleRobot {
 	private volatile boolean disabled = true;
 
-	private final Subsystem[] subsystems = {
-			Drive.getInstance(),
-			Climber.getInstance(),
-			Cargo.getInstance(),
-			HatchPanel.getInstance()
-	};
-
 	public static void main(final String... args) {
 		RobotBase.startRobot(Robot::new);
 	}
 
+	@SuppressWarnings("ResultOfMethodCallIgnored")
 	@Override
 	protected final void robotInit() {
-		final Thread[] subsystemThreads = new Thread[subsystems.length];
-		for (int subsystemNumber = 0; subsystemNumber < subsystems.length; subsystemNumber++) {
-			final Thread subsystemThread = new Thread(subsystems[subsystemNumber]::init);
-			subsystemThread.start();
-			subsystemThreads[subsystemNumber] = subsystemThread;
-		}
-
-		for (final Subsystem subsystem : subsystems) {
-			subsystem.initControls();
-		}
-
-		Compressor.getInstance().setClosedLoopControl(true);
-
-		for (final Thread subsystemThread : subsystemThreads) {
-			try {
-				subsystemThread.join();
-			} catch (final InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+		Drive.getInstance();
+		Climber.getInstance();
+		Cargo.getInstance();
+		HatchPanel.getInstance();
 	}
 
 	@Override
@@ -70,10 +47,7 @@ public final class Robot extends SampleRobot {
 			Thread.onSpinWait();
 		}
 		Controls.getInstance().disable();
-		for (final Subsystem subsystem : subsystems) {
-			subsystem.disable();
-		}
-		Compressor.getInstance().stop();
+		Compressor.getInstance().disable();
 		disabled = true;
 	}
 
@@ -82,10 +56,7 @@ public final class Robot extends SampleRobot {
 			Thread.onSpinWait();
 		}
 		Controls.getInstance().enable();
-		for (final Subsystem subsystem : subsystems) {
-			subsystem.enable();
-		}
-		Compressor.getInstance().start();
+		Compressor.getInstance().enabled();
 		disabled = false;
 	}
 }
