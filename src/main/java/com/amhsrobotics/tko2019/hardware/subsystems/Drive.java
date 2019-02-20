@@ -4,7 +4,6 @@ import com.amhsrobotics.tko2019.controls.ControllerID;
 import com.amhsrobotics.tko2019.controls.Controls;
 import com.amhsrobotics.tko2019.controls.commands.AnalogType;
 import com.amhsrobotics.tko2019.controls.commands.DigitalType;
-import com.amhsrobotics.tko2019.hardware.Subsystem;
 import com.amhsrobotics.tko2019.settings.ControlsConfig;
 import com.amhsrobotics.tko2019.settings.subsystems.PID;
 import com.amhsrobotics.tko2019.settings.subsystems.SolenoidIds;
@@ -22,7 +21,7 @@ import edu.wpi.first.wpilibj.PIDController;
 
 import java.util.logging.Logger;
 
-public final class Drive implements Subsystem {
+public final class Drive {
 	private final static Drive INSTANCE = new Drive();
 
 	private final WPI_TalonSRX[] lTalons = new WPI_TalonSRX[TalonIds.LEFT_DRIVE.length];

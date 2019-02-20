@@ -3,13 +3,12 @@ package com.amhsrobotics.tko2019.hardware.subsystems;
 import com.amhsrobotics.tko2019.controls.ControllerID;
 import com.amhsrobotics.tko2019.controls.Controls;
 import com.amhsrobotics.tko2019.controls.commands.DigitalType;
-import com.amhsrobotics.tko2019.hardware.Subsystem;
 import com.amhsrobotics.tko2019.settings.ControlsConfig;
 import com.amhsrobotics.tko2019.settings.subsystems.SolenoidIds;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 
-public class Climber implements Subsystem {
+public class Climber {
 	private final static Climber INSTANCE = new Climber();
 	private final DoubleSolenoid climberSolenoid;
 
