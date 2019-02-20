@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.SampleRobot;
 @SuppressWarnings("deprecation")
 public final class Robot extends SampleRobot {
 	public static void main(final String... args) {
-		//RobotBase.startRobot(Robot::new);
+		RobotBase.startRobot(Robot::new);
 	}
 
 	@SuppressWarnings("ResultOfMethodCallIgnored")
