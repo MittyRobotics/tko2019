@@ -5,15 +5,11 @@ public class Compressor extends edu.wpi.first.wpilibj.Compressor implements Init
 
 	private Compressor() {
 		super();
+		setClosedLoopControl(true);
 	}
 
 	public static Compressor getInstance() {
 		return ourInstance;
-	}
-
-	@Override
-	public void init() {
-		setClosedLoopControl(true);
 	}
 
 	@Override
