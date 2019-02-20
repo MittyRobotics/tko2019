@@ -39,11 +39,11 @@ public class PeerSync {
 		peers.add(peer);
 	}
 
-	private void stop() {
+	static void stop() {
 		isRunning = false;
 	}
 
-	void updateData(final int value) {
+	static void updateData(final int value) {
 		data = value;
 		for (final Socket peer : peers) {
 			try {
@@ -54,7 +54,7 @@ public class PeerSync {
 		}
 	}
 
-	int retrieveData() {
+	static int retrieveData() {
 		return data;
 	}
 }
