@@ -106,7 +106,7 @@ public class Cargo {
 		return INSTANCE;
 	}
 
-	private void spinIntake(double topSpeed, double bottomSpeed) {
+	public void spinIntake(double topSpeed, double bottomSpeed) {
 		if (!Switches.getInstance().getIntakeSensor()) { //Switch is inverted
 			visionConveyor();
 			stopIntake();
@@ -117,7 +117,7 @@ public class Cargo {
 		}
 	}
 
-	private void spinOuttake(double topSpeed, double bottomSpeed) {
+	public void spinOuttake(double topSpeed, double bottomSpeed) {
 		intakeTalons[0].set(ControlMode.PercentOutput, -topSpeed);
 		intakeTalons[1].set(ControlMode.PercentOutput, bottomSpeed);
 	}
