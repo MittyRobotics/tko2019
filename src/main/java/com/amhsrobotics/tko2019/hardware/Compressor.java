@@ -6,6 +6,7 @@ public class Compressor extends edu.wpi.first.wpilibj.Compressor implements Enab
 	private Compressor() {
 		super();
 		setClosedLoopControl(true);
+		ENABLEABLES.add(this);
 	}
 
 	public static Compressor getInstance() {
