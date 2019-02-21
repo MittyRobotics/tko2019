@@ -1,6 +1,6 @@
 package com.amhsrobotics.tko2019.hardware.subsystems;
 
-import com.amhsrobotics.tko2019.controls.ControllerID;
+import com.amhsrobotics.tko2019.controls.Controller;
 import com.amhsrobotics.tko2019.controls.Controls;
 import com.amhsrobotics.tko2019.controls.commands.AnalogType;
 import com.amhsrobotics.tko2019.controls.commands.DigitalType;
@@ -42,7 +42,7 @@ public class HatchPanel {
 		pushForward = new DoubleSolenoid(SolenoidIds.PUSH_FORWARD[0], SolenoidIds.PUSH_FORWARD[1]);
 
 
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SWITCH_MODE, DigitalType.DigitalPress, () -> {
+		Controls.getInstance().registerDigitalCommand(Controller.Joystick1, ControlsConfig.SWITCH_MODE, DigitalType.DigitalPress, () -> {
 			manual = !manual;
 			if (manual) {
 				System.out.println("Manual Mode");
@@ -50,7 +50,7 @@ public class HatchPanel {
 				System.out.println("Automatic Mode");
 			}
 		});
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SLIDE_LEFT, DigitalType.DigitalRelease, () -> {
+		Controls.getInstance().registerDigitalCommand(Controller.Joystick1, ControlsConfig.SLIDE_LEFT, DigitalType.DigitalRelease, () -> {
 			if (!manual) {
 				if ((
 //						!Switches.getInstance().wallSwitch.get() &&
@@ -60,7 +60,7 @@ public class HatchPanel {
 				}
 			}
 		});
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SLIDE_RIGHT, DigitalType.DigitalRelease, () -> {
+		Controls.getInstance().registerDigitalCommand(Controller.Joystick1, ControlsConfig.SLIDE_RIGHT, DigitalType.DigitalRelease, () -> {
 			if (!manual) {
 				if ((
 //						!Switches.getInstance().wallSwitch.get() &&
@@ -70,30 +70,30 @@ public class HatchPanel {
 				}
 			}
 		});
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SLIDE_LEFT, DigitalType.DigitalPress, () -> {
+		Controls.getInstance().registerDigitalCommand(Controller.Joystick1, ControlsConfig.SLIDE_LEFT, DigitalType.DigitalPress, () -> {
 			if (!manual) {
 				slideLeft();
 			}
 		});
-		Controls.getInstance().registerAnalogCommand(ControllerID.Joystick1.getId(), ControlsConfig.JOYTICK_SLIDE, AnalogType.OutOfThresholdMinor, value -> {
+		Controls.getInstance().registerAnalogCommand(Controller.Joystick1, ControlsConfig.JOYTICK_SLIDE, AnalogType.OutOfThresholdMinor, value -> {
 			if (!manual) {
 				slide(slideTalon.getSelectedSensorPosition() / TicksPerInch.SLIDER + value);
 			} else {
 				manualSlide(value * 0.5);
 			}
 		});
-		Controls.getInstance().registerAnalogCommand(ControllerID.Joystick1.getId(), ControlsConfig.JOYTICK_SLIDE, AnalogType.InThresholdMinor, value -> {
+		Controls.getInstance().registerAnalogCommand(Controller.Joystick1, ControlsConfig.JOYTICK_SLIDE, AnalogType.InThresholdMinor, value -> {
 			if (manual) {
 				manualSlide(0);
 			}
 		});
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SLIDE_RIGHT, DigitalType.DigitalPress, () -> {
+		Controls.getInstance().registerDigitalCommand(Controller.Joystick1, ControlsConfig.SLIDE_RIGHT, DigitalType.DigitalPress, () -> {
 			if (!manual) {
 				slideRight();
 			}
 		});
 
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.RELEASE_HATCH, DigitalType.DigitalPress, () -> {
+		Controls.getInstance().registerDigitalCommand(Controller.Joystick1, ControlsConfig.RELEASE_HATCH, DigitalType.DigitalPress, () -> {
 			if (!manual) {
 				if (!Switches.getInstance().getHatchSwitch()
 //						&& Switches.getInstance().wallSwitch.get()
@@ -105,7 +105,7 @@ public class HatchPanel {
 				closeHatch();
 			}
 		});
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.GRAB_HATCH, DigitalType.DigitalPress, () -> {
+		Controls.getInstance().registerDigitalCommand(Controller.Joystick1, ControlsConfig.GRAB_HATCH, DigitalType.DigitalPress, () -> {
 			if (!manual) {
 				if (!Switches.getInstance().getHatchSwitch()
 //						&& Switches.getInstance().wallSwitch.get()
@@ -116,7 +116,7 @@ public class HatchPanel {
 				openHatch();
 			}
 		});
-		Controls.getInstance().registerAnalogCommand(ControllerID.Joystick1.getId(), ControlsConfig.PUSH_HATCH_MECHANISM, AnalogType.OutOfThresholdMajor, value -> {
+		Controls.getInstance().registerAnalogCommand(Controller.Joystick1, ControlsConfig.PUSH_HATCH_MECHANISM, AnalogType.OutOfThresholdMajor, value -> {
 			if (manual) {
 				if (value > 0) {
 					goHatchForward();
@@ -125,7 +125,7 @@ public class HatchPanel {
 				}
 			}
 		});
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.CONFIG_ENCODER, DigitalType.DigitalPress, this::resetEncoder);
+		Controls.getInstance().registerDigitalCommand(Controller.Joystick1, ControlsConfig.CONFIG_ENCODER, DigitalType.DigitalPress, this::resetEncoder);
 	}
 
 	public static HatchPanel getInstance() {

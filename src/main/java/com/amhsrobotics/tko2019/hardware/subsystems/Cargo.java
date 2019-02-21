@@ -1,6 +1,6 @@
 package com.amhsrobotics.tko2019.hardware.subsystems;
 
-import com.amhsrobotics.tko2019.controls.ControllerID;
+import com.amhsrobotics.tko2019.controls.Controller;
 import com.amhsrobotics.tko2019.controls.Controls;
 import com.amhsrobotics.tko2019.controls.commands.AnalogType;
 import com.amhsrobotics.tko2019.controls.commands.DigitalType;
@@ -50,15 +50,14 @@ public class Cargo {
 		}
 
 
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick2.getId(), ControlsConfig.SWITCH_MODE, DigitalType.DigitalPress, () -> {
+		Controls.getInstance().registerDigitalCommand(Controller.Joystick2, ControlsConfig.SWITCH_MODE, DigitalType.DigitalPress, () -> {
 			manual = !manual;
 			if (manual) {
 				System.out.println("Manual Mode");
 			} else {
 				System.out.println("Auton Mode");
 			}
-		});
-		Controls.getInstance().registerAnalogCommand(ControllerID.Joystick2.getId(), ControlsConfig.SPIN_INTAKE, AnalogType.OutOfThresholdMinor, (value) -> {
+		}).registerAnalogCommand(Controller.Joystick2, ControlsConfig.SPIN_INTAKE, AnalogType.OutOfThresholdMinor, (value) -> {
 			if (manual) {
 				spinIntake(value, value);
 			} else {
@@ -68,8 +67,7 @@ public class Cargo {
 					stopIntake();
 				}
 			}
-		});
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick2.getId(), ControlsConfig.ANGLE_UP, DigitalType.DigitalHold, () -> {
+		}).registerDigitalCommand(Controller.Joystick2, ControlsConfig.ANGLE_UP, DigitalType.DigitalHold, () -> {
 			if (manual) {
 				conveyorTalons[0].set(ControlMode.Position, conveyorTalons[1].getSelectedSensorPosition() + 1);
 			} else {
@@ -87,8 +85,7 @@ public class Cargo {
 					System.out.println("Human Player Height");
 				}
 			}
-		});
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick2.getId(), ControlsConfig.ANGLE_DOWN, DigitalType.DigitalHold, () -> {
+		}).registerDigitalCommand(Controller.Joystick2, ControlsConfig.ANGLE_DOWN, DigitalType.DigitalHold, () -> {
 			if (manual) {
 				conveyorTalons[0].set(ControlMode.Position, conveyorTalons[1].getSelectedSensorPosition() - 1);
 			} else {
@@ -107,8 +104,7 @@ public class Cargo {
 				}
 			}
 
-		});
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick2.getId(), ControlsConfig.CONFIG_ENCODER, DigitalType.DigitalPress, this::resetEncoder);
+		}).registerDigitalCommand(Controller.Joystick2, ControlsConfig.CONFIG_ENCODER, DigitalType.DigitalPress, this::resetEncoder);
 	}
 
 	public static Cargo getInstance() {

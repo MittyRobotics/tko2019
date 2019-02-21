@@ -1,6 +1,6 @@
 package com.amhsrobotics.tko2019.hardware.subsystems;
 
-import com.amhsrobotics.tko2019.controls.ControllerID;
+import com.amhsrobotics.tko2019.controls.Controller;
 import com.amhsrobotics.tko2019.controls.Controls;
 import com.amhsrobotics.tko2019.controls.commands.AnalogType;
 import com.amhsrobotics.tko2019.controls.commands.DigitalType;
@@ -30,7 +30,7 @@ public final class Drive {
 	private final DoubleSolenoid gearShifter =
 			new DoubleSolenoid(SolenoidIds.DRIVE_SHIFTER[0], SolenoidIds.DRIVE_SHIFTER[1]);
 
-	private boolean isReversed = false;
+	private volatile boolean isReversed = false;
 
 	private byte currentGear = 1;
 	private long lastSwitch = 0;
@@ -65,36 +65,36 @@ public final class Drive {
 		}
 
 
-		Controls c = Controls.getInstance();
-		c.registerAnalogCommand(ControllerID.XboxController.getId(), ControlsConfig.LEFT_WHEELS, AnalogType.OutOfThresholdMinor, value -> {
+		Controls.getInstance().registerAnalogCommand(Controller.XboxController, ControlsConfig.LEFT_WHEELS,
+				AnalogType.OutOfThresholdMinor, value -> {
 			if (isReversed) {
 				setRight(-value);
 			} else {
 				setLeft(value);
 			}
-		});
-		c.registerAnalogCommand(ControllerID.XboxController.getId(), ControlsConfig.LEFT_WHEELS, AnalogType.InThresholdMinor, value -> {
+		}).registerAnalogCommand(Controller.XboxController, ControlsConfig.LEFT_WHEELS,
+				AnalogType.InThresholdMinor, value -> {
 			if (isReversed) {
 				setRight(0);
 			} else {
 				setLeft(0);
 			}
-		});
-		c.registerAnalogCommand(ControllerID.XboxController.getId(), ControlsConfig.RIGHT_WHEELS, AnalogType.OutOfThresholdMinor, value -> {
+		}).registerAnalogCommand(Controller.XboxController, ControlsConfig.RIGHT_WHEELS,
+				AnalogType.OutOfThresholdMinor, value -> {
 			if (isReversed) {
 				setLeft(-value);
 			} else {
 				setRight(value);
 			}
-		});
-		c.registerAnalogCommand(ControllerID.XboxController.getId(), ControlsConfig.RIGHT_WHEELS, AnalogType.InThresholdMinor, value -> {
+		}).registerAnalogCommand(Controller.XboxController, ControlsConfig.RIGHT_WHEELS,
+				AnalogType.InThresholdMinor, value -> {
 			if (isReversed) {
 				setLeft(0);
 			} else {
 				setRight(0);
 			}
-		});
-		c.registerDigitalCommand(ControllerID.XboxController.getId(), ControlsConfig.GEAR_SWITCH, DigitalType.DigitalPress, () -> {
+		}).registerDigitalCommand(Controller.XboxController, ControlsConfig.GEAR_SWITCH,
+				DigitalType.DigitalPress, () -> {
 			if (System.currentTimeMillis() - lastSwitch > Restrictions.DRIVE_GEAR_SHIFT_COOLDOWN_MILLIS) {
 				if (currentGear == 1) {
 					shiftGear(0);
@@ -105,10 +105,8 @@ public final class Drive {
 			} else {
 				System.err.println("Shifter is on Cooldown.");
 			}
-		});
-		c.registerDigitalCommand(ControllerID.XboxController.getId(), ControlsConfig.REVERSE_DIRECTION, DigitalType.DigitalPress, () -> {
-			toggleReverser(!isReversed);
-		});
+		}).registerDigitalCommand(Controller.XboxController, ControlsConfig.REVERSE_DIRECTION,
+				DigitalType.DigitalPress, this::toggleReverser);
 	}
 
 	public static Drive getInstance() {
@@ -195,8 +193,8 @@ public final class Drive {
 		rightTalons[0].set(controlMode, value);
 	}
 
-	private void toggleReverser(final boolean shouldReverse) {
-		isReversed = shouldReverse;
+	private synchronized void toggleReverser() {
+		isReversed = !isReversed;
 	}
 
 	public synchronized void shiftGear(final int value) {
