@@ -32,7 +32,7 @@ public final class Drive {
 
 	private boolean isReversed = false;
 
-	private byte currentGear = 1;
+	private int currentGear = 1;
 	private long lastSwitch = 0;
 
 	private Drive() {

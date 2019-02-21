@@ -6,6 +6,7 @@ import com.amhsrobotics.tko2019.controls.commands.AnalogType;
 import com.amhsrobotics.tko2019.controls.commands.DigitalType;
 import com.amhsrobotics.tko2019.hardware.Switches;
 import com.amhsrobotics.tko2019.settings.ControlsConfig;
+import com.amhsrobotics.tko2019.settings.subsystems.EncoderInversions;
 import com.amhsrobotics.tko2019.settings.subsystems.PID;
 import com.amhsrobotics.tko2019.settings.subsystems.SolenoidIds;
 import com.amhsrobotics.tko2019.settings.subsystems.TalonIds;
@@ -24,15 +25,15 @@ public class HatchPanel {
 	private final DoubleSolenoid grabber;
 	private final DoubleSolenoid pushForward;
 	private final WPI_TalonSRX slideTalon;
-
 	private boolean manual = false;
-	private boolean processDone = false;
+	private boolean encoderConfig = false;
 
 	private HatchPanel() {
 		slideTalon = new WPI_TalonSRX(TalonIds.SLIDE);
 		slideTalon.setNeutralMode(NeutralMode.Coast);
 		slideTalon.configFactoryDefault();
 		slideTalon.setInverted(TalonInversions.SLIDER);
+		slideTalon.setSensorPhase(EncoderInversions.SLIDER_ENCODER);
 		slideTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
 		slideTalon.config_kP(0, PID.SLIDER[0]);
 		slideTalon.config_kI(0, PID.SLIDER[1]);
@@ -41,91 +42,73 @@ public class HatchPanel {
 		grabber = new DoubleSolenoid(SolenoidIds.GRABBER[0], SolenoidIds.GRABBER[1]);
 		pushForward = new DoubleSolenoid(SolenoidIds.PUSH_FORWARD[0], SolenoidIds.PUSH_FORWARD[1]);
 
-
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SWITCH_MODE, DigitalType.DigitalPress, () -> {
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SWITCH_MODE, DigitalType.DigitalPress, () ->{
 			manual = !manual;
-			if (manual) {
+			if(manual){
 				System.out.println("Manual Mode");
-			} else {
+			}
+			else {
 				System.out.println("Automatic Mode");
 			}
 		});
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SLIDE_LEFT, DigitalType.DigitalRelease, () -> {
-			if (!manual) {
-				if ((
-//						!Switches.getInstance().wallSwitch.get() &&
-						!Switches.getInstance().getHatchSwitch()) && (processDone)) {
-					slideMiddle();
-					processDone = false;
+
+		Controls.getInstance().registerAnalogCommand(ControllerID.Joystick1.getId(), ControlsConfig.JOYTICK_SLIDE, AnalogType.Always, value -> {
+			if (Math.abs(value) > 0.2) {
+				if(!manual){
+					slide(slideTalon.getSelectedSensorPosition() / TicksPerInch.SLIDER - 0.5 *value);
+				}
+				else {
+					slideTalon.set(ControlMode.PercentOutput, value / 2);
+				}
+			}
+			else {
+				if(manual){
+					slideTalon.set(ControlMode.PercentOutput, 0);
 				}
 			}
 		});
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SLIDE_RIGHT, DigitalType.DigitalRelease, () -> {
-			if (!manual) {
-				if ((
-//						!Switches.getInstance().wallSwitch.get() &&
-						!Switches.getInstance().getHatchSwitch()) && (processDone)) {
-					slideMiddle();
-					processDone = false;
-				}
+//
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.RELEASE_HATCH, DigitalType.DigitalPress, ()->{
+			if(!manual){
+				outtake();
+			}
+			else {
+				closeHatch();
 			}
 		});
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SLIDE_LEFT, DigitalType.DigitalPress, () -> {
-			if (!manual) {
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.GRAB_HATCH, DigitalType.DigitalPress, ()->{
+			if(!manual){
+				intake();
+			}
+			else {
+				openHatch();
+			}
+		});
+		Controls.getInstance().registerAnalogCommand(ControllerID.Joystick1.getId(), ControlsConfig.PUSH_HATCH_MECHANISM, AnalogType.OutOfThresholdMajor, value ->{
+			if(value > 0.5){
+				goHatchForward();
+			}
+			else if(value < -0.5){
+				goHatchBackward();
+			}
+		});
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.CONFIG_ENCODER, DigitalType.DigitalPress, this::resetEncoder);
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SLIDE_MIDDLE, DigitalType.DigitalPress, ()->{
+			if(!manual && encoderConfig){
+				slideMiddle();
+			}
+		});
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SLIDE_LEFT, DigitalType.DigitalPress, ()->{
+			if(!manual && encoderConfig){
 				slideLeft();
 			}
 		});
-		Controls.getInstance().registerAnalogCommand(ControllerID.Joystick1.getId(), ControlsConfig.JOYTICK_SLIDE, AnalogType.OutOfThresholdMinor, value -> {
-			if (!manual) {
-				slide(slideTalon.getSelectedSensorPosition() / TicksPerInch.SLIDER + value);
-			} else {
-				manualSlide(value * 0.5);
-			}
-		});
-		Controls.getInstance().registerAnalogCommand(ControllerID.Joystick1.getId(), ControlsConfig.JOYTICK_SLIDE, AnalogType.InThresholdMinor, value -> {
-			if (manual) {
-				manualSlide(0);
-			}
-		});
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SLIDE_RIGHT, DigitalType.DigitalPress, () -> {
-			if (!manual) {
+		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.SLIDE_RIGHT, DigitalType.DigitalPress, ()->{
+			if(!manual && encoderConfig){
 				slideRight();
 			}
 		});
 
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.RELEASE_HATCH, DigitalType.DigitalPress, () -> {
-			if (!manual) {
-				if (!Switches.getInstance().getHatchSwitch()
-//						&& Switches.getInstance().wallSwitch.get()
-				) {
-					processDone = true;
-					outtake();
-				}
-			} else {
-				closeHatch();
-			}
-		});
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.GRAB_HATCH, DigitalType.DigitalPress, () -> {
-			if (!manual) {
-				if (!Switches.getInstance().getHatchSwitch()
-//						&& Switches.getInstance().wallSwitch.get()
-				) {
-					intake();
-				}
-			} else {
-				openHatch();
-			}
-		});
-		Controls.getInstance().registerAnalogCommand(ControllerID.Joystick1.getId(), ControlsConfig.PUSH_HATCH_MECHANISM, AnalogType.OutOfThresholdMajor, value -> {
-			if (manual) {
-				if (value > 0) {
-					goHatchForward();
-				} else {
-					goHatchBackward();
-				}
-			}
-		});
-		Controls.getInstance().registerDigitalCommand(ControllerID.Joystick1.getId(), ControlsConfig.CONFIG_ENCODER, DigitalType.DigitalPress, this::resetEncoder);
 	}
 
 	public static HatchPanel getInstance() {
@@ -133,11 +116,11 @@ public class HatchPanel {
 	}
 
 	private void openHatch() {
-		grabber.set(DoubleSolenoid.Value.kReverse);
+		grabber.set(DoubleSolenoid.Value.kForward);
 	}
 
 	private void closeHatch() {
-		grabber.set(DoubleSolenoid.Value.kForward);
+		grabber.set(DoubleSolenoid.Value.kReverse);
 	}
 
 	private void goHatchForward() {
@@ -162,6 +145,7 @@ public class HatchPanel {
 		}
 		slideTalon.set(ControlMode.PercentOutput, 0);
 		slideTalon.setSelectedSensorPosition(0);
+		encoderConfig = true;
 	}
 
 
@@ -178,35 +162,19 @@ public class HatchPanel {
 		slide(SliderPositions.SLIDE_RIGHT);
 	}
 
-	private void manualSlide(double percent) {
-		slideTalon.set(ControlMode.PercentOutput, percent);
-	}
-
 	//take in the hatch panel *has safety measures*
 	public void intake() {
-		if (!Switches.getInstance().getHatchSwitch() && Switches.getInstance().getWallSwitch()) {
+		if (!Switches.getInstance().getHatchSwitch()) { //Switch is inverted
 			openHatch();
-			if (!Switches.getInstance().getHatchSwitch()) {
-				closeHatch();
-			}
 		}
 	}
 
 	public void outtake() {
-		if (Switches.getInstance().getHatchSwitch() && Switches.getInstance().getWallSwitch()) {
-			goHatchForward();
-			closeHatch();
-			goHatchBackward();
-			if (Switches.getInstance().getHatchSwitch()) {
-				openHatch();
-			}
-		}
+		closeHatch();
 	}
 
 	//how far the mechanism has to slide
-	private void slide(double position) { //position in inches
+	private void slide(double position) { //position in negative inches
 		slideTalon.set(ControlMode.Position, (position * TicksPerInch.SLIDER));
-		System.out.println("end error =" + slideTalon.getClosedLoopError()); // FIXME: 2019-02-14
-		System.out.println(slideTalon.getSelectedSensorPosition()); // FIXME: 2019-02-14
 	}
 }

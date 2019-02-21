@@ -9,11 +9,11 @@ public class TalonInversions {
 
 	//Hatch Panel
 
-	public static final boolean SLIDER = false;
+	public static final boolean SLIDER = true;
 
 
 	//CARGO
 
-	public static final boolean[] CONVEYOR = {false, false};
-	public static final boolean[] INTAKE = {false, true};
+	public static final boolean[] CONVEYOR = {false, true};
+	public static final boolean[] INTAKE = {false, false};
 }
