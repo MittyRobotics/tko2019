@@ -40,5 +40,6 @@ public class ControlsConfig {
 
 	//Climber
 
-	public static final DigitalInput RELEASE_CLIMBER = DigitalInput.XboxA;
+	public static final DigitalInput RELEASE_CLIMBER_1 = DigitalInput.Joystick6;
+	public static final DigitalInput RELEASE_CLIMBER_2 = DigitalInput.XboxY;
 }
