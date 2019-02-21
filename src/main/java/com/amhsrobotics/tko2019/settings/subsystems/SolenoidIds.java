@@ -8,11 +8,11 @@ public class SolenoidIds {
 
 	// Climber
 
-	public static final int[] CLIMBER = {0, 1};
+	public static final int[] CLIMBER = {6, 7};
 
 
 	//Hatch Panel
 
-	public static final int[] PUSH_FORWARD = {0, 1};
-	public static final int[] GRABBER = {2, 3};
+	public static final int[] PUSH_FORWARD = {2, 3};
+	public static final int[] GRABBER = {4, 5};
 }

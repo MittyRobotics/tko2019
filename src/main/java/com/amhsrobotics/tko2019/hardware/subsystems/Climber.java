@@ -28,6 +28,6 @@ public class Climber {
 	}
 
 	private void release() {
-		climberSolenoid.set(DoubleSolenoid.Value.kForward);
+		climberSolenoid.set(DoubleSolenoid.Value.kReverse);
 	}
 }

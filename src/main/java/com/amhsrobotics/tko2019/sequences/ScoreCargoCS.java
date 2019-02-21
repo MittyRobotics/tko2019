@@ -38,7 +38,7 @@ public class ScoreCargoCS {
 		double moveDist = 0; //TODO
 		cargo.cargoConveyor();
 		drive.moveStraight(moveDist);
-		cargo.intakeOuttakeMacro();
+		cargo.spinOuttake(0.5, 0.5);
 		drive.moveStraight(-moveDist);
 		cargo.stopIntake();
 		Sequence.Transition(State.SCORING, State.EXIT_VISION, new Check[]{Check.HAS_NO_CARGO});
