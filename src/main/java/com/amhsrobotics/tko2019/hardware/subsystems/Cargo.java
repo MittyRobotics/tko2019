@@ -46,7 +46,7 @@ public class Cargo {
 		}
 
 
-		Controls.getInstance().registerDigitalCommand(Controller.Joystick2, ControlsConfig.SWITCH_MODE, DigitalType.DigitalPress, () -> {
+		Controls.getInstance().registerDigitalCommand(Controller.Joystick2, ControlsConfig.SWITCH_MODE, DigitalType.DigitalPress, () -> { // FIXME: 2019-02-22 No Control Found with that Name
 			manual = !manual;
 			if (manual) {
 				System.out.println("Manual Mode");
