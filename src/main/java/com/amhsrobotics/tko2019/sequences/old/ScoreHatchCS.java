@@ -1,13 +1,14 @@
-package com.amhsrobotics.tko2019.sequences;
+package com.amhsrobotics.tko2019.sequences.old;
 
-import com.amhsrobotics.tko2019.hardware.subsystems.Cargo;
+
 import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
-import com.amhsrobotics.tko2019.sequences.States.Check;
-import com.amhsrobotics.tko2019.sequences.States.State;
+import com.amhsrobotics.tko2019.hardware.subsystems.HatchPanel;
+import com.amhsrobotics.tko2019.sequences.old.States.Check;
+import com.amhsrobotics.tko2019.sequences.old.States.State;
 
-public class ScoreCargoRS {
+public class ScoreHatchCS {
 	public static State lastState;
-	static Cargo cargo = Cargo.getInstance();
+	static HatchPanel hatch = HatchPanel.getInstance();
 	static Drive drive = Drive.getInstance();
 	static Sequence sequence = new Sequence();
 	static PathFollower pathFollower = new PathFollower();
@@ -19,7 +20,7 @@ public class ScoreCargoRS {
 	public static void VisionRequest() {
 		//RECIEVE VISION STUFF
 
-		Sequence.Transition(State.VISION_REQUEST, State.FOLLOWING_TARGET, new Check[]{Check.HAS_CARGO});
+		Sequence.Transition(State.VISION_REQUEST, State.FOLLOWING_TARGET, new Check[]{Check.HAS_HATCH});
 	}
 
 	public static void FollowingTarget() {
@@ -27,18 +28,17 @@ public class ScoreCargoRS {
 		while (sequence.completedPath == false) {
 		}
 		sequence.completedPath = false;
-		Sequence.Transition(State.FOLLOWING_TARGET, State.SCORING, new Check[]{Check.HAS_CARGO, Check.RELATIVE_POS});
+		Sequence.Transition(State.FOLLOWING_TARGET, State.SCORING, new Check[]{Check.HAS_HATCH, Check.RELATIVE_POS});
 	}
 
 	public static void Scoring() {
 		System.out.println(Sequence.state);
 		double moveDist = 0; //TODO
-		cargo.rocketConveyor();
+		hatch.slideMiddle();
 		drive.moveStraight(moveDist);
-		cargo.spinOuttake(0.5, 0.5);
+		hatch.outtake();
 		drive.moveStraight(-moveDist);
-		cargo.stopIntake();
-		Sequence.Transition(State.SCORING, State.EXIT_VISION, new Check[]{Check.HAS_NO_CARGO});
+		Sequence.Transition(State.SCORING, State.EXIT_VISION, new Check[]{Check.HAS_NO_HATCH});
 	}
 
 

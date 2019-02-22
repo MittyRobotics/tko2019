@@ -1,4 +1,4 @@
-package com.amhsrobotics.tko2019.sequences.States;
+package com.amhsrobotics.tko2019.sequences.old.States;
 
 public enum VisionMode {
 	NO_STATE,

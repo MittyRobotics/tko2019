@@ -1,11 +1,12 @@
-package com.amhsrobotics.tko2019.sequences;
+package com.amhsrobotics.tko2019.sequences.old;
+
 
 import com.amhsrobotics.tko2019.hardware.subsystems.Cargo;
 import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
-import com.amhsrobotics.tko2019.sequences.States.Check;
-import com.amhsrobotics.tko2019.sequences.States.State;
+import com.amhsrobotics.tko2019.sequences.old.States.Check;
+import com.amhsrobotics.tko2019.sequences.old.States.State;
 
-public class PickupCargo {
+public class ScoreCargoCS {
 	public static State lastState;
 	static Cargo cargo = Cargo.getInstance();
 	static Drive drive = Drive.getInstance();
@@ -17,9 +18,11 @@ public class PickupCargo {
 	}
 
 	public static void VisionRequest() {
-		//RECIEVE VISION STUFF
+		//////////////////////
+		//Recieve Coordinate//
+		//////////////////////
 
-		Sequence.Transition(State.VISION_REQUEST, State.FOLLOWING_TARGET, new Check[]{Check.HAS_NO_CARGO});
+		Sequence.Transition(State.VISION_REQUEST, State.FOLLOWING_TARGET, new Check[]{Check.HAS_CARGO});
 	}
 
 	public static void FollowingTarget() {
@@ -27,18 +30,18 @@ public class PickupCargo {
 		while (sequence.completedPath == false) {
 		}
 		sequence.completedPath = false;
-		Sequence.Transition(State.FOLLOWING_TARGET, State.SCORING, new Check[]{Check.HAS_NO_CARGO, Check.RELATIVE_POS});
+		Sequence.Transition(State.FOLLOWING_TARGET, State.SCORING, new Check[]{Check.HAS_CARGO, Check.RELATIVE_POS});
 	}
 
 	public static void Scoring() {
 		System.out.println(Sequence.state);
 		double moveDist = 0; //TODO
-		cargo.stationConveyor();
+		cargo.cargoConveyor();
 		drive.moveStraight(moveDist);
-		cargo.spinIntake(0.5, 0.5);
+		cargo.spinOuttake(0.5, 0.5);
 		drive.moveStraight(-moveDist);
 		cargo.stopIntake();
-		Sequence.Transition(State.SCORING, State.EXIT_VISION, new Check[]{Check.HAS_CARGO});
+		Sequence.Transition(State.SCORING, State.EXIT_VISION, new Check[]{Check.HAS_NO_CARGO});
 	}
 
 
@@ -48,7 +51,4 @@ public class PickupCargo {
 		lastState = State.IDLE;
 
 	}
-
-
 }
-

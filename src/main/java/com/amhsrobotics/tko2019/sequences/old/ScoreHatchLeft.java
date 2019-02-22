@@ -1,12 +1,12 @@
-package com.amhsrobotics.tko2019.sequences;
+package com.amhsrobotics.tko2019.sequences.old;
 
 
 import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
 import com.amhsrobotics.tko2019.hardware.subsystems.HatchPanel;
-import com.amhsrobotics.tko2019.sequences.States.Check;
-import com.amhsrobotics.tko2019.sequences.States.State;
+import com.amhsrobotics.tko2019.sequences.old.States.Check;
+import com.amhsrobotics.tko2019.sequences.old.States.State;
 
-public class ScoreHatchRight {
+public class ScoreHatchLeft {
 	public static State lastState;
 	static HatchPanel hatch = HatchPanel.getInstance();
 	static Drive drive = Drive.getInstance();
@@ -34,7 +34,7 @@ public class ScoreHatchRight {
 	public static void Scoring() {
 		System.out.println(Sequence.state);
 		double moveDist = 0; //TODO
-		hatch.slideRight();
+		hatch.slideLeft();
 		drive.moveStraight(moveDist);
 		hatch.outtake();
 		drive.moveStraight(-moveDist);

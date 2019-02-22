@@ -1,13 +1,13 @@
-package com.amhsrobotics.tko2019.sequences;
+package com.amhsrobotics.tko2019.sequences.old;
 
+import com.amhsrobotics.tko2019.hardware.subsystems.Cargo;
 import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
-import com.amhsrobotics.tko2019.hardware.subsystems.HatchPanel;
-import com.amhsrobotics.tko2019.sequences.States.Check;
-import com.amhsrobotics.tko2019.sequences.States.State;
+import com.amhsrobotics.tko2019.sequences.old.States.Check;
+import com.amhsrobotics.tko2019.sequences.old.States.State;
 
-public class PickupHatch {
+public class ScoreCargoRS {
 	public static State lastState;
-	static HatchPanel hatch = HatchPanel.getInstance();
+	static Cargo cargo = Cargo.getInstance();
 	static Drive drive = Drive.getInstance();
 	static Sequence sequence = new Sequence();
 	static PathFollower pathFollower = new PathFollower();
@@ -19,7 +19,7 @@ public class PickupHatch {
 	public static void VisionRequest() {
 		//RECIEVE VISION STUFF
 
-		Sequence.Transition(State.VISION_REQUEST, State.FOLLOWING_TARGET, new Check[]{Check.HAS_NO_HATCH});
+		Sequence.Transition(State.VISION_REQUEST, State.FOLLOWING_TARGET, new Check[]{Check.HAS_CARGO});
 	}
 
 	public static void FollowingTarget() {
@@ -27,17 +27,18 @@ public class PickupHatch {
 		while (sequence.completedPath == false) {
 		}
 		sequence.completedPath = false;
-		Sequence.Transition(State.FOLLOWING_TARGET, State.SCORING, new Check[]{Check.HAS_NO_HATCH, Check.RELATIVE_POS});
+		Sequence.Transition(State.FOLLOWING_TARGET, State.SCORING, new Check[]{Check.HAS_CARGO, Check.RELATIVE_POS});
 	}
 
 	public static void Scoring() {
 		System.out.println(Sequence.state);
 		double moveDist = 0; //TODO
-		hatch.slideMiddle();
+		cargo.rocketConveyor();
 		drive.moveStraight(moveDist);
-		hatch.intake();
+		cargo.spinOuttake(0.5, 0.5);
 		drive.moveStraight(-moveDist);
-		Sequence.Transition(State.SCORING, State.EXIT_VISION, new Check[]{Check.HAS_HATCH});
+		cargo.stopIntake();
+		Sequence.Transition(State.SCORING, State.EXIT_VISION, new Check[]{Check.HAS_NO_CARGO});
 	}
 
 
@@ -47,5 +48,4 @@ public class PickupHatch {
 		lastState = State.IDLE;
 
 	}
-
 }
