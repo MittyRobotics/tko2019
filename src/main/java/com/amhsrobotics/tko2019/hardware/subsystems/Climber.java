@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 public class Climber {
 	private final static Climber INSTANCE = new Climber();
 	private final DoubleSolenoid climberSolenoid;
-	private boolean sixPressed = false;
+	private volatile boolean sixPressed = false;
 
 	private Climber() {
 		climberSolenoid = new DoubleSolenoid(SolenoidIds.CLIMBER[0], SolenoidIds.CLIMBER[1]);
