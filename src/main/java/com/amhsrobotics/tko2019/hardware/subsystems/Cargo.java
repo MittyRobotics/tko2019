@@ -19,7 +19,6 @@ public class Cargo {
 	private final static Cargo INSTANCE = new Cargo();
 	private final WPI_TalonSRX[] intakeTalons = new WPI_TalonSRX[TalonIds.INTAKE.length];
 	private final WPI_TalonSRX[] conveyorTalons = new WPI_TalonSRX[TalonIds.CONVEYOR.length];
-	private boolean manual = false;
 	private boolean configEncoder = false;
 
 	private Cargo() {
@@ -46,14 +45,6 @@ public class Cargo {
 		}
 
 
-		Controls.getInstance().registerDigitalCommand(Controller.Joystick2, ControlsConfig.SWITCH_MODE, DigitalType.DigitalPress, () -> { // FIXME: 2019-02-22 No Control Found with that Name
-			manual = !manual;
-			if (manual) {
-				System.out.println("Manual Mode");
-			} else {
-				System.out.println("Automatic Mode");
-			}
-		});
 		Controls.getInstance().registerDigitalCommand(Controller.Joystick2, ControlsConfig.SPIN_INTAKE, DigitalType.DigitalHold, () -> spinIntake(0.5, 0.5));
 		Controls.getInstance().registerDigitalCommand(Controller.Joystick2, ControlsConfig.SPIN_INTAKE, DigitalType.DigitalRelease, this::stopIntake);
 		Controls.getInstance().registerDigitalCommand(Controller.Joystick2, ControlsConfig.SPIN_OUTTAKE, DigitalType.DigitalHold, () -> spinOuttake(0.5, 0.5));
@@ -73,11 +64,7 @@ public class Cargo {
 			if (configEncoder) {
 				groundConveyor();
 			}
-		}).registerDigitalCommand(Controller.Joystick2, ControlsConfig.STATION_HEIGHT, DigitalType.DigitalPress, () -> {
-			if (configEncoder) {
-				stationConveyor();
-			}
-		}).registerDigitalCommand(Controller.Joystick2, ControlsConfig.CONFIG_ENCODER, DigitalType.DigitalPress, this::resetEncoder);
+		}).registerDigitalCommand(Controller.Joystick2, ControlsConfig.CONFIG_ENCODER_CARGO, DigitalType.DigitalPress, this::resetEncoder);
 	}
 
 	public static Cargo getInstance() {
@@ -85,7 +72,7 @@ public class Cargo {
 	}
 
 	public void spinIntake(double topSpeed, double bottomSpeed) {
-		if (!Switches.getInstance().getIntakeSensor()) { //Switch is inverted
+		if (Switches.getInstance().hasCargo()) {
 			visionConveyor();
 			stopIntake();
 		} else {

@@ -16,13 +16,13 @@ public class Climber {
 	private Climber() {
 		climberSolenoid = new DoubleSolenoid(SolenoidIds.CLIMBER[0], SolenoidIds.CLIMBER[1]);
 
-		Controls.getInstance().registerDigitalCommand(Controller.XboxController, ControlsConfig.RELEASE_CLIMBER_2, DigitalType.DigitalPress, () -> {
+		Controls.getInstance().registerDigitalCommand(Controller.Joystick1, ControlsConfig.RELEASE_CLIMBER_2, DigitalType.DigitalPress, () -> {
 			if (DriverStation.getInstance().getMatchTime() < 30 && DriverStation.getInstance().isOperatorControl() && xPressed) {
 				HatchPanel.getInstance().slideMiddle();
 				release();
 			}
-		}).registerDigitalCommand(Controller.XboxController, ControlsConfig.RELEASE_CLIMBER_1, DigitalType.DigitalHold, () -> xPressed = true)
-				.registerDigitalCommand(Controller.XboxController, ControlsConfig.RELEASE_CLIMBER_1, DigitalType.DigitalRelease, () -> xPressed = false);
+		}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.RELEASE_CLIMBER_1, DigitalType.DigitalHold, () -> xPressed = true)
+				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.RELEASE_CLIMBER_1, DigitalType.DigitalRelease, () -> xPressed = false);
 	}
 
 	public static Climber getInstance() {

@@ -4,7 +4,8 @@ import com.amhsrobotics.tko2019.controls.input.AnalogInput;
 import com.amhsrobotics.tko2019.controls.input.DigitalInput;
 
 public class ControlsConfig {
-	public static final DigitalInput CONFIG_ENCODER = DigitalInput.Joystick6;
+	public static final DigitalInput CONFIG_ENCODER_HATCH = DigitalInput.Joystick6;
+	public static final DigitalInput CONFIG_ENCODER_CARGO = DigitalInput.Joystick11;
 
 
 	// Drive
@@ -22,7 +23,6 @@ public class ControlsConfig {
 	public static final AnalogInput MOVE_ANGLE = AnalogInput.JoystickY;
 	public static final DigitalInput CARGO_HEIGHT = DigitalInput.Joystick3;
 	public static final DigitalInput ROCKET_HEIGHT = DigitalInput.Joystick4;
-	public static final DigitalInput STATION_HEIGHT = DigitalInput.Joystick7; //TODO Figure out place
 	public static final DigitalInput GROUND_HEIGHT = DigitalInput.Joystick5;
 
 
@@ -39,6 +39,6 @@ public class ControlsConfig {
 
 	//Climber
 
-	public static final DigitalInput RELEASE_CLIMBER_1 = DigitalInput.XboxX;
-	public static final DigitalInput RELEASE_CLIMBER_2 = DigitalInput.XboxY;
+	public static final DigitalInput RELEASE_CLIMBER_1 = DigitalInput.Joystick10;
+	public static final DigitalInput RELEASE_CLIMBER_2 = DigitalInput.Joystick11;
 }

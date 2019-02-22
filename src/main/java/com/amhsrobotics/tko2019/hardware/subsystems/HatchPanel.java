@@ -62,7 +62,7 @@ public class HatchPanel {
 			if (encoderConfig) {
 				slideRight();
 			}
-		}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.CONFIG_ENCODER, DigitalType.DigitalPress, this::resetEncoder);
+		}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.CONFIG_ENCODER_HATCH, DigitalType.DigitalPress, this::resetEncoder);
 	}
 
 	public static HatchPanel getInstance() {
@@ -118,7 +118,7 @@ public class HatchPanel {
 
 	//take in the hatch panel *has safety measures*
 	public void intake() {
-		if (!Switches.getInstance().getHatchSwitch()) { //Switch is inverted
+		if (Switches.getInstance().hasHatch()) {
 			openHatch();
 		}
 	}

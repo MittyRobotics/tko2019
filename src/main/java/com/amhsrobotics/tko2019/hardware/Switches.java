@@ -21,12 +21,12 @@ public class Switches {
 	}
 
 	public boolean hasCargo() {
-		return intakeSensor.get();
-	}
+		return !intakeSensor.get();
+	} //switch is inverted
 
 	public boolean hasHatch() {
 		return !hatchSwitch.get();
-	}
+	} //switch is inverted
 
 	public boolean isTouchingWall() {
 		return wallSwitch.get();
