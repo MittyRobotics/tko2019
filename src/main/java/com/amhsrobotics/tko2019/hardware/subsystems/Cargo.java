@@ -27,14 +27,12 @@ public class Cargo {
 		for (int talonIdIndex = 0; talonIdIndex < TalonIds.INTAKE.length; talonIdIndex++) {
 			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.INTAKE[talonIdIndex]);
 			talon.configFactoryDefault();
-			talon.setNeutralMode(NeutralMode.Coast);
 			talon.setInverted(TalonInversions.INTAKE[talonIdIndex]);
 			intakeTalons[talonIdIndex] = talon;
 		}
 		for (int talonIdIndex = 0; talonIdIndex < TalonIds.CONVEYOR.length; talonIdIndex++) {
 			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.CONVEYOR[talonIdIndex]);
 			talon.configFactoryDefault();
-			talon.setNeutralMode(NeutralMode.Coast);
 			talon.setInverted(TalonInversions.CONVEYOR[talonIdIndex]);
 			if (talonIdIndex == 0) {
 				talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
@@ -64,30 +62,21 @@ public class Cargo {
 		Controls.getInstance().registerDigitalCommand(Controller.Joystick2, ControlsConfig.SPIN_OUTTAKE, DigitalType.DigitalRelease, this::stopIntake);
 
 		Controls.getInstance().registerAnalogCommand(Controller.Joystick2, ControlsConfig.MOVE_ANGLE, AnalogType.OutOfThresholdMinor, value -> {
-			if(!manual){
 				moveConveyor(conveyorTalons[0].getSelectedSensorPosition() + value * 1000);
-			}
-			else {
-				conveyorTalons[0].set(ControlMode.PercentOutput, value * 0.35);
-			}
-		}).registerAnalogCommand(Controller.Joystick2, ControlsConfig.MOVE_ANGLE, AnalogType.InThresholdMinor, value -> {
-			if(manual){
-				conveyorTalons[0].set(ControlMode.PercentOutput, 0);
-			}
 		}).registerDigitalCommand(Controller.Joystick2, ControlsConfig.CARGO_HEIGHT, DigitalType.DigitalPress, ()->{
-			if(!manual && configEncoder){
+			if(configEncoder){
 				cargoConveyor();
 			}
 		}).registerDigitalCommand(Controller.Joystick2, ControlsConfig.ROCKET_HEIGHT, DigitalType.DigitalPress, ()->{
-			if(!manual && configEncoder){
+			if(configEncoder){
 				rocketConveyor();
 			}
 		}).registerDigitalCommand(Controller.Joystick2, ControlsConfig.GROUND_HEIGHT, DigitalType.DigitalPress, ()->{
-			if(!manual && configEncoder){
+			if(configEncoder){
 				groundConveyor();
 			}
 		}).registerDigitalCommand(Controller.Joystick2, ControlsConfig.STATION_HEIGHT, DigitalType.DigitalPress, ()->{
-			if(!manual && configEncoder){
+			if(configEncoder){
 				stationConveyor();
 			}
 		}).registerDigitalCommand(Controller.Joystick2, ControlsConfig.CONFIG_ENCODER, DigitalType.DigitalPress, this::resetEncoder);
