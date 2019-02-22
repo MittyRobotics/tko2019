@@ -20,15 +20,15 @@ public class Switches {
 		return ourInstance;
 	}
 
-	public boolean getIntakeSensor() {
+	public boolean hasCargo() {
 		return intakeSensor.get();
 	}
 
-	public boolean getHatchSwitch() {
-		return hatchSwitch.get();
+	public boolean hasHatch() {
+		return !hatchSwitch.get();
 	}
 
-	public boolean getWallSwitch() {
+	public boolean isTouchingWall() {
 		return wallSwitch.get();
 	}
 }
