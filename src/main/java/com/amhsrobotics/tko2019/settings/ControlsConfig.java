@@ -4,7 +4,6 @@ import com.amhsrobotics.tko2019.controls.input.AnalogInput;
 import com.amhsrobotics.tko2019.controls.input.DigitalInput;
 
 public class ControlsConfig {
-	public static final DigitalInput SWITCH_MODE = DigitalInput.Joystick11;
 	public static final DigitalInput CONFIG_ENCODER = DigitalInput.Joystick6;
 
 
@@ -40,6 +39,6 @@ public class ControlsConfig {
 
 	//Climber
 
-	public static final DigitalInput RELEASE_CLIMBER_1 = DigitalInput.Joystick6;
+	public static final DigitalInput RELEASE_CLIMBER_1 = DigitalInput.XboxX;
 	public static final DigitalInput RELEASE_CLIMBER_2 = DigitalInput.XboxY;
 }

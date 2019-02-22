@@ -40,7 +40,6 @@ public final class Drive {
 			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.LEFT_DRIVE[i]);
 			talon.configFactoryDefault();
 			talon.setInverted(TalonInversions.LEFT_DRIVE[i]);
-			talon.setNeutralMode(NeutralMode.Coast); // FIXME: 2019-02-20 Isn't Coast Default?
 			if (i == 0) {
 				talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
 			} else {
@@ -52,7 +51,6 @@ public final class Drive {
 			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.RIGHT_DRIVE[i]);
 			talon.configFactoryDefault();
 			talon.setInverted(TalonInversions.RIGHT_DRIVE[i]);
-			talon.setNeutralMode(NeutralMode.Coast); // FIXME: 2019-02-20 Isn't Coast Default?
 			if (i == 0) {
 				talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
 				talon.config_kP(0, PID.DRIVE[0]);

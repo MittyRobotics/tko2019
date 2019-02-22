@@ -25,12 +25,10 @@ public class HatchPanel {
 	private final DoubleSolenoid grabber;
 	private final DoubleSolenoid pushForward;
 	private final WPI_TalonSRX slideTalon;
-	private boolean manual = false;
 	private boolean encoderConfig = false;
 
 	private HatchPanel() {
 		slideTalon = new WPI_TalonSRX(TalonIds.SLIDE);
-		slideTalon.setNeutralMode(NeutralMode.Coast);
 		slideTalon.configFactoryDefault();
 		slideTalon.setInverted(TalonInversions.SLIDER);
 		slideTalon.setSensorPhase(EncoderInversions.SLIDER_ENCODER);
@@ -42,43 +40,12 @@ public class HatchPanel {
 		grabber = new DoubleSolenoid(SolenoidIds.GRABBER[0], SolenoidIds.GRABBER[1]);
 		pushForward = new DoubleSolenoid(SolenoidIds.PUSH_FORWARD[0], SolenoidIds.PUSH_FORWARD[1]);
 
-		Controls.getInstance().registerDigitalCommand(Controller.Joystick1, ControlsConfig.SWITCH_MODE, DigitalType.DigitalPress, () ->{
-			manual = !manual;
-			if(manual){
-				System.out.println("Manual Mode");
-			}
-			else {
-				System.out.println("Automatic Mode");
-			}
-		}).registerAnalogCommand(Controller.Joystick1, ControlsConfig.JOYTICK_SLIDE, AnalogType.Always, value -> {
+		Controls.getInstance().registerAnalogCommand(Controller.Joystick1, ControlsConfig.JOYTICK_SLIDE, AnalogType.Always, value -> {
 			if (Math.abs(value) > 0.2) {
-				if(!manual){
-					slide(slideTalon.getSelectedSensorPosition() / TicksPerInch.SLIDER - 0.5 *value);
-				}
-				else {
-					slideTalon.set(ControlMode.PercentOutput, value / 2);
-				}
+				slide(slideTalon.getSelectedSensorPosition() / TicksPerInch.SLIDER - 0.5 *value);
 			}
-			else {
-				if(manual){
-					slideTalon.set(ControlMode.PercentOutput, 0);
-				}
-			}
-		}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.RELEASE_HATCH, DigitalType.DigitalPress, ()->{
-			if(!manual){
-				outtake();
-			}
-			else {
-				closeHatch();
-			}
-		}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.GRAB_HATCH, DigitalType.DigitalPress, ()->{
-			if(!manual){
-				intake();
-			}
-			else {
-				openHatch();
-			}
-		}).registerAnalogCommand(Controller.Joystick1, ControlsConfig.PUSH_HATCH_MECHANISM, AnalogType.OutOfThresholdMajor, value ->{
+		}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.RELEASE_HATCH, DigitalType.DigitalPress, this::outtake).registerDigitalCommand(Controller.Joystick1, ControlsConfig.GRAB_HATCH, DigitalType.DigitalPress, this::intake)
+				.registerAnalogCommand(Controller.Joystick1, ControlsConfig.PUSH_HATCH_MECHANISM, AnalogType.OutOfThresholdMajor, value ->{
 			if(value > 0.5){
 				goHatchForward();
 			}
@@ -86,15 +53,15 @@ public class HatchPanel {
 				goHatchBackward();
 			}
 		}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.SLIDE_MIDDLE, DigitalType.DigitalPress, ()->{
-			if(!manual && encoderConfig){
+			if(encoderConfig){
 				slideMiddle();
 			}
 		}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.SLIDE_LEFT, DigitalType.DigitalPress, ()->{
-			if(!manual && encoderConfig){
+			if(encoderConfig){
 				slideLeft();
 			}
 		}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.SLIDE_RIGHT, DigitalType.DigitalPress, ()->{
-			if(!manual && encoderConfig){
+			if(encoderConfig){
 				slideRight();
 			}
 		}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.CONFIG_ENCODER, DigitalType.DigitalPress, this::resetEncoder);
