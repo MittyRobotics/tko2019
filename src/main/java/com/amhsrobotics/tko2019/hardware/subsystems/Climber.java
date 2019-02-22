@@ -21,13 +21,8 @@ public class Climber {
 				HatchPanel.getInstance().slideMiddle();
 				release();
 			}
-		});
-		Controls.getInstance().registerDigitalCommand(Controller.Joystick1, ControlsConfig.RELEASE_CLIMBER_1, DigitalType.DigitalHold, ()->{
-			sixPressed = true;
-		});
-		Controls.getInstance().registerDigitalCommand(Controller.Joystick1, ControlsConfig.RELEASE_CLIMBER_1, DigitalType.DigitalRelease, ()->{
-			sixPressed = false;
-		});
+		}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.RELEASE_CLIMBER_1, DigitalType.DigitalHold, ()-> sixPressed = true)
+				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.RELEASE_CLIMBER_1, DigitalType.DigitalRelease, ()-> sixPressed = false);
 	}
 
 	public static Climber getInstance() {
