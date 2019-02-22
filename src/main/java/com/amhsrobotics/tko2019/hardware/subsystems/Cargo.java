@@ -13,7 +13,6 @@ import com.amhsrobotics.tko2019.settings.subsystems.TalonInversions;
 import com.amhsrobotics.tko2019.settings.subsystems.cargo.IntakeHeights;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 public class Cargo {
@@ -49,10 +48,9 @@ public class Cargo {
 
 		Controls.getInstance().registerDigitalCommand(Controller.Joystick2, ControlsConfig.SWITCH_MODE, DigitalType.DigitalPress, () -> {
 			manual = !manual;
-			if(manual){
+			if (manual) {
 				System.out.println("Manual Mode");
-			}
-			else {
+			} else {
 				System.out.println("Automatic Mode");
 			}
 		});
@@ -62,21 +60,21 @@ public class Cargo {
 		Controls.getInstance().registerDigitalCommand(Controller.Joystick2, ControlsConfig.SPIN_OUTTAKE, DigitalType.DigitalRelease, this::stopIntake);
 
 		Controls.getInstance().registerAnalogCommand(Controller.Joystick2, ControlsConfig.MOVE_ANGLE, AnalogType.OutOfThresholdMinor, value -> {
-				moveConveyor(conveyorTalons[0].getSelectedSensorPosition() + value * 1000);
-		}).registerDigitalCommand(Controller.Joystick2, ControlsConfig.CARGO_HEIGHT, DigitalType.DigitalPress, ()->{
-			if(configEncoder){
+			moveConveyor(conveyorTalons[0].getSelectedSensorPosition() + value * 1000);
+		}).registerDigitalCommand(Controller.Joystick2, ControlsConfig.CARGO_HEIGHT, DigitalType.DigitalPress, () -> {
+			if (configEncoder) {
 				cargoConveyor();
 			}
-		}).registerDigitalCommand(Controller.Joystick2, ControlsConfig.ROCKET_HEIGHT, DigitalType.DigitalPress, ()->{
-			if(configEncoder){
+		}).registerDigitalCommand(Controller.Joystick2, ControlsConfig.ROCKET_HEIGHT, DigitalType.DigitalPress, () -> {
+			if (configEncoder) {
 				rocketConveyor();
 			}
-		}).registerDigitalCommand(Controller.Joystick2, ControlsConfig.GROUND_HEIGHT, DigitalType.DigitalPress, ()->{
-			if(configEncoder){
+		}).registerDigitalCommand(Controller.Joystick2, ControlsConfig.GROUND_HEIGHT, DigitalType.DigitalPress, () -> {
+			if (configEncoder) {
 				groundConveyor();
 			}
-		}).registerDigitalCommand(Controller.Joystick2, ControlsConfig.STATION_HEIGHT, DigitalType.DigitalPress, ()->{
-			if(configEncoder){
+		}).registerDigitalCommand(Controller.Joystick2, ControlsConfig.STATION_HEIGHT, DigitalType.DigitalPress, () -> {
+			if (configEncoder) {
 				stationConveyor();
 			}
 		}).registerDigitalCommand(Controller.Joystick2, ControlsConfig.CONFIG_ENCODER, DigitalType.DigitalPress, this::resetEncoder);
@@ -90,8 +88,7 @@ public class Cargo {
 		if (!Switches.getInstance().getIntakeSensor()) { //Switch is inverted
 			visionConveyor();
 			stopIntake();
-		}
-		else {
+		} else {
 			intakeTalons[0].set(ControlMode.PercentOutput, topSpeed);
 			intakeTalons[1].set(ControlMode.PercentOutput, -bottomSpeed);
 		}

@@ -15,7 +15,6 @@ import com.amhsrobotics.tko2019.settings.subsystems.Thresholds;
 import com.amhsrobotics.tko2019.settings.subsystems.TicksPerInch;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PIDController;
@@ -65,45 +64,45 @@ public final class Drive {
 
 		Controls.getInstance().registerAnalogCommand(Controller.XboxController, ControlsConfig.LEFT_WHEELS,
 				AnalogType.OutOfThresholdMinor, value -> {
-			if (isReversed) {
-				setRight(-value);
-			} else {
-				setLeft(value);
-			}
-		}).registerAnalogCommand(Controller.XboxController, ControlsConfig.LEFT_WHEELS,
+					if (isReversed) {
+						setRight(-value);
+					} else {
+						setLeft(value);
+					}
+				}).registerAnalogCommand(Controller.XboxController, ControlsConfig.LEFT_WHEELS,
 				AnalogType.InThresholdMinor, value -> {
-			if (isReversed) {
-				setRight(0);
-			} else {
-				setLeft(0);
-			}
-		}).registerAnalogCommand(Controller.XboxController, ControlsConfig.RIGHT_WHEELS,
+					if (isReversed) {
+						setRight(0);
+					} else {
+						setLeft(0);
+					}
+				}).registerAnalogCommand(Controller.XboxController, ControlsConfig.RIGHT_WHEELS,
 				AnalogType.OutOfThresholdMinor, value -> {
-			if (isReversed) {
-				setLeft(-value);
-			} else {
-				setRight(value);
-			}
-		}).registerAnalogCommand(Controller.XboxController, ControlsConfig.RIGHT_WHEELS,
+					if (isReversed) {
+						setLeft(-value);
+					} else {
+						setRight(value);
+					}
+				}).registerAnalogCommand(Controller.XboxController, ControlsConfig.RIGHT_WHEELS,
 				AnalogType.InThresholdMinor, value -> {
-			if (isReversed) {
-				setLeft(0);
-			} else {
-				setRight(0);
-			}
-		}).registerDigitalCommand(Controller.XboxController, ControlsConfig.GEAR_SWITCH,
+					if (isReversed) {
+						setLeft(0);
+					} else {
+						setRight(0);
+					}
+				}).registerDigitalCommand(Controller.XboxController, ControlsConfig.GEAR_SWITCH,
 				DigitalType.DigitalPress, () -> {
-			if (System.currentTimeMillis() - lastSwitch > Restrictions.DRIVE_GEAR_SHIFT_COOLDOWN_MILLIS) {
-				if (currentGear == 1) {
-					shiftGear(0);
-				} else {
-					shiftGear(1);
-				}
-				lastSwitch = System.currentTimeMillis();
-			} else {
-				System.err.println("Shifter is on Cooldown.");
-			}
-		}).registerDigitalCommand(Controller.XboxController, ControlsConfig.REVERSE_DIRECTION,
+					if (System.currentTimeMillis() - lastSwitch > Restrictions.DRIVE_GEAR_SHIFT_COOLDOWN_MILLIS) {
+						if (currentGear == 1) {
+							shiftGear(0);
+						} else {
+							shiftGear(1);
+						}
+						lastSwitch = System.currentTimeMillis();
+					} else {
+						System.err.println("Shifter is on Cooldown.");
+					}
+				}).registerDigitalCommand(Controller.XboxController, ControlsConfig.REVERSE_DIRECTION,
 				DigitalType.DigitalPress, this::toggleReverser);
 	}
 

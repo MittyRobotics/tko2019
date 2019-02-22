@@ -21,8 +21,8 @@ public class Climber {
 				HatchPanel.getInstance().slideMiddle();
 				release();
 			}
-		}).registerDigitalCommand(Controller.XboxController, ControlsConfig.RELEASE_CLIMBER_1, DigitalType.DigitalHold, ()-> xPressed = true)
-				.registerDigitalCommand(Controller.XboxController, ControlsConfig.RELEASE_CLIMBER_1, DigitalType.DigitalRelease, ()-> xPressed = false);
+		}).registerDigitalCommand(Controller.XboxController, ControlsConfig.RELEASE_CLIMBER_1, DigitalType.DigitalHold, () -> xPressed = true)
+				.registerDigitalCommand(Controller.XboxController, ControlsConfig.RELEASE_CLIMBER_1, DigitalType.DigitalRelease, () -> xPressed = false);
 	}
 
 	public static Climber getInstance() {

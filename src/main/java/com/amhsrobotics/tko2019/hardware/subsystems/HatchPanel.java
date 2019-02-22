@@ -15,7 +15,6 @@ import com.amhsrobotics.tko2019.settings.subsystems.TicksPerInch;
 import com.amhsrobotics.tko2019.settings.subsystems.hatchpanel.SliderPositions;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
@@ -42,26 +41,25 @@ public class HatchPanel {
 
 		Controls.getInstance().registerAnalogCommand(Controller.Joystick1, ControlsConfig.JOYTICK_SLIDE, AnalogType.Always, value -> {
 			if (Math.abs(value) > 0.2) {
-				slide(slideTalon.getSelectedSensorPosition() / TicksPerInch.SLIDER - 0.5 *value);
+				slide(slideTalon.getSelectedSensorPosition() / TicksPerInch.SLIDER - 0.5 * value);
 			}
 		}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.RELEASE_HATCH, DigitalType.DigitalPress, this::outtake).registerDigitalCommand(Controller.Joystick1, ControlsConfig.GRAB_HATCH, DigitalType.DigitalPress, this::intake)
-				.registerAnalogCommand(Controller.Joystick1, ControlsConfig.PUSH_HATCH_MECHANISM, AnalogType.OutOfThresholdMajor, value ->{
-			if(value > 0.5){
-				goHatchForward();
-			}
-			else if(value < -0.5){
-				goHatchBackward();
-			}
-		}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.SLIDE_MIDDLE, DigitalType.DigitalPress, ()->{
-			if(encoderConfig){
+				.registerAnalogCommand(Controller.Joystick1, ControlsConfig.PUSH_HATCH_MECHANISM, AnalogType.OutOfThresholdMajor, value -> {
+					if (value > 0.5) {
+						goHatchForward();
+					} else if (value < -0.5) {
+						goHatchBackward();
+					}
+				}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.SLIDE_MIDDLE, DigitalType.DigitalPress, () -> {
+			if (encoderConfig) {
 				slideMiddle();
 			}
-		}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.SLIDE_LEFT, DigitalType.DigitalPress, ()->{
-			if(encoderConfig){
+		}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.SLIDE_LEFT, DigitalType.DigitalPress, () -> {
+			if (encoderConfig) {
 				slideLeft();
 			}
-		}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.SLIDE_RIGHT, DigitalType.DigitalPress, ()->{
-			if(encoderConfig){
+		}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.SLIDE_RIGHT, DigitalType.DigitalPress, () -> {
+			if (encoderConfig) {
 				slideRight();
 			}
 		}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.CONFIG_ENCODER, DigitalType.DigitalPress, this::resetEncoder);
