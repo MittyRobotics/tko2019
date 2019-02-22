@@ -13,6 +13,7 @@ import com.amhsrobotics.tko2019.settings.subsystems.TalonInversions;
 import com.amhsrobotics.tko2019.settings.subsystems.cargo.IntakeHeights;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 public class Cargo {
