@@ -3,7 +3,7 @@ package com.amhsrobotics.tko2019.sequences;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public abstract class Sequence extends Thread {
-	protected final LinkedBlockingQueue<Action> sequence = new LinkedBlockingQueue<>();
+	private final LinkedBlockingQueue<Action> sequence = new LinkedBlockingQueue<>();
 
 	private volatile boolean enabled = false;
 	private volatile boolean finished = false;
@@ -24,7 +24,7 @@ public abstract class Sequence extends Thread {
 		}
 	}
 
-	public void disable() {
+	public void cancel() {
 		enabled = false;
 	}
 
@@ -32,7 +32,14 @@ public abstract class Sequence extends Thread {
 	public void run() {
 		enabled = true;
 		while (enabled) {
+			if (!shouldContinue()) {
+				return;
+			}
+
 			if (inProgress) {
+				if (!currentAction.isContinuable()) {
+					return;
+				}
 				currentAction.prepare();
 				currentAction.doAction(true);
 				currentAction.cleanup();
@@ -49,11 +56,13 @@ public abstract class Sequence extends Thread {
 			currentAction = action;
 			inProgress = true;
 			action.prepare();
-			action.doAction(false);
+			currentAction.doAction(true);
 			action.cleanup();
 			inProgress = false;
 		}
 	}
+
+	protected abstract boolean shouldContinue();
 
 	public boolean isFinished() {
 		return finished;

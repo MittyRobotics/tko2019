@@ -8,4 +8,12 @@ public interface Action {
 
 	default void cleanup() {
 	}
+
+	default boolean isContinuable() {
+		return true;
+	}
+
+	default boolean canRun() {
+		return true;
+	}
 }

@@ -77,11 +77,11 @@ public class HatchPanel {
 		grabber.set(DoubleSolenoid.Value.kReverse);
 	}
 
-	private void goHatchForward() {
+	public void goHatchForward() {
 		pushForward.set(DoubleSolenoid.Value.kForward);
 	}
 
-	private void goHatchBackward() {
+	public void goHatchBackward() {
 		pushForward.set(DoubleSolenoid.Value.kReverse);
 	}
 
