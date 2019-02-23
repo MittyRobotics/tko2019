@@ -1,4 +1,4 @@
-package com.amhsrobotics.tko2019.networking;
+package com.amhsrobotics.datatypes;
 
 import java.io.Serializable;
 
