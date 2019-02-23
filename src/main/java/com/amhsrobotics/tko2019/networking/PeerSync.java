@@ -4,13 +4,14 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class PeerSync {
 	private static List<Socket> peers = new CopyOnWriteArrayList<>();
 
-	private static volatile int data = 0;
+	private static volatile HashMap<String, Double> data = new HashMap<String, Double>();
 	private static volatile boolean isRunning = false;
 
 	static void run() {
@@ -20,8 +21,8 @@ public class PeerSync {
 				for (final Socket peer : peers) {
 					if (!peer.isClosed()) {
 						try {
-							data = new ObjectInputStream(peer.getInputStream()).readInt();
-						} catch (final IOException e) {
+							data = (HashMap<String, Double>) new ObjectInputStream(peer.getInputStream()).readObject();
+						} catch (final IOException | ClassNotFoundException e) {
 							e.printStackTrace();
 						}
 					}
@@ -43,7 +44,7 @@ public class PeerSync {
 		isRunning = false;
 	}
 
-	static void updateData(final int value) {
+	static void updateData(final HashMap<String, Double> value) {
 		data = value;
 		for (final Socket peer : peers) {
 			try {
@@ -54,7 +55,7 @@ public class PeerSync {
 		}
 	}
 
-	static int retrieveData() {
+	static HashMap<String, Double> retrieveData() {
 		return data;
 	}
 }
