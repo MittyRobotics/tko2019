@@ -5,8 +5,8 @@ import com.amhsrobotics.tko2019.sequences.Action;
 import com.amhsrobotics.tko2019.sequences.Sequence;
 
 abstract class CargoScore extends Sequence {
-	CargoScore(Action... actions) {
-		super(actions);
+	CargoScore(final Action changeHeightAction) {
+		super();
 	}
 
 	@Override
