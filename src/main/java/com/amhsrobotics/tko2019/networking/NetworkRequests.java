@@ -9,5 +9,4 @@ public class NetworkRequests {
 		final Socket socket = new Socket("tegra-ubuntu.local", dataPort.getPort());
 		return (MicromovementData) new ObjectInputStream(socket.getInputStream()).readObject();
 	}
-
 }
