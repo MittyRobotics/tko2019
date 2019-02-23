@@ -47,7 +47,7 @@ public class Cargo {
 
 		Controls.getInstance().registerDigitalCommand(Controller.Joystick2, ControlsConfig.SPIN_INTAKE, DigitalType.DigitalHold, () -> spinIntake(0.5, 0.5));
 		Controls.getInstance().registerDigitalCommand(Controller.Joystick2, ControlsConfig.SPIN_INTAKE, DigitalType.DigitalRelease, this::stopIntake);
-		Controls.getInstance().registerDigitalCommand(Controller.Joystick2, ControlsConfig.SPIN_OUTTAKE, DigitalType.DigitalHold, () -> spinOuttake(0.5, 0.5));
+		Controls.getInstance().registerDigitalCommand(Controller.Joystick2, ControlsConfig.SPIN_OUTTAKE, DigitalType.DigitalHold, () -> spinOuttake(0.5));
 		Controls.getInstance().registerDigitalCommand(Controller.Joystick2, ControlsConfig.SPIN_OUTTAKE, DigitalType.DigitalRelease, this::stopIntake);
 
 		Controls.getInstance().registerAnalogCommand(Controller.Joystick2, ControlsConfig.MOVE_ANGLE, AnalogType.OutOfThresholdMinor, value -> {
@@ -81,9 +81,9 @@ public class Cargo {
 		}
 	}
 
-	public void spinOuttake(double topSpeed, double bottomSpeed) {
-		intakeTalons[0].set(ControlMode.PercentOutput, -topSpeed);
-		intakeTalons[1].set(ControlMode.PercentOutput, bottomSpeed);
+	public void spinOuttake(double speed) {
+		intakeTalons[0].set(ControlMode.PercentOutput, -speed);
+		intakeTalons[1].set(ControlMode.PercentOutput, speed);
 	}
 
 	public void stopIntake() {
@@ -107,11 +107,11 @@ public class Cargo {
 		moveConveyor(IntakeHeights.STATION_HEIGHT);
 	}
 
-	private void visionConveyor() {
+	public void visionConveyor() {
 		moveConveyor(IntakeHeights.VISION_HEIGHT);
 	}
 
-	private void groundConveyor() {
+	public void groundConveyor() {
 		moveConveyor(IntakeHeights.GROUND_HEIGHT);
 	}
 
