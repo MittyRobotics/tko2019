@@ -1,4 +1,4 @@
-package com.amhsrobotics.tko2019.sequences.drive;
+package com.amhsrobotics.tko2019.sequences.actions.drive;
 
 import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
 import com.amhsrobotics.tko2019.sequences.Action;
@@ -11,12 +11,12 @@ public final class TurnAction implements Action {
 	}
 
 	@Override
-	public void doAction(final boolean continuing) {
+	public final void doAction(final boolean continuing) {
 		Drive.getInstance().turn(angle);
 	}
 
 	@Override
-	public boolean isContinuable() {
+	public final boolean isContinuable() {
 		return false;
 	}
 }
