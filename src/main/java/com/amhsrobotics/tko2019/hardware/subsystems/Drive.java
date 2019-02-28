@@ -17,9 +17,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PIDController;
-
-import java.util.logging.Logger;
 
 public final class Drive {
 	private final static Drive INSTANCE = new Drive();
@@ -33,6 +32,7 @@ public final class Drive {
 
 	private int currentGear = 1;
 	private long lastSwitch = 0;
+	private boolean didTurn = false;
 
 	private Drive() {
 		for (int i = 0; i < TalonIds.LEFT_DRIVE.length; i++) {
@@ -114,32 +114,67 @@ public final class Drive {
 		moveStraight(inches, 0);
 	}
 
-	public final void moveStraight(final double inches, final double breakInches) {
-		final double setpoint = inches * getTicksPerInch();
-		final double threshold = 0.25 * getTicksPerInch();
+	public final void moveStraight(final double inches, final double waitTime) {
+		if(inches < 13){
+			rightTalons[0].config_kP(0, 0.25, 0);
+		}
+		else {
+			rightTalons[0].config_kP(0, PID.DRIVE[0], 0);
+		}
+		final double threshold = 0.5 * 160;
 
-		leftTalons[0].set(ControlMode.Position, leftTalons[0].getSelectedSensorPosition() + setpoint);
-		rightTalons[0].follow(leftTalons[0]);
-		while (Math.abs(leftTalons[0].getClosedLoopError()) > breakInches + threshold) {
-			Logger.getLogger("drive").finer("Error:\t" + leftTalons[0].getClosedLoopError());
+		leftTalons[0].set(ControlMode.Follower, rightTalons[0].getDeviceID());
+		leftTalons[1].set(ControlMode.Follower, rightTalons[0].getDeviceID());
+		final double setpoint;
+		if(didTurn){
+			setpoint = -1 * rightTalons[0].getSelectedSensorPosition() + inches * 160;
+		}
+		else {
+			setpoint = rightTalons[0].getSelectedSensorPosition() + inches * 160;
+		}
+		rightTalons[0].set(ControlMode.Position, setpoint);
+		long time = System.currentTimeMillis();
+		while (DriverStation.getInstance().isEnabled()){
+			if(System.currentTimeMillis() - time > waitTime && rightTalons[0].getClosedLoopError() < threshold){
+				break;
+			}
+			System.out.println("POS: " + rightTalons[0].getSelectedSensorPosition());
+			System.out.println("GOAL: " + rightTalons[0].getClosedLoopTarget());
 			try {
-				Thread.sleep(20);
-			} catch (final InterruptedException e) {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-
+		System.out.println("Here");
 		leftTalons[0].set(ControlMode.PercentOutput, 0);
 		rightTalons[0].set(ControlMode.PercentOutput, 0);
+		leftTalons[1].set(ControlMode.Follower, leftTalons[0].getDeviceID());
+//		System.out.println(setpoint);
+//		while (DriverStation.getInstance().isEnabled()) {
+////			System.out.println("(Left) T1: " + leftDriveTalons[0].getSelectedSensorPosition());
+////			System.out.println("(Right) T1: " + rightDriveTalons[0].getSelectedSensorPosition());
+//
+//			try {
+//				Thread.sleep(20);
+//			} catch (final InterruptedException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		System.out.println("here");
+//		leftDriveTalons[0].set(ControlMode.PercentOutput, 0);
+//		rightDriveTalons[0].set(ControlMode.PercentOutput, 0);
+		didTurn = false;
 	}
 
 	public final void turn(final double degrees) {
-		final PIDController pidController = new PIDController(PID.TURN[0], PID.TURN[1], PID.TURN[2], Gyro.getInstance(), leftTalons[0]);
-		pidController.setInputRange(0, 360);
-		pidController.setOutputRange(-0.35, 0.35);
-		pidController.setContinuous(true);
+		int count = 0;
+		final PIDController pidController = new PIDController(0.05, 0, 0, Gyro.getInstance(), rightTalons[0]);
 
-		rightTalons[0].follow(leftTalons[0]);
+		pidController.setInputRange(0, 360);
+		pidController.setOutputRange(-0.5, 0.5);
+		pidController.setContinuous(true);
+		leftTalons[0].set(ControlMode.Follower, rightTalons[0].getDeviceID());
 		rightTalons[0].setInverted(!TalonInversions.RIGHT_DRIVE[0]);
 		rightTalons[1].setInverted(!TalonInversions.RIGHT_DRIVE[1]);
 
@@ -152,17 +187,27 @@ public final class Drive {
 
 		pidController.setSetpoint(angle);
 		pidController.enable();
-		while (pidController.getError() > Thresholds.TURN) {
+		final long startTime = System.currentTimeMillis();
+		while (count < 50 && DriverStation.getInstance().isEnabled()) {
+			if(pidController.getError() < 3 && System.currentTimeMillis()  - startTime > 500){
+				count++;
+			}
+			else {
+				count = 0;
+			}
 			try {
-				Thread.sleep(20);
+				Thread.sleep(10);
 			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
+		System.out.println("Turn Done");
 		pidController.disable();
+
 
 		rightTalons[0].setInverted(TalonInversions.RIGHT_DRIVE[0]);
 		rightTalons[1].setInverted(TalonInversions.RIGHT_DRIVE[1]);
+		didTurn = true;
 	}
 
 	public synchronized void set(final double value) {
