@@ -31,9 +31,7 @@ public final class Controls extends Thread {
 		if (!shouldRun) {
 			try {
 				join();
-			} catch (final InterruptedException e) {
-				e.printStackTrace();
-			}
+			} catch (final InterruptedException ignored) { }
 			shouldRun = true;
 			start();
 		}
