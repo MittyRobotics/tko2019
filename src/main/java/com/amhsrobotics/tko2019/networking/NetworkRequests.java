@@ -16,6 +16,8 @@ import java.net.Socket;
 import java.util.Arrays;
 
 public class NetworkRequests {
+	private static Thread thread = new Thread();
+
 	public static MicromovementData requestData(final DataPort dataPort) throws IOException, ClassNotFoundException {
 		final Socket socket = new Socket("tegra-ubuntu.local", dataPort.getPort());
 		return (MicromovementData) new ObjectInputStream(socket.getInputStream()).readObject();
@@ -37,10 +39,14 @@ public class NetworkRequests {
 		final Mat mat = bufferedImageToMat(bufferedImage);
 
 		CvSource outputStream = CameraServer.getInstance().putVideo(name, bufferedImage.getWidth(), bufferedImage.getHeight());
-		final Thread thread = new Thread();
-		thread.setDaemon(true);
-		while (!Thread.interrupted()) {
-			outputStream.putFrame(mat);
+		if (!thread.isAlive()) {
+			thread.setDaemon(true);
+			thread = new Thread(() -> {
+				while (!Thread.interrupted()) {
+					outputStream.putFrame(mat);
+				}
+			});
+			thread.start();
 		}
 	}
 

@@ -4,15 +4,12 @@ import com.amhsrobotics.tko2019.controls.Controller;
 import com.amhsrobotics.tko2019.controls.Controls;
 import com.amhsrobotics.tko2019.controls.commands.AnalogType;
 import com.amhsrobotics.tko2019.controls.commands.DigitalType;
-import com.amhsrobotics.tko2019.controls.input.DigitalInput;
 import com.amhsrobotics.tko2019.hardware.Gyro;
 import com.amhsrobotics.tko2019.settings.ControlsConfig;
-import com.amhsrobotics.tko2019.settings.Restrictions;
 import com.amhsrobotics.tko2019.settings.subsystems.PID;
 import com.amhsrobotics.tko2019.settings.subsystems.SolenoidIds;
 import com.amhsrobotics.tko2019.settings.subsystems.TalonIds;
 import com.amhsrobotics.tko2019.settings.subsystems.TalonInversions;
-import com.amhsrobotics.tko2019.settings.subsystems.Thresholds;
 import com.amhsrobotics.tko2019.settings.subsystems.TicksPerInch;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -62,6 +59,7 @@ public final class Drive {
 			}
 			rightTalons[i] = talon;
 		}
+		rightTalons[0].setSensorPhase(true);
 
 
 		Controls.getInstance().registerAnalogCommand(Controller.XboxController, ControlsConfig.LEFT_WHEELS,
@@ -106,9 +104,7 @@ public final class Drive {
 //					}
 				}).registerDigitalCommand(Controller.XboxController, ControlsConfig.REVERSE_DIRECTION,
 				DigitalType.DigitalPress, this::toggleReverser);
-		Controls.getInstance().registerDigitalCommand(Controller.XboxController, DigitalInput.XboxA, DigitalType.DigitalPress, ()->{
-			turn(90);
-		});
+
 	}
 
 	public static Drive getInstance() {
@@ -124,10 +120,9 @@ public final class Drive {
 		leftTalons[1].setNeutralMode(NeutralMode.Brake);
 		rightTalons[0].setNeutralMode(NeutralMode.Brake);
 		rightTalons[1].setNeutralMode(NeutralMode.Brake);
-		if(inches < 13){
+		if (inches < 13) {
 			rightTalons[0].config_kP(0, 0.25, 0);
-		}
-		else {
+		} else {
 			rightTalons[0].config_kP(0, PID.DRIVE[0], 0);
 		}
 		final double threshold = 0.5 * 160;
@@ -135,16 +130,15 @@ public final class Drive {
 		leftTalons[0].set(ControlMode.Follower, rightTalons[0].getDeviceID());
 		leftTalons[1].set(ControlMode.Follower, rightTalons[0].getDeviceID());
 		final double setpoint;
-		if(didTurn){
-			setpoint = -1 * rightTalons[0].getSelectedSensorPosition() + inches * 160;
-		}
-		else {
+//		if (didTurn) {
 			setpoint = rightTalons[0].getSelectedSensorPosition() + inches * 160;
-		}
+//		} else {
+//			setpoint = rightTalons[0].getSelectedSensorPosition() + inches * 160;
+//		}
 		rightTalons[0].set(ControlMode.Position, setpoint);
 		long time = System.currentTimeMillis();
-		while (DriverStation.getInstance().isEnabled()){
-			if(System.currentTimeMillis() - time > waitTime && rightTalons[0].getClosedLoopError() < threshold){
+		while (DriverStation.getInstance().isEnabled()) {
+			if (System.currentTimeMillis() - time > waitTime && rightTalons[0].getClosedLoopError() < threshold) {
 				break;
 			}
 			System.out.println("POS: " + rightTalons[0].getSelectedSensorPosition());
@@ -159,10 +153,10 @@ public final class Drive {
 		leftTalons[0].set(ControlMode.PercentOutput, 0);
 		rightTalons[0].set(ControlMode.PercentOutput, 0);
 		leftTalons[1].set(ControlMode.Follower, leftTalons[0].getDeviceID());
-		leftTalons[0].setNeutralMode(NeutralMode.Coast);
-		leftTalons[1].setNeutralMode(NeutralMode.Coast);
-		rightTalons[0].setNeutralMode(NeutralMode.Coast);
-		rightTalons[1].setNeutralMode(NeutralMode.Coast);
+//		leftTalons[0].setNeutralMode(NeutralMode.Coast);
+//		leftTalons[1].setNeutralMode(NeutralMode.Coast);
+//		rightTalons[0].setNeutralMode(NeutralMode.Coast);
+//		rightTalons[1].setNeutralMode(NeutralMode.Coast);
 //		System.out.println(setpoint);
 //		while (DriverStation.getInstance().isEnabled()) {
 ////			System.out.println("(Left) T1: " + leftDriveTalons[0].getSelectedSensorPosition());
@@ -185,7 +179,7 @@ public final class Drive {
 		final PIDController pidController = new PIDController(0.1, 0, 0, Gyro.getInstance(), rightTalons[0]);
 
 		pidController.setInputRange(0, 360);
-		pidController.setOutputRange(-0.5, 0.5);
+		pidController.setOutputRange(-0.35, 0.35);
 		pidController.setContinuous(true);
 		leftTalons[0].set(ControlMode.Follower, rightTalons[0].getDeviceID());
 		rightTalons[0].setInverted(!TalonInversions.RIGHT_DRIVE[0]);
@@ -202,12 +196,15 @@ public final class Drive {
 		pidController.enable();
 		final long startTime = System.currentTimeMillis();
 		while (count < 200 && DriverStation.getInstance().isEnabled()) {
-			if(pidController.getError() < 10 && System.currentTimeMillis()  - startTime > 500){
+			if (Math.abs(pidController.getError()) < 10) {
 				count++;
-			}
-			else {
+			} else {
 				count = 0;
 			}
+			if(System.currentTimeMillis() - startTime > 3000){
+				break;
+			}
+			System.out.println(pidController.getError());
 			try {
 				Thread.sleep(10);
 			} catch (final InterruptedException e) {
@@ -215,7 +212,7 @@ public final class Drive {
 			}
 		}
 		System.out.println("Turn Done");
-		pidController.disable();
+		pidController.close();
 
 
 		rightTalons[0].setInverted(TalonInversions.RIGHT_DRIVE[0]);

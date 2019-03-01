@@ -1,13 +1,14 @@
 package com.amhsrobotics.tko2019;
 
+import com.amhsrobotics.tko2019.controls.Controller;
+import com.amhsrobotics.tko2019.controls.Controls;
+import com.amhsrobotics.tko2019.controls.commands.DigitalType;
+import com.amhsrobotics.tko2019.controls.input.DigitalInput;
 import com.amhsrobotics.tko2019.hardware.Compressor;
 import com.amhsrobotics.tko2019.hardware.Enableable;
 import com.amhsrobotics.tko2019.hardware.Gyro;
-import com.amhsrobotics.tko2019.hardware.Switches;
-import com.amhsrobotics.tko2019.hardware.subsystems.Cargo;
-import com.amhsrobotics.tko2019.hardware.subsystems.Climber;
 import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
-import com.amhsrobotics.tko2019.hardware.subsystems.HatchPanel;
+import com.amhsrobotics.tko2019.sequences.VisionSync;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SampleRobot;
 
@@ -21,13 +22,28 @@ public final class Robot extends SampleRobot {
 	@Override
 	protected final void robotInit() {
 		Compressor.getInstance();
-		Switches.getInstance();
+		//Switches.getInstance();
 		Gyro.getInstance();
 
 		Drive.getInstance();
-		Climber.getInstance();
-		Cargo.getInstance();
-		HatchPanel.getInstance();
+
+		//Climber.getInstance();
+		//Cargo.getInstance();
+		//HatchPanel.getInstance();
+		try {
+			Thread.sleep(10_000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		Controls.getInstance().registerDigitalCommand(Controller.XboxController, DigitalInput.XboxA, DigitalType.DigitalPress, () -> {
+			VisionSync.getInstance().request();
+		}).registerDigitalCommand(Controller.XboxController, DigitalInput.XboxB, DigitalType.DigitalPress, () -> {
+			VisionSync.getInstance().confirm();
+//			Drive.getInstance().turn(180 +15);
+//			Drive.getInstance().moveStraight(24);
+//			Drive.getInstance().turn(-90);
+		});
 	}
 
 	@Override
@@ -37,6 +53,7 @@ public final class Robot extends SampleRobot {
 
 	@Override
 	public final void operatorControl() {
+		Controls.getInstance().enable();
 		enabled();
 	}
 
@@ -47,6 +64,7 @@ public final class Robot extends SampleRobot {
 
 	@Override
 	protected final void disabled() {
+		Controls.getInstance().disable();
 		for (final Enableable enableable : Enableable.ENABLEABLES) {
 			enableable.disable();
 		}
