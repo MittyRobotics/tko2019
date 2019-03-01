@@ -57,7 +57,7 @@ public final class Controls extends Thread {
 	@SuppressWarnings("Duplicates")
 	public Controls registerAnalogCommand(Controller controller, AnalogInput analogInput, AnalogType analogType, AnalogControlCommand lambda) {
 		analogControls.putIfAbsent(controller, new HashMap<>());
-		final HashMap<AnalogInput, HashMap<AnalogType, ArrayList<AnalogControlCommand>>> inputs = analogControls.get(controller.ordinal());
+		final HashMap<AnalogInput, HashMap<AnalogType, ArrayList<AnalogControlCommand>>> inputs = analogControls.get(controller);
 		inputs.putIfAbsent(analogInput, new HashMap<>());
 		final HashMap<AnalogType, ArrayList<AnalogControlCommand>> commands = inputs.get(analogInput);
 		commands.putIfAbsent(analogType, new ArrayList<>());

@@ -4,6 +4,7 @@ import com.amhsrobotics.tko2019.controls.Controller;
 import com.amhsrobotics.tko2019.controls.Controls;
 import com.amhsrobotics.tko2019.controls.commands.AnalogType;
 import com.amhsrobotics.tko2019.controls.commands.DigitalType;
+import com.amhsrobotics.tko2019.controls.input.DigitalInput;
 import com.amhsrobotics.tko2019.hardware.Gyro;
 import com.amhsrobotics.tko2019.settings.ControlsConfig;
 import com.amhsrobotics.tko2019.settings.Restrictions;
@@ -15,6 +16,7 @@ import com.amhsrobotics.tko2019.settings.subsystems.Thresholds;
 import com.amhsrobotics.tko2019.settings.subsystems.TicksPerInch;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -90,20 +92,23 @@ public final class Drive {
 					} else {
 						setRight(0);
 					}
-				}).registerDigitalCommand(Controller.XboxController, ControlsConfig.GEAR_SWITCH,
-				DigitalType.DigitalPress, () -> {
-					if (System.currentTimeMillis() - lastSwitch > Restrictions.DRIVE_GEAR_SHIFT_COOLDOWN_MILLIS) {
-						if (currentGear == 1) {
-							shiftGear(0);
-						} else {
-							shiftGear(1);
-						}
-						lastSwitch = System.currentTimeMillis();
-					} else {
-						System.err.println("Shifter is on Cooldown.");
-					}
+//				}).registerDigitalCommand(Controller.XboxController, ControlsConfig.GEAR_SWITCH,
+//				DigitalType.DigitalPress, () -> {
+//					if (System.currentTimeMillis() - lastSwitch > Restrictions.DRIVE_GEAR_SHIFT_COOLDOWN_MILLIS) {
+//						if (currentGear == 1) {
+//							shiftGear(0);
+//						} else {
+//							shiftGear(1);
+//						}
+//						lastSwitch = System.currentTimeMillis();
+//					} else {
+//						System.err.println("Shifter is on Cooldown.");
+//					}
 				}).registerDigitalCommand(Controller.XboxController, ControlsConfig.REVERSE_DIRECTION,
 				DigitalType.DigitalPress, this::toggleReverser);
+		Controls.getInstance().registerDigitalCommand(Controller.XboxController, DigitalInput.XboxA, DigitalType.DigitalPress, ()->{
+			turn(90);
+		});
 	}
 
 	public static Drive getInstance() {
@@ -111,10 +116,14 @@ public final class Drive {
 	}
 
 	public final void moveStraight(final double inches) {
-		moveStraight(inches, 0);
+		moveStraight(inches, 500);
 	}
 
 	public final void moveStraight(final double inches, final double waitTime) {
+		leftTalons[0].setNeutralMode(NeutralMode.Brake);
+		leftTalons[1].setNeutralMode(NeutralMode.Brake);
+		rightTalons[0].setNeutralMode(NeutralMode.Brake);
+		rightTalons[1].setNeutralMode(NeutralMode.Brake);
 		if(inches < 13){
 			rightTalons[0].config_kP(0, 0.25, 0);
 		}
@@ -150,6 +159,10 @@ public final class Drive {
 		leftTalons[0].set(ControlMode.PercentOutput, 0);
 		rightTalons[0].set(ControlMode.PercentOutput, 0);
 		leftTalons[1].set(ControlMode.Follower, leftTalons[0].getDeviceID());
+		leftTalons[0].setNeutralMode(NeutralMode.Coast);
+		leftTalons[1].setNeutralMode(NeutralMode.Coast);
+		rightTalons[0].setNeutralMode(NeutralMode.Coast);
+		rightTalons[1].setNeutralMode(NeutralMode.Coast);
 //		System.out.println(setpoint);
 //		while (DriverStation.getInstance().isEnabled()) {
 ////			System.out.println("(Left) T1: " + leftDriveTalons[0].getSelectedSensorPosition());
@@ -169,7 +182,7 @@ public final class Drive {
 
 	public final void turn(final double degrees) {
 		int count = 0;
-		final PIDController pidController = new PIDController(0.05, 0, 0, Gyro.getInstance(), rightTalons[0]);
+		final PIDController pidController = new PIDController(0.1, 0, 0, Gyro.getInstance(), rightTalons[0]);
 
 		pidController.setInputRange(0, 360);
 		pidController.setOutputRange(-0.5, 0.5);
@@ -188,8 +201,8 @@ public final class Drive {
 		pidController.setSetpoint(angle);
 		pidController.enable();
 		final long startTime = System.currentTimeMillis();
-		while (count < 50 && DriverStation.getInstance().isEnabled()) {
-			if(pidController.getError() < 3 && System.currentTimeMillis()  - startTime > 500){
+		while (count < 200 && DriverStation.getInstance().isEnabled()) {
+			if(pidController.getError() < 10 && System.currentTimeMillis()  - startTime > 500){
 				count++;
 			}
 			else {
