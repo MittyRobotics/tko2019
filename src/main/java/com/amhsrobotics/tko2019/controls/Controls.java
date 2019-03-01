@@ -31,9 +31,10 @@ public final class Controls extends Thread {
 		if (!shouldRun) {
 			try {
 				join();
+				Thread.sleep(1_000);
+				start();
 			} catch (final InterruptedException ignored) { }
 			shouldRun = true;
-			start();
 		}
 	}
 
