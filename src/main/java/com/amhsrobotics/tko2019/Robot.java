@@ -9,6 +9,7 @@ import com.amhsrobotics.tko2019.hardware.Enableable;
 import com.amhsrobotics.tko2019.hardware.Gyro;
 import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
 import com.amhsrobotics.tko2019.sequences.VisionSync;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SampleRobot;
 
@@ -21,6 +22,9 @@ public final class Robot extends SampleRobot {
 	@SuppressWarnings("ResultOfMethodCallIgnored")
 	@Override
 	protected final void robotInit() {
+		CameraServer.getInstance().startAutomaticCapture(0);
+		CameraServer.getInstance().startAutomaticCapture(1);
+
 		Compressor.getInstance();
 		//Switches.getInstance();
 		Gyro.getInstance();
