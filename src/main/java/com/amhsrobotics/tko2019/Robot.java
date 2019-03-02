@@ -33,6 +33,8 @@ public final class Robot extends SampleRobot {
 		cam2 = CameraServer.getInstance().startAutomaticCapture("2", 2);
 		cam3 = CameraServer.getInstance().startAutomaticCapture("3", 3);
 
+
+
 		Compressor.getInstance();
 		//Switches.getInstance();
 		Gyro.getInstance();

@@ -25,13 +25,15 @@ public class VisionSync {
 		final Mat frame = new Mat();
 		CameraServer.getInstance().getVideo(camName).grabFrame(frame);
 		final byte[] raw = matToBytes(frame);
+		nt.getEntry("row").setNumber(frame.rows());
+		nt.getEntry("col").setNumber(frame.cols());
 		nt.getEntry("frame").setRaw(raw);
 	}
 
 	private static byte[] matToBytes(final Mat matrix) {
-		MatOfByte mob=new MatOfByte();
-		Imgcodecs.imencode(".jpg", matrix, mob);
-		return new ByteArrayInputStream(mob.toArray()).readAllBytes();
+		byte[] b = new byte[matrix.channels() * matrix.cols() * matrix.rows()];
+		matrix.data().get(b);
+		return b;
 	}
 
 	public void confirm() {
