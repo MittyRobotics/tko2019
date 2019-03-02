@@ -4,10 +4,11 @@ import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfByte;
-import org.opencv.imgcodecs.Imgcodecs;
 
-import java.io.ByteArrayInputStream;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.io.ByteArrayOutputStream;
 
 public class VisionSync {
 	private static VisionSync ourInstance = new VisionSync();
@@ -19,21 +20,17 @@ public class VisionSync {
 	private VisionSync() {
 	}
 
-	public void request(String camName, String pos) {
+	public void request(String camName, String pos) throws Exception {
 		final NetworkTableInstance nt = NetworkTableInstance.getDefault();
 		nt.getEntry("pos").setString(pos);
 		final Mat frame = new Mat();
 		CameraServer.getInstance().getVideo(camName).grabFrame(frame);
-		final byte[] raw = matToBytes(frame);
+		final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		ImageIO.write(matToBufferedImage(frame), "jpg", byteArrayOutputStream);
+		final byte[] raw = byteArrayOutputStream.toByteArray();
 		nt.getEntry("row").setNumber(frame.rows());
 		nt.getEntry("col").setNumber(frame.cols());
 		nt.getEntry("frame").setRaw(raw);
-	}
-
-	private static byte[] matToBytes(final Mat matrix) {
-		byte[] b = new byte[matrix.channels() * matrix.cols() * matrix.rows()];
-		matrix.data().get(b);
-		return b;
 	}
 
 	public void confirm() {
@@ -46,5 +43,23 @@ public class VisionSync {
 		Drive.getInstance().moveStraight(d1);
 		Drive.getInstance().turn(t2);
 		Drive.getInstance().moveStraight(d2);
+	}
+
+	private static BufferedImage matToBufferedImage(final Mat mat) throws Exception {
+		final int type;
+		if (mat.channels() == 1) {
+			type = BufferedImage.TYPE_BYTE_GRAY;
+		} else if (mat.channels() == 3) {
+			type = BufferedImage.TYPE_3BYTE_BGR;
+		} else if (mat.channels() == 4) {
+			type = BufferedImage.TYPE_4BYTE_ABGR;
+		} else {
+			throw new Exception();
+		}
+		final BufferedImage img = new BufferedImage(mat.width(), mat.height(), type);
+
+		mat.get(0, 0, ((DataBufferByte) img.getRaster().getDataBuffer()).getData());
+
+		return img;
 	}
 }
