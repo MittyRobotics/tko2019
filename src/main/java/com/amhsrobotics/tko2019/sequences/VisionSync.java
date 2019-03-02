@@ -4,8 +4,16 @@ import com.amhsrobotics.datatypes.MicromovementData;
 import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
 import com.amhsrobotics.tko2019.networking.DataPort;
 import com.amhsrobotics.tko2019.networking.NetworkRequests;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
+import org.opencv.imgcodecs.Imgcodecs;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import static com.amhsrobotics.tko2019.networking.NetworkRequests.stream;
@@ -22,17 +30,19 @@ public class VisionSync {
 	private VisionSync() {
 	}
 
-	public void request() {
-		try {
-			data = NetworkRequests.requestData(DataPort.Center);
-			NetworkTableInstance.getDefault().getEntry("t1").setNumber(data.getTurn1());
-			NetworkTableInstance.getDefault().getEntry("d1").setNumber(data.getDrive1());
-			NetworkTableInstance.getDefault().getEntry("t2").setNumber(data.getTurn2());
-			NetworkTableInstance.getDefault().getEntry("d2").setNumber(data.getDrive2());
-			stream(data, "t");
-		} catch (final IOException | ClassNotFoundException e) {
-			e.printStackTrace();
-		}
+	public void request(String camName, String pos) {
+		final NetworkTableInstance nt = NetworkTableInstance.getDefault();
+		nt.getEntry("pos").setString(pos);
+		final Mat frame = new Mat();
+		CameraServer.getInstance().getVideo(camName).grabFrame(frame);
+		final byte[] raw = matToBytes(frame);
+		nt.getEntry("frame").setRaw(raw);
+	}
+
+	public static byte[] matToBytes(final Mat matrix) {
+		MatOfByte mob=new MatOfByte();
+		Imgcodecs.imencode(".jpg", matrix, mob);
+		return new ByteArrayInputStream(mob.toArray()).readAllBytes();
 	}
 
 	public void confirm() {

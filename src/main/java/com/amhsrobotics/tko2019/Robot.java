@@ -9,12 +9,18 @@ import com.amhsrobotics.tko2019.hardware.Enableable;
 import com.amhsrobotics.tko2019.hardware.Gyro;
 import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
 import com.amhsrobotics.tko2019.sequences.VisionSync;
+import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.SampleRobot;
 
 @SuppressWarnings("deprecation")
 public final class Robot extends SampleRobot {
+	private UsbCamera cam0;
+	private UsbCamera cam1;
+	private UsbCamera cam2;
+	private UsbCamera cam3;
+
 	public static void main(final String... args) {
 		RobotBase.startRobot(Robot::new);
 	}
@@ -22,8 +28,10 @@ public final class Robot extends SampleRobot {
 	@SuppressWarnings("ResultOfMethodCallIgnored")
 	@Override
 	protected final void robotInit() {
-		CameraServer.getInstance().startAutomaticCapture(0);
-		CameraServer.getInstance().startAutomaticCapture(1);
+		cam0 = CameraServer.getInstance().startAutomaticCapture("0", 0);
+		cam1 = CameraServer.getInstance().startAutomaticCapture("1", 1);
+		cam2 = CameraServer.getInstance().startAutomaticCapture("2", 2);
+		cam3 = CameraServer.getInstance().startAutomaticCapture("3", 3);
 
 		Compressor.getInstance();
 		//Switches.getInstance();
@@ -35,9 +43,9 @@ public final class Robot extends SampleRobot {
 		//Cargo.getInstance();
 		//HatchPanel.getInstance();
 
-		
+
 		Controls.getInstance().registerDigitalCommand(Controller.XboxController, DigitalInput.XboxA, DigitalType.DigitalPress, () -> {
-			VisionSync.getInstance().request();
+			VisionSync.getInstance().request("0", "c");
 		}).registerDigitalCommand(Controller.XboxController, DigitalInput.XboxB, DigitalType.DigitalPress, () -> {
 			VisionSync.getInstance().confirm();
 //			Drive.getInstance().turn(180 +15);
