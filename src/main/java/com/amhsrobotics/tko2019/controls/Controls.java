@@ -21,6 +21,7 @@ public final class Controls extends Thread {
 	private Controls() {
 		setName("Controls Thread");
 		setPriority(Thread.MAX_PRIORITY);
+		start();
 	}
 
 	public static Controls getInstance() {
@@ -28,14 +29,7 @@ public final class Controls extends Thread {
 	}
 
 	public synchronized void enable() {
-		if (!shouldRun) {
-			try {
-				join();
-				Thread.sleep(1_000);
-				start();
-			} catch (final InterruptedException ignored) { }
-			shouldRun = true;
-		}
+		shouldRun = true;
 	}
 
 	public void disable() {
@@ -68,87 +62,94 @@ public final class Controls extends Thread {
 	public void run() {
 		final HashMap<Controller, HashMap<DigitalInput, Boolean>> cachedDigitalInputs = new HashMap<>();
 		final HashMap<Controller, HashMap<AnalogInput, Double>> cachedAnalogInputs = new HashMap<>();
-		while (shouldRun) {
-			// Buttons
-			for (Controller controller : buttonControls.keySet()) {
-				for (final DigitalInput digitalInput : buttonControls.get(controller).keySet()) {
-					boolean value = digitalInput.getInputRequest().requestDigital(controller.getController());
-					cachedDigitalInputs.putIfAbsent(controller, new HashMap<>());
-					cachedDigitalInputs.get(controller).putIfAbsent(digitalInput, value);
-					boolean cachedValue = cachedDigitalInputs.get(controller).get(digitalInput);
-					if (value) {
-						ArrayList<DigitalControlCommand> pressCommands = buttonControls.get(controller).get(digitalInput).get(DigitalType.DigitalPress);
-						if (pressCommands != null && !cachedValue) {
-							for (DigitalControlCommand controlCommand : pressCommands) {
-								controlCommand.action();
+		while (true) {
+			while (shouldRun) {
+				// Buttons
+				for (Controller controller : buttonControls.keySet()) {
+					for (final DigitalInput digitalInput : buttonControls.get(controller).keySet()) {
+						boolean value = digitalInput.getInputRequest().requestDigital(controller.getController());
+						cachedDigitalInputs.putIfAbsent(controller, new HashMap<>());
+						cachedDigitalInputs.get(controller).putIfAbsent(digitalInput, value);
+						boolean cachedValue = cachedDigitalInputs.get(controller).get(digitalInput);
+						if (value) {
+							ArrayList<DigitalControlCommand> pressCommands = buttonControls.get(controller).get(digitalInput).get(DigitalType.DigitalPress);
+							if (pressCommands != null && !cachedValue) {
+								for (DigitalControlCommand controlCommand : pressCommands) {
+									controlCommand.action();
+								}
+							}
+							ArrayList<DigitalControlCommand> holdCommands = buttonControls.get(controller).get(digitalInput).get(DigitalType.DigitalHold);
+							if (holdCommands != null) {
+								for (DigitalControlCommand controlCommand : holdCommands) {
+									controlCommand.action();
+								}
+							}
+						} else {
+							ArrayList<DigitalControlCommand> releaseCommands = buttonControls.get(controller).get(digitalInput).get(DigitalType.DigitalRelease);
+							if (releaseCommands != null && cachedValue) {
+								for (DigitalControlCommand controlCommand : releaseCommands) {
+									controlCommand.action();
+								}
 							}
 						}
-						ArrayList<DigitalControlCommand> holdCommands = buttonControls.get(controller).get(digitalInput).get(DigitalType.DigitalHold);
-						if (holdCommands != null) {
-							for (DigitalControlCommand controlCommand : holdCommands) {
-								controlCommand.action();
-							}
-						}
-					} else {
-						ArrayList<DigitalControlCommand> releaseCommands = buttonControls.get(controller).get(digitalInput).get(DigitalType.DigitalRelease);
-						if (releaseCommands != null && cachedValue) {
-							for (DigitalControlCommand controlCommand : releaseCommands) {
-								controlCommand.action();
-							}
-						}
-					}
-					cachedDigitalInputs.get(controller).put(digitalInput, value);
-				}
-			}
-
-			// AnalogInput
-			for (final Controller controller : analogControls.keySet()) {
-				for (final AnalogInput analogInput : analogControls.get(controller).keySet()) {
-					double value = analogInput.getInputRequest().requestAnalog(controller.getController());
-					cachedAnalogInputs.putIfAbsent(controller, new HashMap<>());
-					cachedAnalogInputs.get(controller).putIfAbsent(analogInput, value);
-					ArrayList<AnalogControlCommand> alwaysCommands = analogControls.get(controller).get(analogInput).get(AnalogType.Always);
-					if (alwaysCommands != null) {
-						for (AnalogControlCommand controlCommand : alwaysCommands) {
-							controlCommand.action(value);
-						}
-					}
-					if (Math.abs(value) > 0.05) {
-						ArrayList<AnalogControlCommand> outOfMinorThresholdCommands = analogControls.get(controller).get(analogInput).get(AnalogType.OutOfThresholdMinor);
-						if (outOfMinorThresholdCommands != null) {
-							for (AnalogControlCommand controlCommand : outOfMinorThresholdCommands) {
-								controlCommand.action(value);
-							}
-						}
-					} else {
-						ArrayList<AnalogControlCommand> commands = analogControls.get(controller).get(analogInput).get(AnalogType.InThresholdMinor);
-						if (commands != null) {
-							for (AnalogControlCommand command : commands) {
-								command.action(value);
-							}
-						}
-					}
-					if (Math.abs(value) > 0.5) {
-						ArrayList<AnalogControlCommand> outOfMajorThresholdCommands = analogControls.get(controller).get(analogInput).get(AnalogType.OutOfThresholdMajor);
-						if (outOfMajorThresholdCommands != null) {
-							for (AnalogControlCommand controlCommand : outOfMajorThresholdCommands) {
-								controlCommand.action(value);
-							}
-						}
-					} else {
-						ArrayList<AnalogControlCommand> outOfMinorThresholdCommands = analogControls.get(controller).get(analogInput).get(AnalogType.InThresholdMajor);
-						if (outOfMinorThresholdCommands != null) {
-							for (AnalogControlCommand controlCommand : outOfMinorThresholdCommands) {
-								controlCommand.action(value);
-							}
-						}
+						cachedDigitalInputs.get(controller).put(digitalInput, value);
 					}
 				}
-			}
 
-			// Delay
+				// AnalogInput
+				for (final Controller controller : analogControls.keySet()) {
+					for (final AnalogInput analogInput : analogControls.get(controller).keySet()) {
+						double value = analogInput.getInputRequest().requestAnalog(controller.getController());
+						cachedAnalogInputs.putIfAbsent(controller, new HashMap<>());
+						cachedAnalogInputs.get(controller).putIfAbsent(analogInput, value);
+						ArrayList<AnalogControlCommand> alwaysCommands = analogControls.get(controller).get(analogInput).get(AnalogType.Always);
+						if (alwaysCommands != null) {
+							for (AnalogControlCommand controlCommand : alwaysCommands) {
+								controlCommand.action(value);
+							}
+						}
+						if (Math.abs(value) > 0.05) {
+							ArrayList<AnalogControlCommand> outOfMinorThresholdCommands = analogControls.get(controller).get(analogInput).get(AnalogType.OutOfThresholdMinor);
+							if (outOfMinorThresholdCommands != null) {
+								for (AnalogControlCommand controlCommand : outOfMinorThresholdCommands) {
+									controlCommand.action(value);
+								}
+							}
+						} else {
+							ArrayList<AnalogControlCommand> commands = analogControls.get(controller).get(analogInput).get(AnalogType.InThresholdMinor);
+							if (commands != null) {
+								for (AnalogControlCommand command : commands) {
+									command.action(value);
+								}
+							}
+						}
+						if (Math.abs(value) > 0.5) {
+							ArrayList<AnalogControlCommand> outOfMajorThresholdCommands = analogControls.get(controller).get(analogInput).get(AnalogType.OutOfThresholdMajor);
+							if (outOfMajorThresholdCommands != null) {
+								for (AnalogControlCommand controlCommand : outOfMajorThresholdCommands) {
+									controlCommand.action(value);
+								}
+							}
+						} else {
+							ArrayList<AnalogControlCommand> outOfMinorThresholdCommands = analogControls.get(controller).get(analogInput).get(AnalogType.InThresholdMajor);
+							if (outOfMinorThresholdCommands != null) {
+								for (AnalogControlCommand controlCommand : outOfMinorThresholdCommands) {
+									controlCommand.action(value);
+								}
+							}
+						}
+					}
+				}
+
+				// Delay
+				try {
+					sleep(10);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
 			try {
-				sleep(10);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
