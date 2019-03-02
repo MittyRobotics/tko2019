@@ -34,12 +34,8 @@ public final class Robot extends SampleRobot {
 		//Climber.getInstance();
 		//Cargo.getInstance();
 		//HatchPanel.getInstance();
-		try {
-			Thread.sleep(10_000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 
+		
 		Controls.getInstance().registerDigitalCommand(Controller.XboxController, DigitalInput.XboxA, DigitalType.DigitalPress, () -> {
 			VisionSync.getInstance().request();
 		}).registerDigitalCommand(Controller.XboxController, DigitalInput.XboxB, DigitalType.DigitalPress, () -> {
