@@ -4,6 +4,7 @@ import com.amhsrobotics.datatypes.MicromovementData;
 import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
 import com.amhsrobotics.tko2019.networking.DataPort;
 import com.amhsrobotics.tko2019.networking.NetworkRequests;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 import java.io.IOException;
 
@@ -24,6 +25,10 @@ public class VisionSync {
 	public void request() {
 		try {
 			data = NetworkRequests.requestData(DataPort.Center);
+			NetworkTableInstance.getDefault().getEntry("t1").setNumber(data.getTurn1());
+			NetworkTableInstance.getDefault().getEntry("d1").setNumber(data.getDrive1());
+			NetworkTableInstance.getDefault().getEntry("t2").setNumber(data.getTurn2());
+			NetworkTableInstance.getDefault().getEntry("d2").setNumber(data.getDrive2());
 			stream(data, "t");
 		} catch (final IOException | ClassNotFoundException e) {
 			e.printStackTrace();
