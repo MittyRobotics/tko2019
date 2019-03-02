@@ -4,7 +4,7 @@ import com.amhsrobotics.tko2019.controls.input.AnalogInput;
 import com.amhsrobotics.tko2019.controls.input.DigitalInput;
 
 public class ControlsConfig {
-	public static final DigitalInput CONFIG_ENCODER_HATCH = DigitalInput.Joystick6;
+	public static final DigitalInput CONFIG_ENCODER_HATCH = DigitalInput.Joystick10;
 	public static final DigitalInput CONFIG_ENCODER_CARGO = DigitalInput.Joystick11;
 
 
@@ -21,9 +21,9 @@ public class ControlsConfig {
 	public static final DigitalInput SPIN_INTAKE = DigitalInput.JoystickTrigger;
 	public static final DigitalInput SPIN_OUTTAKE = DigitalInput.Joystick2;
 	public static final AnalogInput MOVE_ANGLE = AnalogInput.JoystickY;
-	public static final DigitalInput CARGO_HEIGHT = DigitalInput.Joystick3;
+	public static final DigitalInput CARGO_HEIGHT = DigitalInput.Joystick5;
 	public static final DigitalInput ROCKET_HEIGHT = DigitalInput.Joystick4;
-	public static final DigitalInput GROUND_HEIGHT = DigitalInput.Joystick5;
+	public static final DigitalInput GROUND_HEIGHT = DigitalInput.Joystick3;
 
 
 	//Hatch Panel
