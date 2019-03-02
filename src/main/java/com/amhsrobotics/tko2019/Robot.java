@@ -31,6 +31,7 @@ public final class Robot extends SampleRobot {
 		cam0 = CameraServer.getInstance().startAutomaticCapture("0", 0);
 		cam1 = CameraServer.getInstance().startAutomaticCapture("1", 1);
 		cam2 = CameraServer.getInstance().startAutomaticCapture("2", 2);
+		cam2.setResolution(640, 360);
 		cam3 = CameraServer.getInstance().startAutomaticCapture("3", 3);
 
 
