@@ -22,8 +22,8 @@ import edu.wpi.first.wpilibj.PIDController;
 public final class Drive {
 	private final static Drive INSTANCE = new Drive();
 
-	private final WPI_TalonSRX[] leftTalons = new WPI_TalonSRX[TalonIds.LEFT_DRIVE.length];
-	private final WPI_TalonSRX[] rightTalons = new WPI_TalonSRX[TalonIds.RIGHT_DRIVE.length];
+	public final WPI_TalonSRX[] leftTalons = new WPI_TalonSRX[TalonIds.LEFT_DRIVE.length];
+	public final WPI_TalonSRX[] rightTalons = new WPI_TalonSRX[TalonIds.RIGHT_DRIVE.length];
 	private final DoubleSolenoid gearShifter =
 			new DoubleSolenoid(SolenoidIds.DRIVE_SHIFTER[0], SolenoidIds.DRIVE_SHIFTER[1]);
 
@@ -40,6 +40,9 @@ public final class Drive {
 			talon.setInverted(TalonInversions.LEFT_DRIVE[i]);
 			if (i == 0) {
 				talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+				talon.config_kP(0, PID.DRIVE[0]);
+				talon.config_kI(0, PID.DRIVE[1]);
+				talon.config_kD(0, PID.DRIVE[2]);
 			} else {
 				talon.follow(leftTalons[0]);
 			}
@@ -51,15 +54,11 @@ public final class Drive {
 			talon.setInverted(TalonInversions.RIGHT_DRIVE[i]);
 			if (i == 0) {
 				talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-				talon.config_kP(0, PID.DRIVE[0]);
-				talon.config_kI(0, PID.DRIVE[1]);
-				talon.config_kD(0, PID.DRIVE[2]);
 			} else {
 				talon.follow(rightTalons[0]);
 			}
 			rightTalons[i] = talon;
 		}
-		rightTalons[0].setSensorPhase(true);
 
 
 		Controls.getInstance().registerAnalogCommand(Controller.XboxController, ControlsConfig.LEFT_WHEELS,
@@ -120,29 +119,30 @@ public final class Drive {
 		leftTalons[1].setNeutralMode(NeutralMode.Brake);
 		rightTalons[0].setNeutralMode(NeutralMode.Brake);
 		rightTalons[1].setNeutralMode(NeutralMode.Brake);
-		if (inches < 13) {
-			rightTalons[0].config_kP(0, 0.25, 0);
-		} else {
-			rightTalons[0].config_kP(0, PID.DRIVE[0], 0);
-		}
-		final double threshold = 0.5 * 160;
+//		if (inches < 12) {
+			leftTalons[0].config_kP(0, 0.225, 0);
+//		} else{
+//			leftTalons[0].config_kP(0, 0.225, 0);
+//		}
+		final double threshold = 0.25 * 160;
 
-		leftTalons[0].set(ControlMode.Follower, rightTalons[0].getDeviceID());
-		leftTalons[1].set(ControlMode.Follower, rightTalons[0].getDeviceID());
+		rightTalons[0].set(ControlMode.Follower, leftTalons[0].getDeviceID());
+		rightTalons[1].set(ControlMode.Follower, leftTalons[0].getDeviceID());
 		final double setpoint;
 //		if (didTurn) {
-			setpoint = rightTalons[0].getSelectedSensorPosition() + inches * 160;
+			setpoint = leftTalons[0].getSelectedSensorPosition() - inches * 160;
 //		} else {
 //			setpoint = rightTalons[0].getSelectedSensorPosition() + inches * 160;
 //		}
-		rightTalons[0].set(ControlMode.Position, setpoint);
+		leftTalons[0].set(ControlMode.Position, setpoint);
 		long time = System.currentTimeMillis();
 		while (DriverStation.getInstance().isEnabled()) {
-			if (System.currentTimeMillis() - time > waitTime && rightTalons[0].getClosedLoopError() < threshold) {
+			if (System.currentTimeMillis() - time > waitTime && leftTalons[0].getClosedLoopError() < threshold) {
 				break;
 			}
-			System.out.println("POS: " + rightTalons[0].getSelectedSensorPosition());
-			System.out.println("GOAL: " + rightTalons[0].getClosedLoopTarget());
+			System.out.println("ERROR: " + leftTalons[0].getClosedLoopError());
+//			System.out.println("POS: " + leftTalons[0].getSelectedSensorPosition());
+//			System.out.println("GOAL: " + leftTalons[0].getClosedLoopTarget());
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
@@ -152,7 +152,7 @@ public final class Drive {
 		System.out.println("Here");
 		leftTalons[0].set(ControlMode.PercentOutput, 0);
 		rightTalons[0].set(ControlMode.PercentOutput, 0);
-		leftTalons[1].set(ControlMode.Follower, leftTalons[0].getDeviceID());
+		rightTalons[1].set(ControlMode.Follower, rightTalons[0].getDeviceID());
 //		leftTalons[0].setNeutralMode(NeutralMode.Coast);
 //		leftTalons[1].setNeutralMode(NeutralMode.Coast);
 //		rightTalons[0].setNeutralMode(NeutralMode.Coast);
@@ -173,15 +173,19 @@ public final class Drive {
 //		rightDriveTalons[0].set(ControlMode.PercentOutput, 0);
 		didTurn = false;
 	}
+	public final void turn(final double degrees){
+		turn(degrees, 3000);
+	}
 
-	public final void turn(final double degrees) {
+	public final void turn(final double degrees, final int breakoutTime) {
 		int count = 0;
-		final PIDController pidController = new PIDController(0.1, 0, 0, Gyro.getInstance(), rightTalons[0]);
+		final PIDController pidController = new PIDController(0.1, 0, 0, Gyro.getInstance(), leftTalons[0]);
 
 		pidController.setInputRange(0, 360);
 		pidController.setOutputRange(-0.35, 0.35);
 		pidController.setContinuous(true);
-		leftTalons[0].set(ControlMode.Follower, rightTalons[0].getDeviceID());
+		rightTalons[0].set(ControlMode.Follower, leftTalons[0].getDeviceID());
+		rightTalons[1].set(ControlMode.Follower, leftTalons[0].getDeviceID());
 		rightTalons[0].setInverted(!TalonInversions.RIGHT_DRIVE[0]);
 		rightTalons[1].setInverted(!TalonInversions.RIGHT_DRIVE[1]);
 
@@ -201,7 +205,7 @@ public final class Drive {
 			} else {
 				count = 0;
 			}
-			if(System.currentTimeMillis() - startTime > 3000){
+			if(System.currentTimeMillis() - startTime > breakoutTime){
 				break;
 			}
 			System.out.println(pidController.getError());
@@ -217,6 +221,8 @@ public final class Drive {
 
 		rightTalons[0].setInverted(TalonInversions.RIGHT_DRIVE[0]);
 		rightTalons[1].setInverted(TalonInversions.RIGHT_DRIVE[1]);
+		rightTalons[0].set(ControlMode.PercentOutput, 0);
+		rightTalons[1].set(ControlMode.Follower, rightTalons[0].getDeviceID());
 		didTurn = true;
 	}
 
