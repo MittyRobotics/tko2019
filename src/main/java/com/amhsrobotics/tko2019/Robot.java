@@ -23,11 +23,10 @@ public final class Robot extends SampleRobot {
 	@Override
 	protected final void robotInit() {
 		CameraServer.getInstance().startAutomaticCapture(0);
-		CameraServer.getInstance().startAutomaticCapture(1);
 
-		Compressor.getInstance();
+//		Compressor.getInstance();
 		//Switches.getInstance();
-		Gyro.getInstance();
+//		Gyro.getInstance();
 
 		Drive.getInstance();
 
@@ -36,14 +35,14 @@ public final class Robot extends SampleRobot {
 		//HatchPanel.getInstance();
 
 		
-		Controls.getInstance().registerDigitalCommand(Controller.XboxController, DigitalInput.XboxA, DigitalType.DigitalPress, () -> {
-			VisionSync.getInstance().request();
-		}).registerDigitalCommand(Controller.XboxController, DigitalInput.XboxB, DigitalType.DigitalPress, () -> {
-			VisionSync.getInstance().confirm();
+//		Controls.getInstance().registerDigitalCommand(Controller.XboxController, DigitalInput.XboxA, DigitalType.DigitalPress, () -> {
+//			VisionSync.getInstance().request();
+//		}).registerDigitalCommand(Controller.XboxController, DigitalInput.XboxB, DigitalType.DigitalPress, () -> {
+//			VisionSync.getInstance().confirm();
 //			Drive.getInstance().turn(180 +15);
 //			Drive.getInstance().moveStraight(24);
 //			Drive.getInstance().turn(-90);
-		});
+//		});
 	}
 
 	@Override
