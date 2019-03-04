@@ -15,5 +15,5 @@ public class TalonInversions {
 	//CARGO
 
 	public static final boolean[] CONVEYOR = {false, true};
-	public static final boolean[] INTAKE = {false, false};
+	public static final boolean[] INTAKE = {false, true};
 }
