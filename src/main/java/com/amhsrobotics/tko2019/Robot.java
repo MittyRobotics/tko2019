@@ -20,6 +20,8 @@ public final class Robot extends SampleRobot {
 	private UsbCamera cam1;
 	private UsbCamera cam2;
 	private UsbCamera cam3;
+	private boolean aPressed = false;
+	private long time = 0;
 
 	public static void main(final String... args) {
 		RobotBase.startRobot(Robot::new);
@@ -31,6 +33,8 @@ public final class Robot extends SampleRobot {
 		cam0 = CameraServer.getInstance().startAutomaticCapture("0", 0);
 		cam1 = CameraServer.getInstance().startAutomaticCapture("1", 1);
 		cam2 = CameraServer.getInstance().startAutomaticCapture("2", 2);
+		cam2.setBrightness(-100);
+		cam2.setExposureManual(-100);
 		cam2.setResolution(640, 360);
 		cam3 = CameraServer.getInstance().startAutomaticCapture("3", 3);
 
@@ -48,12 +52,22 @@ public final class Robot extends SampleRobot {
 
 
 		Controls.getInstance().registerDigitalCommand(Controller.XboxController, DigitalInput.XboxA, DigitalType.DigitalPress, () -> {
-			VisionSync.getInstance().request("0", "c");
+			try {
+				VisionSync.getInstance().request("2", "c");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			aPressed = true;
+			time = System.currentTimeMillis();
 		}).registerDigitalCommand(Controller.XboxController, DigitalInput.XboxB, DigitalType.DigitalPress, () -> {
-			VisionSync.getInstance().confirm();
-//			Drive.getInstance().turn(180 +15);
-//			Drive.getInstance().moveStraight(24);
-//			Drive.getInstance().turn(-90);
+//			Drive.getInstance().turn(8);
+			if(aPressed && System.currentTimeMillis() - time > 200){
+				VisionSync.getInstance().confirm();
+			}
+			//Drive.getInstance().turn(23);
+			//Drive.getInstance().moveStraight(30);s
+			//Drive.getInstance().turn(-45);
+			aPressed = false;
 		});
 	}
 

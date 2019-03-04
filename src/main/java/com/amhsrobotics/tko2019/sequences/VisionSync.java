@@ -1,6 +1,7 @@
 package com.amhsrobotics.tko2019.sequences;
 
 import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import org.opencv.core.Mat;
@@ -35,14 +36,46 @@ public class VisionSync {
 
 	public void confirm() {
 		final NetworkTableInstance nt = NetworkTableInstance.getDefault();
+		Drive.getInstance().leftTalons[0].setNeutralMode(NeutralMode.Brake);
+		Drive.getInstance().leftTalons[1].setNeutralMode(NeutralMode.Brake);
+		Drive.getInstance().rightTalons[0].setNeutralMode(NeutralMode.Brake);
+		Drive.getInstance().rightTalons[1].setNeutralMode(NeutralMode.Brake);
 		final double t1 = nt.getEntry("t1").getDouble(0);
 		final double d1 = nt.getEntry("d1").getDouble(0);
 		final double t2 = nt.getEntry("t2").getDouble(0);
 		final double d2 = nt.getEntry("d2").getDouble(0);
-		Drive.getInstance().turn(t1);
+		if(t1 != 0){
+			Drive.getInstance().turn(t1);
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
 		Drive.getInstance().moveStraight(d1);
-		Drive.getInstance().turn(t2);
-		Drive.getInstance().moveStraight(d2);
+		try {
+			Thread.sleep(50);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		if(t2 != 0){
+			Drive.getInstance().turn(t2);
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		if(d2 != 0){
+			Drive.getInstance().moveStraight(d2);
+		}
+
+
+		Drive.getInstance().leftTalons[0].setNeutralMode(NeutralMode.Coast);
+		Drive.getInstance().leftTalons[1].setNeutralMode(NeutralMode.Coast);
+		Drive.getInstance().rightTalons[0].setNeutralMode(NeutralMode.Coast);
+		Drive.getInstance().rightTalons[1].setNeutralMode(NeutralMode.Coast);
 	}
 
 	private static BufferedImage matToBufferedImage(final Mat mat) throws Exception {
