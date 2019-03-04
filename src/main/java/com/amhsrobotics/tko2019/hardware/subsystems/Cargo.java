@@ -45,7 +45,7 @@ public class Cargo {
 		}
 
 
-		Controls.getInstance().registerDigitalCommand(Controller.Joystick2, ControlsConfig.SPIN_INTAKE, DigitalType.DigitalHold, () -> spinIntake(0.5, 0.5));
+		Controls.getInstance().registerDigitalCommand(Controller.Joystick2, ControlsConfig.SPIN_INTAKE, DigitalType.DigitalHold, () -> spinIntake(0.5));
 		Controls.getInstance().registerDigitalCommand(Controller.Joystick2, ControlsConfig.SPIN_INTAKE, DigitalType.DigitalRelease, this::stopIntake);
 		Controls.getInstance().registerDigitalCommand(Controller.Joystick2, ControlsConfig.SPIN_OUTTAKE, DigitalType.DigitalHold, () -> spinOuttake(0.5));
 		Controls.getInstance().registerDigitalCommand(Controller.Joystick2, ControlsConfig.SPIN_OUTTAKE, DigitalType.DigitalRelease, this::stopIntake);
@@ -71,19 +71,19 @@ public class Cargo {
 		return INSTANCE;
 	}
 
-	public void spinIntake(double topSpeed, double bottomSpeed) {
+	public void spinIntake(double speed) {
 		if (Switches.getInstance().hasCargo()) {
 			visionConveyor();
 			stopIntake();
 		} else {
-			intakeTalons[0].set(ControlMode.PercentOutput, topSpeed);
-			intakeTalons[1].set(ControlMode.PercentOutput, -bottomSpeed);
+			intakeTalons[0].set(ControlMode.PercentOutput, speed);
+			intakeTalons[1].set(ControlMode.PercentOutput, speed);
 		}
 	}
 
 	public void spinOuttake(double speed) {
 		intakeTalons[0].set(ControlMode.PercentOutput, -speed);
-		intakeTalons[1].set(ControlMode.PercentOutput, speed);
+		intakeTalons[1].set(ControlMode.PercentOutput, -speed);
 	}
 
 	public void stopIntake() {

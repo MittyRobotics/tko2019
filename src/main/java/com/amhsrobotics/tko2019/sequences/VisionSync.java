@@ -1,19 +1,18 @@
 package com.amhsrobotics.tko2019.sequences;
 
-import com.amhsrobotics.datatypes.MicromovementData;
 import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
-import com.amhsrobotics.tko2019.networking.DataPort;
-import com.amhsrobotics.tko2019.networking.NetworkRequests;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import org.opencv.core.Mat;
 
-import java.io.IOException;
-
-import static com.amhsrobotics.tko2019.networking.NetworkRequests.stream;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.io.ByteArrayOutputStream;
 
 public class VisionSync {
 	private static VisionSync ourInstance = new VisionSync();
-
-	private MicromovementData data = null;
 
 	public static VisionSync getInstance() {
 		return ourInstance;
@@ -22,29 +21,78 @@ public class VisionSync {
 	private VisionSync() {
 	}
 
-	public void request() {
-		try {
-			data = NetworkRequests.requestData(DataPort.Center);
-			NetworkTableInstance.getDefault().getEntry("t1").setNumber(data.getTurn1());
-			NetworkTableInstance.getDefault().getEntry("d1").setNumber(data.getDrive1());
-			NetworkTableInstance.getDefault().getEntry("t2").setNumber(data.getTurn2());
-			NetworkTableInstance.getDefault().getEntry("d2").setNumber(data.getDrive2());
-			stream(data, "t");
-		} catch (final IOException | ClassNotFoundException e) {
-			e.printStackTrace();
-		}
+	public void request(String camName, String pos) throws Exception {
+		final NetworkTableInstance nt = NetworkTableInstance.getDefault();
+		nt.getEntry("pos").setString(pos);
+		final Mat frame = new Mat();
+		CameraServer.getInstance().getVideo(camName).grabFrame(frame);
+		final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		ImageIO.write(matToBufferedImage(frame), "jpg", byteArrayOutputStream);
+		final byte[] raw = byteArrayOutputStream.toByteArray();
+		nt.getEntry("row").setNumber(frame.rows());
+		nt.getEntry("col").setNumber(frame.cols());
+		nt.getEntry("frame").setRaw(raw);
 	}
 
 	public void confirm() {
-		if (data != null) {
-			Drive.getInstance().turn(180- (-data.getTurn1()));
-			Drive.getInstance().moveStraight(-data.getDrive1());
-			Drive.getInstance().turn(180 - (-data.getTurn2()));
-			// Drive.getInstance().moveStraight(data.getDrive2());
+		final NetworkTableInstance nt = NetworkTableInstance.getDefault();
+		Drive.getInstance().leftTalons[0].setNeutralMode(NeutralMode.Brake);
+		Drive.getInstance().leftTalons[1].setNeutralMode(NeutralMode.Brake);
+		Drive.getInstance().rightTalons[0].setNeutralMode(NeutralMode.Brake);
+		Drive.getInstance().rightTalons[1].setNeutralMode(NeutralMode.Brake);
+		final double t1 = nt.getEntry("t1").getDouble(0);
+		final double d1 = nt.getEntry("d1").getDouble(0);
+		final double t2 = nt.getEntry("t2").getDouble(0);
+		final double d2 = nt.getEntry("d2").getDouble(0);
+		if(t1 != 0){
+			Drive.getInstance().turn(t1);
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
+
+		Drive.getInstance().moveStraight(d1);
+		try {
+			Thread.sleep(50);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		if(t2 != 0){
+			Drive.getInstance().turn(t2);
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		if(d2 != 0){
+			Drive.getInstance().moveStraight(d2);
+		}
+
+
+		Drive.getInstance().leftTalons[0].setNeutralMode(NeutralMode.Coast);
+		Drive.getInstance().leftTalons[1].setNeutralMode(NeutralMode.Coast);
+		Drive.getInstance().rightTalons[0].setNeutralMode(NeutralMode.Coast);
+		Drive.getInstance().rightTalons[1].setNeutralMode(NeutralMode.Coast);
 	}
 
-	public void invalidate() {
-		data = null;
+	private static BufferedImage matToBufferedImage(final Mat mat) throws Exception {
+		final int type;
+		if (mat.channels() == 1) {
+			type = BufferedImage.TYPE_BYTE_GRAY;
+		} else if (mat.channels() == 3) {
+			type = BufferedImage.TYPE_3BYTE_BGR;
+		} else if (mat.channels() == 4) {
+			type = BufferedImage.TYPE_4BYTE_ABGR;
+		} else {
+			throw new Exception();
+		}
+		final BufferedImage img = new BufferedImage(mat.width(), mat.height(), type);
+
+		mat.get(0, 0, ((DataBufferByte) img.getRaster().getDataBuffer()).getData());
+
+		return img;
 	}
 }

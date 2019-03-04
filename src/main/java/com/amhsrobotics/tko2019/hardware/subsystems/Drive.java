@@ -115,10 +115,7 @@ public final class Drive {
 	}
 
 	public final void moveStraight(final double inches, final double waitTime) {
-		leftTalons[0].setNeutralMode(NeutralMode.Brake);
-		leftTalons[1].setNeutralMode(NeutralMode.Brake);
-		rightTalons[0].setNeutralMode(NeutralMode.Brake);
-		rightTalons[1].setNeutralMode(NeutralMode.Brake);
+
 //		if (inches < 12) {
 			leftTalons[0].config_kP(0, 0.225, 0);
 //		} else{
@@ -177,12 +174,19 @@ public final class Drive {
 		turn(degrees, 3000);
 	}
 
-	public final void turn(final double degrees, final int breakoutTime) {
+	public final void turn(final double degrees, int breakoutTime) {
+
 		int count = 0;
 		final PIDController pidController = new PIDController(0.1, 0, 0, Gyro.getInstance(), leftTalons[0]);
 
 		pidController.setInputRange(0, 360);
-		pidController.setOutputRange(-0.35, 0.35);
+		if(degrees >= 10){
+			pidController.setOutputRange(-0.35, 0.35);
+		}
+		else {
+			pidController.setOutputRange(-0.45, 0.45);
+//			breakoutTime = breakoutTime /2;
+		}
 		pidController.setContinuous(true);
 		rightTalons[0].set(ControlMode.Follower, leftTalons[0].getDeviceID());
 		rightTalons[1].set(ControlMode.Follower, leftTalons[0].getDeviceID());
@@ -199,7 +203,7 @@ public final class Drive {
 		pidController.setSetpoint(angle);
 		pidController.enable();
 		final long startTime = System.currentTimeMillis();
-		while (count < 200 && DriverStation.getInstance().isEnabled()) {
+		while (count <200 && DriverStation.getInstance().isEnabled()) {
 			if (Math.abs(pidController.getError()) < 10) {
 				count++;
 			} else {
