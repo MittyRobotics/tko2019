@@ -1,11 +1,5 @@
 package com.amhsrobotics.tko2019.hardware.subsystems;
 
-import com.amhsrobotics.tko2019.controls.Controller;
-import com.amhsrobotics.tko2019.controls.Controls;
-import com.amhsrobotics.tko2019.controls.commands.AnalogType;
-import com.amhsrobotics.tko2019.controls.commands.DigitalType;
-import com.amhsrobotics.tko2019.hardware.Switches;
-import com.amhsrobotics.tko2019.settings.ControlsConfig;
 import com.amhsrobotics.tko2019.settings.subsystems.EncoderInversions;
 import com.amhsrobotics.tko2019.settings.subsystems.PID;
 import com.amhsrobotics.tko2019.settings.subsystems.SolenoidIds;
@@ -18,77 +12,76 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
-public class HatchPanel {
+public final class HatchPanel {
 	private final static HatchPanel INSTANCE = new HatchPanel();
 
-	private final DoubleSolenoid grabber;
-	private final DoubleSolenoid pushForward;
-	private final WPI_TalonSRX slideTalon;
-	private boolean encoderConfig = false;
+	private final WPI_TalonSRX slideTalon = new WPI_TalonSRX(TalonIds.SLIDE);
+
+	private final DoubleSolenoid grabber = new DoubleSolenoid(SolenoidIds.GRABBER[0], SolenoidIds.GRABBER[1]);
+	private final DoubleSolenoid pusher = new DoubleSolenoid(SolenoidIds.PUSH_FORWARD[0], SolenoidIds.PUSH_FORWARD[1]);
 
 	private HatchPanel() {
-		slideTalon = new WPI_TalonSRX(TalonIds.SLIDE);
 		slideTalon.configFactoryDefault();
-		slideTalon.setInverted(TalonInversions.SLIDER);
+		slideTalon.setInverted(TalonInversions.SLIDER); // FIXME wtf is neg??
+		slideTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder); // FIXME wtf is neg??
 		slideTalon.setSensorPhase(EncoderInversions.SLIDER_ENCODER);
-		slideTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
 		slideTalon.config_kP(0, PID.SLIDER[0]);
 		slideTalon.config_kI(0, PID.SLIDER[1]);
 		slideTalon.config_kD(0, PID.SLIDER[2]);
-
-		grabber = new DoubleSolenoid(SolenoidIds.GRABBER[0], SolenoidIds.GRABBER[1]);
-		pushForward = new DoubleSolenoid(SolenoidIds.PUSH_FORWARD[0], SolenoidIds.PUSH_FORWARD[1]);
-
-		Controls.getInstance().registerAnalogCommand(Controller.Joystick1, ControlsConfig.JOYTICK_SLIDE, AnalogType.Always, value -> {
-			if (Math.abs(value) > 0.2) {
-				slide(slideTalon.getSelectedSensorPosition() / TicksPerInch.SLIDER - 0.5 * value);
-			}
-		}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.RELEASE_HATCH, DigitalType.DigitalPress, this::outtake).registerDigitalCommand(Controller.Joystick1, ControlsConfig.GRAB_HATCH, DigitalType.DigitalPress, this::intake)
-				.registerAnalogCommand(Controller.Joystick1, ControlsConfig.PUSH_HATCH_MECHANISM, AnalogType.OutOfThresholdMajor, value -> {
-					if (value > 0.5) {
-						goHatchForward();
-					} else if (value < -0.5) {
-						goHatchBackward();
-					}
-				}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.SLIDE_MIDDLE, DigitalType.DigitalPress, () -> {
-			if (encoderConfig) {
-				slideMiddle();
-			}
-		}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.SLIDE_LEFT, DigitalType.DigitalPress, () -> {
-			if (encoderConfig) {
-				slideLeft();
-			}
-		}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.SLIDE_RIGHT, DigitalType.DigitalPress, () -> {
-			if (encoderConfig) {
-				slideRight();
-			}
-		}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.CONFIG_ENCODER_HATCH, DigitalType.DigitalPress, this::resetEncoder);
 	}
 
 	public static HatchPanel getInstance() {
 		return INSTANCE;
 	}
 
-	private void openHatch() {
-		grabber.set(DoubleSolenoid.Value.kForward);
-	}
 
-	private void closeHatch() {
+	///////////////////////////////////////////////////////////////////////////
+	// Hatch Panel
+	///////////////////////////////////////////////////////////////////////////
+
+	public final void grab() {
 		grabber.set(DoubleSolenoid.Value.kReverse);
 	}
 
-	public void goHatchForward() {
-		pushForward.set(DoubleSolenoid.Value.kForward);
+	public final void release() {
+		grabber.set(DoubleSolenoid.Value.kForward);
 	}
 
-	public void goHatchBackward() {
-		pushForward.set(DoubleSolenoid.Value.kReverse);
+	public final void forward() {
+		pusher.set(DoubleSolenoid.Value.kForward);
 	}
 
-	//outtake for the rocket
+	public final void back() {
+		pusher.set(DoubleSolenoid.Value.kReverse);
+	}
 
-	//resets encoder when slider is to the left
-	private void resetEncoder() {
+	
+	///////////////////////////////////////////////////////////////////////////
+	// Slider
+	///////////////////////////////////////////////////////////////////////////
+
+	public final  void slideLeft() {
+		slide(SliderPositions.SLIDE_LEFT);
+	}
+
+	public final  void slideMiddle() {
+		slide(SliderPositions.SLIDE_MIDDLE);
+	}
+
+	public final  void slideRight() {
+		slide(SliderPositions.SLIDE_RIGHT);
+	}
+
+	public final  void slide(double position) {
+		slideTalon.set(ControlMode.Position, (position * TicksPerInch.SLIDER));
+	}
+
+
+	///////////////////////////////////////////////////////////////////////////
+	// Reset Encoders
+	///////////////////////////////////////////////////////////////////////////
+
+	public final void zeroEncoder() {
 		slideTalon.set(ControlMode.PercentOutput, 0.1);
 		while (!slideTalon.getSensorCollection().isFwdLimitSwitchClosed()) {
 			try {
@@ -99,36 +92,5 @@ public class HatchPanel {
 		}
 		slideTalon.set(ControlMode.PercentOutput, 0);
 		slideTalon.setSelectedSensorPosition(0);
-		encoderConfig = true;
-	}
-
-
-	//work on position numbers
-	public void slideLeft() {
-		slide(SliderPositions.SLIDE_LEFT);
-	}
-
-	public void slideMiddle() {
-		slide(SliderPositions.SLIDE_MIDDLE);
-	}
-
-	public void slideRight() {
-		slide(SliderPositions.SLIDE_RIGHT);
-	}
-
-	//take in the hatch panel *has safety measures*
-	public void intake() {
-		if (Switches.getInstance().hasHatch()) {
-			openHatch();
-		}
-	}
-
-	public void outtake() {
-		closeHatch();
-	}
-
-	//how far the mechanism has to slide
-	private void slide(double position) { //position in negative inches
-		slideTalon.set(ControlMode.Position, (position * TicksPerInch.SLIDER));
 	}
 }

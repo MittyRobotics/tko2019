@@ -3,32 +3,29 @@ package com.amhsrobotics.tko2019.hardware;
 import com.amhsrobotics.tko2019.settings.SwitchIds;
 import edu.wpi.first.wpilibj.DigitalInput;
 
-public class Switches {
-	private static Switches ourInstance = new Switches();
+public final class Switches {
+	private static final Switches INSTANCE = new Switches();
 
-	private final DigitalInput intakeSensor;
-	private final DigitalInput hatchSwitch;
-	private final DigitalInput wallSwitch;
+	private final DigitalInput intakeSensor = new DigitalInput(SwitchIds.INTAKE_SENSOR_ID);
+	private final DigitalInput hatchSwitch = new DigitalInput(SwitchIds.HATCH_SWITCH_ID);
+	private final DigitalInput wallSwitch = new DigitalInput(SwitchIds.WALL_SWITCH_ID);
 
 	private Switches() {
-		intakeSensor = new DigitalInput(SwitchIds.INTAKE_SENSOR_ID);
-		hatchSwitch = new DigitalInput(SwitchIds.HATCH_SWITCH_ID);
-		wallSwitch = new DigitalInput(SwitchIds.WALL_SWITCH_ID);
 	}
 
 	public static Switches getInstance() {
-		return ourInstance;
+		return INSTANCE;
 	}
 
-	public boolean hasCargo() {
+	public final boolean hasCargo() {
 		return !intakeSensor.get();
-	} //switch is inverted
+	}
 
-	public boolean hasHatch() {
+	public final boolean hasHatch() {
 		return !hatchSwitch.get();
-	} //switch is inverted
+	}
 
-	public boolean isTouchingWall() {
+	public final boolean isTouchingWall() {
 		return wallSwitch.get();
 	}
 }

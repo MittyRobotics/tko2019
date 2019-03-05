@@ -14,11 +14,29 @@ import java.io.ByteArrayOutputStream;
 public class VisionSync {
 	private static VisionSync ourInstance = new VisionSync();
 
+	private VisionSync() {
+	}
+
 	public static VisionSync getInstance() {
 		return ourInstance;
 	}
 
-	private VisionSync() {
+	private static BufferedImage matToBufferedImage(final Mat mat) throws Exception {
+		final int type;
+		if (mat.channels() == 1) {
+			type = BufferedImage.TYPE_BYTE_GRAY;
+		} else if (mat.channels() == 3) {
+			type = BufferedImage.TYPE_3BYTE_BGR;
+		} else if (mat.channels() == 4) {
+			type = BufferedImage.TYPE_4BYTE_ABGR;
+		} else {
+			throw new Exception();
+		}
+		final BufferedImage img = new BufferedImage(mat.width(), mat.height(), type);
+
+		mat.get(0, 0, ((DataBufferByte) img.getRaster().getDataBuffer()).getData());
+
+		return img;
 	}
 
 	public void request(String camName, String pos) throws Exception {
@@ -44,7 +62,7 @@ public class VisionSync {
 		final double d1 = nt.getEntry("d1").getDouble(0);
 		final double t2 = nt.getEntry("t2").getDouble(0);
 		final double d2 = nt.getEntry("d2").getDouble(0);
-		if(t1 != 0){
+		if (t1 != 0) {
 			Drive.getInstance().turn(t1);
 			try {
 				Thread.sleep(50);
@@ -59,7 +77,7 @@ public class VisionSync {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		if(t2 != 0){
+		if (t2 != 0) {
 			Drive.getInstance().turn(t2);
 			try {
 				Thread.sleep(50);
@@ -67,7 +85,7 @@ public class VisionSync {
 				e.printStackTrace();
 			}
 		}
-		if(d2 != 0){
+		if (d2 != 0) {
 			Drive.getInstance().moveStraight(d2);
 		}
 
@@ -76,23 +94,5 @@ public class VisionSync {
 		Drive.getInstance().leftTalons[1].setNeutralMode(NeutralMode.Coast);
 		Drive.getInstance().rightTalons[0].setNeutralMode(NeutralMode.Coast);
 		Drive.getInstance().rightTalons[1].setNeutralMode(NeutralMode.Coast);
-	}
-
-	private static BufferedImage matToBufferedImage(final Mat mat) throws Exception {
-		final int type;
-		if (mat.channels() == 1) {
-			type = BufferedImage.TYPE_BYTE_GRAY;
-		} else if (mat.channels() == 3) {
-			type = BufferedImage.TYPE_3BYTE_BGR;
-		} else if (mat.channels() == 4) {
-			type = BufferedImage.TYPE_4BYTE_ABGR;
-		} else {
-			throw new Exception();
-		}
-		final BufferedImage img = new BufferedImage(mat.width(), mat.height(), type);
-
-		mat.get(0, 0, ((DataBufferByte) img.getRaster().getDataBuffer()).getData());
-
-		return img;
 	}
 }

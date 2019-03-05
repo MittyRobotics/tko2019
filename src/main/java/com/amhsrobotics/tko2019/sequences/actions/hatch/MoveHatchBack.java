@@ -6,6 +6,6 @@ import com.amhsrobotics.tko2019.sequences.Action;
 public final class MoveHatchBack implements Action {
 	@Override
 	public final void doAction(final boolean continuing) {
-		HatchPanel.getInstance().goHatchBackward();
+		HatchPanel.getInstance().back();
 	}
 }

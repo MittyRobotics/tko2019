@@ -1,4 +1,4 @@
-package com.amhsrobotics.tko2019.settings;
+package com.amhsrobotics.tko2019.settings.controls;
 
 import com.amhsrobotics.tko2019.controls.input.AnalogInput;
 import com.amhsrobotics.tko2019.controls.input.DigitalInput;
@@ -33,7 +33,7 @@ public class ControlsConfig {
 	public static final DigitalInput SLIDE_MIDDLE = DigitalInput.Joystick3;
 	public static final DigitalInput RELEASE_HATCH = DigitalInput.Joystick2;
 	public static final DigitalInput GRAB_HATCH = DigitalInput.JoystickTrigger;
-	public static final AnalogInput JOYTICK_SLIDE = AnalogInput.JoystickX;
+	public static final AnalogInput JOYSTICK_SLIDE = AnalogInput.JoystickX;
 	public static final AnalogInput PUSH_HATCH_MECHANISM = AnalogInput.JoystickY;
 
 

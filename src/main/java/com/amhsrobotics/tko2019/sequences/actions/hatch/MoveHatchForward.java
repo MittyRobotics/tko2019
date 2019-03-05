@@ -6,6 +6,6 @@ import com.amhsrobotics.tko2019.sequences.Action;
 public final class MoveHatchForward implements Action {
 	@Override
 	public final void doAction(final boolean continuing) {
-		HatchPanel.getInstance().goHatchForward();
+		HatchPanel.getInstance().forward();
 	}
 }

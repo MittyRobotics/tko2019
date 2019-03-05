@@ -1,5 +1,7 @@
 package com.amhsrobotics.tko2019.sequences;
 
+import edu.wpi.first.wpilibj.DriverStation;
+
 import java.util.concurrent.LinkedBlockingQueue;
 
 public abstract class Sequence extends Thread {
@@ -31,7 +33,20 @@ public abstract class Sequence extends Thread {
 	@Override
 	public void run() {
 		enabled = true;
+		SequencesManager.manual = false;
 		while (enabled) {
+			while (!DriverStation.getInstance().isEnabled()) {
+				try {
+					Thread.sleep(100);
+				} catch (final InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			if (SequencesManager.manual) {
+				cancel();
+				break;
+			}
+
 			if (!shouldContinue()) {
 				return;
 			}
