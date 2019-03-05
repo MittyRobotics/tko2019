@@ -1,12 +1,12 @@
 package com.amhsrobotics.tko2019.hardware.subsystems;
 
-import com.amhsrobotics.tko2019.settings.subsystems.EncoderInversions;
-import com.amhsrobotics.tko2019.settings.subsystems.PID;
-import com.amhsrobotics.tko2019.settings.subsystems.SolenoidIds;
-import com.amhsrobotics.tko2019.settings.subsystems.TalonIds;
-import com.amhsrobotics.tko2019.settings.subsystems.TalonInversions;
-import com.amhsrobotics.tko2019.settings.subsystems.TicksPerInch;
-import com.amhsrobotics.tko2019.settings.subsystems.hatchpanel.SliderPositions;
+import com.amhsrobotics.tko2019.hardware.settings.subsystems.EncoderInversions;
+import com.amhsrobotics.tko2019.hardware.settings.subsystems.PID;
+import com.amhsrobotics.tko2019.hardware.settings.subsystems.SolenoidIds;
+import com.amhsrobotics.tko2019.hardware.settings.subsystems.TalonIds;
+import com.amhsrobotics.tko2019.hardware.settings.subsystems.TalonInversions;
+import com.amhsrobotics.tko2019.hardware.settings.subsystems.TicksPerInch;
+import com.amhsrobotics.tko2019.hardware.settings.subsystems.hatchpanel.SliderPositions;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -16,14 +16,15 @@ public final class HatchPanel {
 	private final static HatchPanel INSTANCE = new HatchPanel();
 
 	private final WPI_TalonSRX slideTalon = new WPI_TalonSRX(TalonIds.SLIDE);
+	private volatile HatchPosition hatchPosition = HatchPosition.Center;
 
 	private final DoubleSolenoid grabber = new DoubleSolenoid(SolenoidIds.GRABBER[0], SolenoidIds.GRABBER[1]);
 	private final DoubleSolenoid pusher = new DoubleSolenoid(SolenoidIds.PUSH_FORWARD[0], SolenoidIds.PUSH_FORWARD[1]);
 
 	private HatchPanel() {
 		slideTalon.configFactoryDefault();
-		slideTalon.setInverted(TalonInversions.SLIDER); // FIXME wtf is neg??
-		slideTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder); // FIXME wtf is neg??
+		slideTalon.setInverted(TalonInversions.SLIDER); // FIXME wtf y is neg??
+		slideTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder); // FIXME wtf y is neg??
 		slideTalon.setSensorPhase(EncoderInversions.SLIDER_ENCODER);
 		slideTalon.config_kP(0, PID.SLIDER[0]);
 		slideTalon.config_kI(0, PID.SLIDER[1]);
@@ -32,6 +33,10 @@ public final class HatchPanel {
 
 	public static HatchPanel getInstance() {
 		return INSTANCE;
+	}
+
+	public final HatchPosition getHatchPosition() {
+		return hatchPosition;
 	}
 
 
@@ -60,19 +65,22 @@ public final class HatchPanel {
 	// Slider
 	///////////////////////////////////////////////////////////////////////////
 
-	public final  void slideLeft() {
+	public final void slideLeft() {
 		slide(SliderPositions.SLIDE_LEFT);
+		hatchPosition = HatchPosition.Left;
 	}
 
-	public final  void slideMiddle() {
+	public final void slideMiddle() {
 		slide(SliderPositions.SLIDE_MIDDLE);
+		hatchPosition = HatchPosition.Center;
 	}
 
-	public final  void slideRight() {
+	public final void slideRight() {
 		slide(SliderPositions.SLIDE_RIGHT);
+		hatchPosition = HatchPosition.Right;
 	}
 
-	public final  void slide(double position) {
+	private void slide(double position) {
 		slideTalon.set(ControlMode.Position, (position * TicksPerInch.SLIDER));
 	}
 
@@ -92,5 +100,27 @@ public final class HatchPanel {
 		}
 		slideTalon.set(ControlMode.PercentOutput, 0);
 		slideTalon.setSelectedSensorPosition(0);
+	}
+
+
+	///////////////////////////////////////////////////////////////////////////
+	// HatchPosition Enum
+	///////////////////////////////////////////////////////////////////////////
+
+	public enum HatchPosition {
+		Left("l"),
+		Center("c"),
+		Right("r");
+
+		private final String ntEntryValue;
+
+		HatchPosition(final String ntEntryValue) {
+			this.ntEntryValue = ntEntryValue;
+		}
+
+		@Override
+		public final String toString() {
+			return ntEntryValue;
+		}
 	}
 }

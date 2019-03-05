@@ -8,7 +8,7 @@ import com.amhsrobotics.tko2019.hardware.subsystems.Cargo;
 import com.amhsrobotics.tko2019.hardware.subsystems.Climber;
 import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
 import com.amhsrobotics.tko2019.hardware.subsystems.HatchPanel;
-import com.amhsrobotics.tko2019.settings.controls.ControlBindings;
+import com.amhsrobotics.tko2019.controls.ControlBindings;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -24,14 +24,15 @@ public final class Robot extends SampleRobot {
 	@Override
 	protected final void robotInit() {
 		// Init Cameras
-		final UsbCamera cam0 = CameraServer.getInstance().startAutomaticCapture("0", 0);
-		final UsbCamera cam1 = CameraServer.getInstance().startAutomaticCapture("1", 1);
-		final UsbCamera cam2 = CameraServer.getInstance().startAutomaticCapture("2", 2);
-		final UsbCamera cam3 = CameraServer.getInstance().startAutomaticCapture("3", 3);
+		final UsbCamera[] CAMERAS = new UsbCamera[4];
+		CAMERAS[0] = CameraServer.getInstance().startAutomaticCapture("0", 0);
+		CAMERAS[1] = CameraServer.getInstance().startAutomaticCapture("1", 1);
+		CAMERAS[2] = CameraServer.getInstance().startAutomaticCapture("2", 2);
+		CAMERAS[3] = CameraServer.getInstance().startAutomaticCapture("3", 3);
 
-		cam2.setBrightness(-100);
-		cam2.setExposureManual(-100);
-		cam2.setResolution(640, 360);
+		CAMERAS[2].setBrightness(-100);
+		CAMERAS[2].setExposureManual(-100);
+		CAMERAS[2].setResolution(640, 360);
 
 
 		// Init Hardware

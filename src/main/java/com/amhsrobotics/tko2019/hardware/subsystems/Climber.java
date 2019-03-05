@@ -1,6 +1,6 @@
 package com.amhsrobotics.tko2019.hardware.subsystems;
 
-import com.amhsrobotics.tko2019.settings.subsystems.SolenoidIds;
+import com.amhsrobotics.tko2019.hardware.settings.subsystems.SolenoidIds;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public final class Climber {

@@ -1,11 +1,11 @@
 package com.amhsrobotics.tko2019.hardware.subsystems;
 
 import com.amhsrobotics.tko2019.hardware.Switches;
-import com.amhsrobotics.tko2019.settings.subsystems.EncoderInversions;
-import com.amhsrobotics.tko2019.settings.subsystems.PID;
-import com.amhsrobotics.tko2019.settings.subsystems.TalonIds;
-import com.amhsrobotics.tko2019.settings.subsystems.TalonInversions;
-import com.amhsrobotics.tko2019.settings.subsystems.cargo.IntakeHeights;
+import com.amhsrobotics.tko2019.hardware.settings.subsystems.EncoderInversions;
+import com.amhsrobotics.tko2019.hardware.settings.subsystems.PID;
+import com.amhsrobotics.tko2019.hardware.settings.subsystems.TalonIds;
+import com.amhsrobotics.tko2019.hardware.settings.subsystems.TalonInversions;
+import com.amhsrobotics.tko2019.hardware.settings.subsystems.cargo.IntakeHeights;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -52,19 +52,19 @@ public final class Cargo {
 	// Intake
 	///////////////////////////////////////////////////////////////////////////
 
-	public final void spinIntake(final double speed) {
+	public final void spinIntake() {
 		if (!Switches.getInstance().hasCargo()) {
-			intakeTalons[0].set(ControlMode.PercentOutput, speed);
-			intakeTalons[1].set(ControlMode.PercentOutput, speed);
+			intakeTalons[0].set(ControlMode.PercentOutput, 1);
+			intakeTalons[1].set(ControlMode.PercentOutput, 1);
 		} else {
 			visionConveyor();
 			stopIntake();
 		}
 	}
 
-	public final void spinOuttake(final double speed) {
-		intakeTalons[0].set(ControlMode.PercentOutput, -speed);
-		intakeTalons[1].set(ControlMode.PercentOutput, -speed);
+	public final void spinOuttake() {
+		intakeTalons[0].set(ControlMode.PercentOutput, -1);
+		intakeTalons[1].set(ControlMode.PercentOutput, -1);
 	}
 
 	public final void stopIntake() {
@@ -77,12 +77,8 @@ public final class Cargo {
 	// Conveyor
 	///////////////////////////////////////////////////////////////////////////
 
-	public final void rocketConveyor() {
-		moveConveyor(IntakeHeights.ROCKET_HEIGHT);
-	}
-
-	public final void cargoConveyor() {
-		moveConveyor(IntakeHeights.CARGO_HEIGHT);
+	public final void scoreConveyor() {
+		moveConveyor(IntakeHeights.SCORING_HEIGHT);
 	}
 
 	public final void stationConveyor() {

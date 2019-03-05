@@ -1,14 +1,15 @@
 package com.amhsrobotics.tko2019.hardware.subsystems;
 
 import com.amhsrobotics.tko2019.hardware.Gyro;
-import com.amhsrobotics.tko2019.settings.subsystems.EncoderInversions;
-import com.amhsrobotics.tko2019.settings.subsystems.PID;
-import com.amhsrobotics.tko2019.settings.subsystems.SolenoidIds;
-import com.amhsrobotics.tko2019.settings.subsystems.TalonIds;
-import com.amhsrobotics.tko2019.settings.subsystems.TalonInversions;
-import com.amhsrobotics.tko2019.settings.subsystems.TicksPerInch;
+import com.amhsrobotics.tko2019.hardware.settings.subsystems.EncoderInversions;
+import com.amhsrobotics.tko2019.hardware.settings.subsystems.PID;
+import com.amhsrobotics.tko2019.hardware.settings.subsystems.SolenoidIds;
+import com.amhsrobotics.tko2019.hardware.settings.subsystems.TalonIds;
+import com.amhsrobotics.tko2019.hardware.settings.subsystems.TalonInversions;
+import com.amhsrobotics.tko2019.hardware.settings.subsystems.TicksPerInch;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -19,7 +20,7 @@ public final class Drive {
 
 	private final WPI_TalonSRX[] leftTalons = new WPI_TalonSRX[TalonIds.LEFT_DRIVE.length];
 	private final WPI_TalonSRX[] rightTalons = new WPI_TalonSRX[TalonIds.RIGHT_DRIVE.length];
-	private volatile boolean isReversed = true;
+	private volatile boolean reversed = true;
 
 	private final DoubleSolenoid gearShifter = new DoubleSolenoid(
 			SolenoidIds.DRIVE_SHIFTER[0], SolenoidIds.DRIVE_SHIFTER[1]
@@ -31,6 +32,7 @@ public final class Drive {
 		for (int i = 0; i < TalonIds.LEFT_DRIVE.length; i++) {
 			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.LEFT_DRIVE[i]);
 			talon.configFactoryDefault();
+			talon.setNeutralMode(NeutralMode.Brake);
 			talon.setInverted(TalonInversions.LEFT_DRIVE[i]);
 			if (i == 0) {
 				talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
@@ -48,6 +50,7 @@ public final class Drive {
 		for (int i = 0; i < TalonIds.RIGHT_DRIVE.length; i++) {
 			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.RIGHT_DRIVE[i]);
 			talon.configFactoryDefault();
+			talon.setNeutralMode(NeutralMode.Brake);
 			talon.setInverted(TalonInversions.RIGHT_DRIVE[i]);
 			if (i == 0) {
 				talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
@@ -64,6 +67,10 @@ public final class Drive {
 
 	public static Drive getInstance() {
 		return INSTANCE;
+	}
+
+	public final boolean isReversed() {
+		return reversed;
 	}
 
 
@@ -185,7 +192,7 @@ public final class Drive {
 	///////////////////////////////////////////////////////////////////////////
 
 	public final synchronized void toggleReverser() {
-		isReversed = !isReversed;
+		reversed = !reversed;
 	}
 
 	public final synchronized void shiftGear(final int value) {

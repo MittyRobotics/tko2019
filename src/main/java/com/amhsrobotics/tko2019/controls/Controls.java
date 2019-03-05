@@ -6,6 +6,7 @@ import com.amhsrobotics.tko2019.controls.commands.DigitalControlCommand;
 import com.amhsrobotics.tko2019.controls.commands.DigitalType;
 import com.amhsrobotics.tko2019.controls.input.AnalogInput;
 import com.amhsrobotics.tko2019.controls.input.DigitalInput;
+import com.amhsrobotics.tko2019.vision.sequences.SequencesManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,12 +77,14 @@ public final class Controls extends Thread {
 							if (pressCommands != null && !cachedValue) {
 								for (DigitalControlCommand controlCommand : pressCommands) {
 									controlCommand.action();
+									SequencesManager.setManual();
 								}
 							}
 							ArrayList<DigitalControlCommand> holdCommands = buttonControls.get(controller).get(digitalInput).get(DigitalType.DigitalHold);
 							if (holdCommands != null) {
 								for (DigitalControlCommand controlCommand : holdCommands) {
 									controlCommand.action();
+									SequencesManager.setManual();
 								}
 							}
 						} else {
@@ -89,6 +92,7 @@ public final class Controls extends Thread {
 							if (releaseCommands != null && cachedValue) {
 								for (DigitalControlCommand controlCommand : releaseCommands) {
 									controlCommand.action();
+									SequencesManager.setManual();
 								}
 							}
 						}
@@ -106,6 +110,7 @@ public final class Controls extends Thread {
 						if (alwaysCommands != null) {
 							for (AnalogControlCommand controlCommand : alwaysCommands) {
 								controlCommand.action(value);
+								SequencesManager.setManual();
 							}
 						}
 						if (Math.abs(value) > 0.05) {
@@ -113,6 +118,7 @@ public final class Controls extends Thread {
 							if (outOfMinorThresholdCommands != null) {
 								for (AnalogControlCommand controlCommand : outOfMinorThresholdCommands) {
 									controlCommand.action(value);
+									SequencesManager.setManual();
 								}
 							}
 						} else {
@@ -120,6 +126,7 @@ public final class Controls extends Thread {
 							if (commands != null) {
 								for (AnalogControlCommand command : commands) {
 									command.action(value);
+									SequencesManager.setManual();
 								}
 							}
 						}
@@ -128,6 +135,7 @@ public final class Controls extends Thread {
 							if (outOfMajorThresholdCommands != null) {
 								for (AnalogControlCommand controlCommand : outOfMajorThresholdCommands) {
 									controlCommand.action(value);
+									SequencesManager.setManual();
 								}
 							}
 						} else {
@@ -135,6 +143,7 @@ public final class Controls extends Thread {
 							if (outOfMinorThresholdCommands != null) {
 								for (AnalogControlCommand controlCommand : outOfMinorThresholdCommands) {
 									controlCommand.action(value);
+									SequencesManager.setManual();
 								}
 							}
 						}

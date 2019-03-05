@@ -1,6 +1,6 @@
 package com.amhsrobotics.tko2019.hardware;
 
-import com.amhsrobotics.tko2019.settings.SwitchIds;
+import com.amhsrobotics.tko2019.hardware.settings.SwitchIds;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 public final class Switches {
