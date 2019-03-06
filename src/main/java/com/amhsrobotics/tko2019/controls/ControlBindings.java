@@ -2,6 +2,7 @@ package com.amhsrobotics.tko2019.controls;
 
 import com.amhsrobotics.tko2019.controls.commands.AnalogType;
 import com.amhsrobotics.tko2019.controls.commands.DigitalType;
+import com.amhsrobotics.tko2019.hardware.Switches;
 import com.amhsrobotics.tko2019.hardware.subsystems.Cargo;
 import com.amhsrobotics.tko2019.hardware.subsystems.Climber;
 import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
@@ -51,10 +52,13 @@ public final class ControlBindings {
 	private static void setupHatch() {
 		Controls.getInstance()
 				// Hatch
-				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.GRAB_HATCH,
-						DigitalType.DigitalPress, () -> HatchPanel.getInstance().grab())
-				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.RELEASE_HATCH,
-						DigitalType.DigitalPress, () -> HatchPanel.getInstance().release())
+				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.CHECK_GRAB_HATCH, DigitalType.DigitalPress, () -> {
+					if (Switches.getInstance().hasHatch()) {
+						HatchPanel.getInstance().grab();
+					} else {
+						HatchPanel.getInstance().release();
+					}
+				})
 				// PID Setpoint Slider Movement
 				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.SLIDE_MIDDLE,
 						DigitalType.DigitalPress, () -> HatchPanel.getInstance().slideMiddle())
@@ -63,8 +67,12 @@ public final class ControlBindings {
 				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.SLIDE_RIGHT,
 						DigitalType.DigitalPress, () -> HatchPanel.getInstance().slideRight())
 				// Manual PID Setpoint Slider Movement
+				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.CHECK_SLIDE,
+						DigitalType.DigitalPress, () -> HatchPanel.getInstance().canSlide(true))
+				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.CHECK_SLIDE,
+						DigitalType.DigitalRelease, () -> HatchPanel.getInstance().canSlide(false))
 				.registerAnalogCommand(Controller.Joystick1, ControlsConfig.JOYSTICK_SLIDE,
-						AnalogType.OutOfThresholdMajor, value -> HatchPanel.getInstance().slideManual(value))
+						AnalogType.OutOfThresholdMinor, value -> HatchPanel.getInstance().slideManual(value))
 				.registerAnalogCommand(Controller.Joystick1, ControlsConfig.PUSH_HATCH_MECHANISM, AnalogType.OutOfThresholdMajor, value -> {
 					if (value > 0) {
 						HatchPanel.getInstance().forward();

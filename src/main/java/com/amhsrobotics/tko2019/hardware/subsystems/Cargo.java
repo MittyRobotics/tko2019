@@ -2,6 +2,7 @@ package com.amhsrobotics.tko2019.hardware.subsystems;
 
 import com.amhsrobotics.tko2019.hardware.Switches;
 import com.amhsrobotics.tko2019.hardware.settings.subsystems.EncoderInversions;
+import com.amhsrobotics.tko2019.hardware.settings.subsystems.NeutralModes;
 import com.amhsrobotics.tko2019.hardware.settings.subsystems.PID;
 import com.amhsrobotics.tko2019.hardware.settings.subsystems.TalonIds;
 import com.amhsrobotics.tko2019.hardware.settings.subsystems.TalonInversions;
@@ -22,6 +23,7 @@ public final class Cargo {
 			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.INTAKE[i]);
 			talon.configFactoryDefault();
 			talon.setInverted(TalonInversions.INTAKE[i]);
+			talon.setNeutralMode(NeutralModes.INTAKE);
 			intakeTalons[i] = talon;
 		}
 
@@ -33,6 +35,7 @@ public final class Cargo {
 			if (i == 0) {
 				talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
 				talon.setSensorPhase(EncoderInversions.CONVEYOR_ENCODER);
+				talon.setNeutralMode(NeutralModes.CONVEYOR);
 				talon.config_kP(0, PID.CARGO[0]);
 				talon.config_kI(0, PID.CARGO[1]);
 				talon.config_kD(0, PID.CARGO[2]);

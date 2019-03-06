@@ -2,6 +2,7 @@ package com.amhsrobotics.tko2019.hardware.subsystems;
 
 import com.amhsrobotics.tko2019.hardware.Gyro;
 import com.amhsrobotics.tko2019.hardware.settings.subsystems.EncoderInversions;
+import com.amhsrobotics.tko2019.hardware.settings.subsystems.NeutralModes;
 import com.amhsrobotics.tko2019.hardware.settings.subsystems.PID;
 import com.amhsrobotics.tko2019.hardware.settings.subsystems.SolenoidIds;
 import com.amhsrobotics.tko2019.hardware.settings.subsystems.TalonIds;
@@ -34,6 +35,7 @@ public final class Drive {
 			talon.configFactoryDefault();
 			talon.setNeutralMode(NeutralMode.Brake);
 			talon.setInverted(TalonInversions.LEFT_DRIVE[i]);
+			talon.setNeutralMode(NeutralModes.DRIVE);
 			if (i == 0) {
 				talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
 				talon.setSensorPhase(EncoderInversions.DRIVE_LEFT);
@@ -52,6 +54,7 @@ public final class Drive {
 			talon.configFactoryDefault();
 			talon.setNeutralMode(NeutralMode.Brake);
 			talon.setInverted(TalonInversions.RIGHT_DRIVE[i]);
+			talon.setNeutralMode(NeutralModes.DRIVE);
 			if (i == 0) {
 				talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
 				talon.setSensorPhase(EncoderInversions.DRIVE_RIGHT);

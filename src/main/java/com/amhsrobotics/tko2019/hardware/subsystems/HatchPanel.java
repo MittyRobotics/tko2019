@@ -1,6 +1,7 @@
 package com.amhsrobotics.tko2019.hardware.subsystems;
 
 import com.amhsrobotics.tko2019.hardware.settings.subsystems.EncoderInversions;
+import com.amhsrobotics.tko2019.hardware.settings.subsystems.NeutralModes;
 import com.amhsrobotics.tko2019.hardware.settings.subsystems.PID;
 import com.amhsrobotics.tko2019.hardware.settings.subsystems.SolenoidIds;
 import com.amhsrobotics.tko2019.hardware.settings.subsystems.TalonIds;
@@ -13,8 +14,8 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public final class HatchPanel {
+	private boolean checkSlide = false;
 	private final static HatchPanel INSTANCE = new HatchPanel();
-
 	private final WPI_TalonSRX slideTalon = new WPI_TalonSRX(TalonIds.SLIDE);
 	private final DoubleSolenoid grabber = new DoubleSolenoid(SolenoidIds.GRABBER[0], SolenoidIds.GRABBER[1]);
 	private final DoubleSolenoid pusher = new DoubleSolenoid(SolenoidIds.PUSH_FORWARD[0], SolenoidIds.PUSH_FORWARD[1]);
@@ -26,6 +27,7 @@ public final class HatchPanel {
 		slideTalon.setInverted(TalonInversions.SLIDER); // FIXME wtf y is neg??
 		slideTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder); // FIXME wtf y is neg??
 		slideTalon.setSensorPhase(EncoderInversions.SLIDER_ENCODER);
+		slideTalon.setNeutralMode(NeutralModes.SLIDER);
 		slideTalon.config_kP(0, PID.SLIDER[0]);
 		slideTalon.config_kI(0, PID.SLIDER[1]);
 		slideTalon.config_kD(0, PID.SLIDER[2]);
@@ -81,11 +83,16 @@ public final class HatchPanel {
 	}
 
 	public void slideManual(final double value) {
-		slide(slideTalon.getSelectedSensorPosition() / TicksPerInch.SLIDER - 0.5 * value);
+		if(checkSlide){
+			slide(slideTalon.getSelectedSensorPosition() / TicksPerInch.SLIDER - 0.5 * value);
+		}
 	}
 
 	private void slide(double position) {
 		slideTalon.set(ControlMode.Position, (position * TicksPerInch.SLIDER));
+	}
+	public void canSlide(boolean canSlide){
+		checkSlide = canSlide;
 	}
 
 
