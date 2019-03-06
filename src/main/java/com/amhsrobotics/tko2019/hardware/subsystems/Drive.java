@@ -20,11 +20,11 @@ public final class Drive {
 
 	private final WPI_TalonSRX[] leftTalons = new WPI_TalonSRX[TalonIds.LEFT_DRIVE.length];
 	private final WPI_TalonSRX[] rightTalons = new WPI_TalonSRX[TalonIds.RIGHT_DRIVE.length];
-	private volatile boolean reversed = true;
-
 	private final DoubleSolenoid gearShifter = new DoubleSolenoid(
 			SolenoidIds.DRIVE_SHIFTER[0], SolenoidIds.DRIVE_SHIFTER[1]
 	);
+
+	private volatile boolean reversed = true;
 	private volatile int currentGear = 1;
 
 	private Drive() {

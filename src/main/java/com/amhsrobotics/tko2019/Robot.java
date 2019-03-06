@@ -1,5 +1,6 @@
 package com.amhsrobotics.tko2019;
 
+import com.amhsrobotics.tko2019.controls.ControlBindings;
 import com.amhsrobotics.tko2019.controls.Controls;
 import com.amhsrobotics.tko2019.hardware.Compressor;
 import com.amhsrobotics.tko2019.hardware.Gyro;
@@ -8,7 +9,6 @@ import com.amhsrobotics.tko2019.hardware.subsystems.Cargo;
 import com.amhsrobotics.tko2019.hardware.subsystems.Climber;
 import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
 import com.amhsrobotics.tko2019.hardware.subsystems.HatchPanel;
-import com.amhsrobotics.tko2019.controls.ControlBindings;
 import com.amhsrobotics.tko2019.vision.VisionSync;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;

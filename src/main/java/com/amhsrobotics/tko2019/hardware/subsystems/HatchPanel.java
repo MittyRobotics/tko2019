@@ -16,10 +16,10 @@ public final class HatchPanel {
 	private final static HatchPanel INSTANCE = new HatchPanel();
 
 	private final WPI_TalonSRX slideTalon = new WPI_TalonSRX(TalonIds.SLIDE);
-	private volatile HatchPosition hatchPosition = HatchPosition.Center;
-
 	private final DoubleSolenoid grabber = new DoubleSolenoid(SolenoidIds.GRABBER[0], SolenoidIds.GRABBER[1]);
 	private final DoubleSolenoid pusher = new DoubleSolenoid(SolenoidIds.PUSH_FORWARD[0], SolenoidIds.PUSH_FORWARD[1]);
+
+	private volatile HatchPosition hatchPosition = HatchPosition.Center;
 
 	private HatchPanel() {
 		slideTalon.configFactoryDefault();
@@ -60,7 +60,7 @@ public final class HatchPanel {
 		pusher.set(DoubleSolenoid.Value.kReverse);
 	}
 
-	
+
 	///////////////////////////////////////////////////////////////////////////
 	// Slider
 	///////////////////////////////////////////////////////////////////////////

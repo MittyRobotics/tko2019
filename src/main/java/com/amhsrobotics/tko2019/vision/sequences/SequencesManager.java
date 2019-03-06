@@ -5,13 +5,13 @@ public final class SequencesManager {
 
 	private Sequence currentSequence = null;
 
+	public static void setManual() {
+		manual = true;
+	}
+
 	public synchronized void startSequence(final Sequence sequence) {
 		currentSequence = sequence;
 		currentSequence.start();
-	}
-
-	public static void setManual() {
-		manual = true;
 	}
 
 	public synchronized void continueSequence() {
