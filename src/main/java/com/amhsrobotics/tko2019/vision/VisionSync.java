@@ -14,7 +14,7 @@ import javax.imageio.ImageIO;
 import java.io.ByteArrayOutputStream;
 import java.util.Objects;
 
-public class VisionSync {
+public final class VisionSync {
 	public static final SequencesManager SEQUENCES_MANAGER = new SequencesManager();
 
 	private final CameraDirection cam;

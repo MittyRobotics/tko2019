@@ -31,7 +31,7 @@ public enum AnalogInput {
 
 	private final AnalogInputRequest inputRequest;
 
-	AnalogInput(AnalogInputRequest inputRequest) {
+	AnalogInput(final AnalogInputRequest inputRequest) {
 		this.inputRequest = inputRequest;
 	}
 

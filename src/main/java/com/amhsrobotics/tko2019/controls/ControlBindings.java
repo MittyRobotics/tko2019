@@ -8,7 +8,7 @@ import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
 import com.amhsrobotics.tko2019.hardware.subsystems.HatchPanel;
 import edu.wpi.first.wpilibj.DriverStation;
 
-public class ControlBindings {
+public final class ControlBindings {
 	public static void setupControls() {
 		setupDrive();
 		setupCargo();

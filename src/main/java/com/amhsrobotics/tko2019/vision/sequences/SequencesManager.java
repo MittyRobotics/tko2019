@@ -1,6 +1,6 @@
 package com.amhsrobotics.tko2019.vision.sequences;
 
-public class SequencesManager {
+public final class SequencesManager {
 	static volatile boolean manual = true;
 
 	private Sequence currentSequence = null;

@@ -6,7 +6,7 @@ import com.amhsrobotics.tko2019.vision.sequences.actions.hatch.MoveHatchBack;
 import com.amhsrobotics.tko2019.vision.sequences.actions.hatch.MoveHatchForward;
 import com.amhsrobotics.tko2019.vision.sequences.actions.hatch.ReleaseHatch;
 
-public class HatchScore extends Sequence {
+public final class HatchScore extends Sequence {
 	public HatchScore() {
 		super(new MoveHatchForward(), new ReleaseHatch(), new MoveHatchBack());
 	}

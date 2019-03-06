@@ -38,7 +38,7 @@ public final class Controls extends Thread {
 	}
 
 	@SuppressWarnings("Duplicates")
-	public Controls registerDigitalCommand(Controller controller, DigitalInput digitalInput, DigitalType digitalType, DigitalControlCommand lambda) {
+	Controls registerDigitalCommand(Controller controller, DigitalInput digitalInput, DigitalType digitalType, DigitalControlCommand lambda) {
 		buttonControls.putIfAbsent(controller, new HashMap<>());
 		final HashMap<DigitalInput, HashMap<DigitalType, ArrayList<DigitalControlCommand>>> inputs = buttonControls.get(controller);
 		inputs.putIfAbsent(digitalInput, new HashMap<>());
@@ -49,7 +49,7 @@ public final class Controls extends Thread {
 	}
 
 	@SuppressWarnings("Duplicates")
-	public Controls registerAnalogCommand(Controller controller, AnalogInput analogInput, AnalogType analogType, AnalogControlCommand lambda) {
+	Controls registerAnalogCommand(Controller controller, AnalogInput analogInput, AnalogType analogType, AnalogControlCommand lambda) {
 		analogControls.putIfAbsent(controller, new HashMap<>());
 		final HashMap<AnalogInput, HashMap<AnalogType, ArrayList<AnalogControlCommand>>> inputs = analogControls.get(controller);
 		inputs.putIfAbsent(analogInput, new HashMap<>());
@@ -110,15 +110,14 @@ public final class Controls extends Thread {
 						if (alwaysCommands != null) {
 							for (AnalogControlCommand controlCommand : alwaysCommands) {
 								controlCommand.action(value);
-								SequencesManager.setManual();
 							}
 						}
 						if (Math.abs(value) > 0.05) {
+							SequencesManager.setManual();
 							ArrayList<AnalogControlCommand> outOfMinorThresholdCommands = analogControls.get(controller).get(analogInput).get(AnalogType.OutOfThresholdMinor);
 							if (outOfMinorThresholdCommands != null) {
 								for (AnalogControlCommand controlCommand : outOfMinorThresholdCommands) {
 									controlCommand.action(value);
-									SequencesManager.setManual();
 								}
 							}
 						} else {
@@ -126,7 +125,6 @@ public final class Controls extends Thread {
 							if (commands != null) {
 								for (AnalogControlCommand command : commands) {
 									command.action(value);
-									SequencesManager.setManual();
 								}
 							}
 						}
@@ -143,7 +141,6 @@ public final class Controls extends Thread {
 							if (outOfMinorThresholdCommands != null) {
 								for (AnalogControlCommand controlCommand : outOfMinorThresholdCommands) {
 									controlCommand.action(value);
-									SequencesManager.setManual();
 								}
 							}
 						}

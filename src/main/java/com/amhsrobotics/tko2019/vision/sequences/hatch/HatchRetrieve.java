@@ -6,7 +6,7 @@ import com.amhsrobotics.tko2019.vision.sequences.actions.hatch.GrabHatch;
 import com.amhsrobotics.tko2019.vision.sequences.actions.hatch.MoveHatchBack;
 import com.amhsrobotics.tko2019.vision.sequences.actions.hatch.MoveHatchForward;
 
-public class HatchRetrieve extends Sequence {
+public final class HatchRetrieve extends Sequence {
 	public HatchRetrieve() {
 		super(new MoveHatchForward(), new GrabHatch(), new MoveHatchBack());
 	}
