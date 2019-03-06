@@ -88,7 +88,11 @@ public final class Drive {
 	}
 
 	public final void setLeft(final double value) {
-		setLeft(ControlMode.PercentOutput, value);
+		if (!reversed) {
+			setLeft(ControlMode.PercentOutput, value);
+		} else {
+			setLeft(ControlMode.PercentOutput, -value);
+		}
 	}
 
 	public final void setLeft(final ControlMode controlMode, final double value) {
@@ -96,7 +100,11 @@ public final class Drive {
 	}
 
 	public final void setRight(final double value) {
-		setRight(ControlMode.PercentOutput, value);
+		if (!reversed) {
+			setRight(ControlMode.PercentOutput, value);
+		} else {
+			setRight(ControlMode.PercentOutput, -value);
+		}
 	}
 
 	public final void setRight(final ControlMode controlMode, final double value) {
@@ -195,13 +203,16 @@ public final class Drive {
 		reversed = !reversed;
 	}
 
-	public final synchronized void shiftGear(final int value) {
-		if (value == 0) {
-			gearShifter.set(DoubleSolenoid.Value.kReverse);
-			currentGear = 0;
-		} else if (value == 1) {
-			gearShifter.set(DoubleSolenoid.Value.kForward);
-			currentGear = 1;
+	public final synchronized void shiftGear() {
+		switch (currentGear) {
+			case 0:
+				gearShifter.set(DoubleSolenoid.Value.kForward);
+				currentGear = 1;
+				break;
+			case 1:
+				gearShifter.set(DoubleSolenoid.Value.kReverse);
+				currentGear = 0;
+				break;
 		}
 	}
 }

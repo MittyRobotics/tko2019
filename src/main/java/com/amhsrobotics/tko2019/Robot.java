@@ -9,6 +9,7 @@ import com.amhsrobotics.tko2019.hardware.subsystems.Climber;
 import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
 import com.amhsrobotics.tko2019.hardware.subsystems.HatchPanel;
 import com.amhsrobotics.tko2019.controls.ControlBindings;
+import com.amhsrobotics.tko2019.vision.VisionSync;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -59,6 +60,7 @@ public final class Robot extends SampleRobot {
 	@Override
 	public final void operatorControl() {
 		enabled();
+		VisionSync.SEQUENCES_MANAGER.continueSequence();
 	}
 
 	@Override

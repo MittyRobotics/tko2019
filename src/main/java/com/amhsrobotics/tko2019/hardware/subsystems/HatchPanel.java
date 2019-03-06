@@ -80,6 +80,10 @@ public final class HatchPanel {
 		hatchPosition = HatchPosition.Right;
 	}
 
+	public void slideManual(final double value) {
+		slide(slideTalon.getSelectedSensorPosition() / TicksPerInch.SLIDER - 0.5 * value);
+	}
+
 	private void slide(double position) {
 		slideTalon.set(ControlMode.Position, (position * TicksPerInch.SLIDER));
 	}

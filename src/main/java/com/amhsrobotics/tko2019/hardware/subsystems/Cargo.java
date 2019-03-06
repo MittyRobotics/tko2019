@@ -77,12 +77,16 @@ public final class Cargo {
 	// Conveyor
 	///////////////////////////////////////////////////////////////////////////
 
-	public final void scoreConveyor() {
-		moveConveyor(IntakeHeights.SCORING_HEIGHT);
-	}
-
 	public final void stationConveyor() {
 		moveConveyor(IntakeHeights.STATION_HEIGHT);
+	}
+
+	public final void cargoConveyor() {
+		moveConveyor(IntakeHeights.CARGO_HEIGHT);
+	}
+
+	public final void rocketConveyor() {
+		moveConveyor(IntakeHeights.ROCKET_HEIGHT);
 	}
 
 	public final void visionConveyor() {
@@ -91,6 +95,10 @@ public final class Cargo {
 
 	public final void groundConveyor() {
 		moveConveyor(IntakeHeights.GROUND_HEIGHT);
+	}
+
+	public final void manualConveyor(final double value) {
+		moveConveyor(conveyorTalons[0].getSelectedSensorPosition() + value * 1000);
 	}
 
 	private void moveConveyor(final double neededPos) { // In negative ticks (more negative moving up) FIXME wtf? just invert the sensor and the output???

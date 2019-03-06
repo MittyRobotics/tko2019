@@ -2,8 +2,10 @@ package com.amhsrobotics.tko2019.controls;
 
 import com.amhsrobotics.tko2019.controls.commands.AnalogType;
 import com.amhsrobotics.tko2019.controls.commands.DigitalType;
+import com.amhsrobotics.tko2019.hardware.subsystems.Cargo;
+import com.amhsrobotics.tko2019.hardware.subsystems.Climber;
+import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
 import com.amhsrobotics.tko2019.hardware.subsystems.HatchPanel;
-import com.amhsrobotics.tko2019.hardware.settings.subsystems.TicksPerInch;
 import edu.wpi.first.wpilibj.DriverStation;
 
 public class ControlBindings {
@@ -15,110 +17,88 @@ public class ControlBindings {
 	}
 
 	private static void setupDrive() {
-		Controls.getInstance().registerAnalogCommand(Controller.XboxController, ControlsConfig.LEFT_WHEELS,
-				AnalogType.OutOfThresholdMinor, value -> {
-					if (isReversed) {
-						setRight(-value);
-					} else {
-						setLeft(value);
-					}
-				}).registerAnalogCommand(Controller.XboxController, ControlsConfig.LEFT_WHEELS,
-				AnalogType.InThresholdMinor, value -> {
-					if (isReversed) {
-						setRight(0);
-					} else {
-						setLeft(0);
-					}
-				}).registerAnalogCommand(Controller.XboxController, ControlsConfig.RIGHT_WHEELS,
-				AnalogType.OutOfThresholdMinor, value -> {
-					if (isReversed) {
-						setLeft(-value);
-					} else {
-						setRight(value);
-					}
-				}).registerAnalogCommand(Controller.XboxController, ControlsConfig.RIGHT_WHEELS,
-				AnalogType.InThresholdMinor, value -> {
-					if (isReversed) {
-						setLeft(0);
-					} else {
-						setRight(0);
-					}
-//				}).registerDigitalCommand(Controller.XboxController, ControlsConfig.GEAR_SWITCH,
-//				DigitalType.DigitalPress, () -> {
-//					if (System.currentTimeMillis() - lastSwitch > Restrictions.DRIVE_GEAR_SHIFT_COOLDOWN_MILLIS) {
-//						if (currentGear == 1) {
-//							shiftGear(0);
-//						} else {
-//							shiftGear(1);
-//						}
-//						lastSwitch = System.currentTimeMillis();
-//					} else {
-//						System.err.println("Shifter is on Cooldown.");
-//					}
-				}).registerDigitalCommand(Controller.XboxController, ControlsConfig.REVERSE_DIRECTION,
-				DigitalType.DigitalPress, this::toggleReverser);
+		Controls.getInstance()
+				// Gear Shifting
+				.registerDigitalCommand(Controller.XboxController, ControlsConfig.GEAR_SWITCH,
+						DigitalType.DigitalPress, () -> Drive.getInstance().shiftGear())
+				// Reversing
+				.registerDigitalCommand(Controller.XboxController, ControlsConfig.REVERSE_DIRECTION,
+						DigitalType.DigitalPress, () -> Drive.getInstance().toggleReverser())
+				// Left Wheels
+				.registerAnalogCommand(Controller.XboxController, ControlsConfig.LEFT_WHEELS,
+						AnalogType.OutOfThresholdMinor, value -> Drive.getInstance().setLeft(value))
+				.registerAnalogCommand(Controller.XboxController, ControlsConfig.LEFT_WHEELS,
+						AnalogType.InThresholdMinor, value -> Drive.getInstance().setLeft(0))
+				// Right Wheels
+				.registerAnalogCommand(Controller.XboxController, ControlsConfig.RIGHT_WHEELS,
+						AnalogType.OutOfThresholdMinor, value -> Drive.getInstance().setRight(value))
+				.registerAnalogCommand(Controller.XboxController, ControlsConfig.RIGHT_WHEELS,
+						AnalogType.InThresholdMinor, value -> Drive.getInstance().setRight(0));
 	}
 
 	private static void setupHatch() {
-		Controls.getInstance().registerAnalogCommand(Controller.Joystick1, ControlsConfig.JOYSTICK_SLIDE, AnalogType.Always, value -> {
-			if (Math.abs(value) > 0.2) {
-				slide(slideTalon.getSelectedSensorPosition() / TicksPerInch.SLIDER - 0.5 * value);
-			}
-		}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.RELEASE_HATCH, DigitalType.DigitalPress, this::outtake).registerDigitalCommand(Controller.Joystick1, ControlsConfig.GRAB_HATCH, DigitalType.DigitalPress, this::intake)
+		Controls.getInstance()
+				// Hatch
+				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.GRAB_HATCH,
+						DigitalType.DigitalPress, () -> HatchPanel.getInstance().grab())
+				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.RELEASE_HATCH,
+						DigitalType.DigitalPress, () -> HatchPanel.getInstance().release())
+				// PID Setpoint Slider Movement
+				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.SLIDE_MIDDLE,
+						DigitalType.DigitalPress, () -> HatchPanel.getInstance().slideMiddle())
+				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.SLIDE_LEFT,
+						DigitalType.DigitalPress, () -> HatchPanel.getInstance().slideLeft())
+				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.SLIDE_RIGHT,
+						DigitalType.DigitalPress, () -> HatchPanel.getInstance().slideRight())
+				// Manual PID Setpoint Slider Movement
+				.registerAnalogCommand(Controller.Joystick1, ControlsConfig.JOYSTICK_SLIDE,
+						AnalogType.OutOfThresholdMajor, value -> HatchPanel.getInstance().slideManual(value))
 				.registerAnalogCommand(Controller.Joystick1, ControlsConfig.PUSH_HATCH_MECHANISM, AnalogType.OutOfThresholdMajor, value -> {
-					if (value > 0.5) {
-						goHatchForward();
-					} else if (value < -0.5) {
-						goHatchBackward();
+					if (value > 0) {
+						HatchPanel.getInstance().forward();
+					} else {
+						HatchPanel.getInstance().back();
 					}
-				}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.SLIDE_MIDDLE, DigitalType.DigitalPress, () -> {
-			if (encoderConfig) {
-				slideMiddle();
-			}
-		}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.SLIDE_LEFT, DigitalType.DigitalPress, () -> {
-			if (encoderConfig) {
-				slideLeft();
-			}
-		}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.SLIDE_RIGHT, DigitalType.DigitalPress, () -> {
-			if (encoderConfig) {
-				slideRight();
-			}
-		}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.CONFIG_ENCODER_HATCH, DigitalType.DigitalPress, this::resetEncoder);
-
+				});
 	}
 
 	private static void setupCargo() {
-		Controls.getInstance().registerDigitalCommand(Controller.Joystick2, ControlsConfig.SPIN_INTAKE, DigitalType.DigitalHold, () -> spinIntake(0.5));
-		Controls.getInstance().registerDigitalCommand(Controller.Joystick2, ControlsConfig.SPIN_INTAKE, DigitalType.DigitalRelease, this::stopIntake);
-		Controls.getInstance().registerDigitalCommand(Controller.Joystick2, ControlsConfig.SPIN_OUTTAKE, DigitalType.DigitalHold, () -> spinOuttake(0.5));
-		Controls.getInstance().registerDigitalCommand(Controller.Joystick2, ControlsConfig.SPIN_OUTTAKE, DigitalType.DigitalRelease, this::stopIntake);
-
-		Controls.getInstance().registerAnalogCommand(Controller.Joystick2, ControlsConfig.MOVE_ANGLE, AnalogType.OutOfThresholdMinor, value -> {
-			moveConveyor(conveyorTalons[0].getSelectedSensorPosition() + value * 1000);
-		}).registerDigitalCommand(Controller.Joystick2, ControlsConfig.CARGO_HEIGHT, DigitalType.DigitalPress, () -> {
-			if (configEncoder) {
-				cargoConveyor();
-			}
-		}).registerDigitalCommand(Controller.Joystick2, ControlsConfig.ROCKET_HEIGHT, DigitalType.DigitalPress, () -> {
-			if (configEncoder) {
-				rocketConveyor();
-			}
-		}).registerDigitalCommand(Controller.Joystick2, ControlsConfig.GROUND_HEIGHT, DigitalType.DigitalPress, () -> {
-			if (configEncoder) {
-				groundConveyor();
-			}
-		}).registerDigitalCommand(Controller.Joystick2, ControlsConfig.CONFIG_ENCODER_CARGO, DigitalType.DigitalPress, this::resetEncoder);
-
+		Controls.getInstance()
+				// Rollers
+				.registerDigitalCommand(Controller.Joystick2, ControlsConfig.SPIN_INTAKE,
+						DigitalType.DigitalHold, () -> Cargo.getInstance().spinIntake())
+				.registerDigitalCommand(Controller.Joystick2, ControlsConfig.SPIN_INTAKE,
+						DigitalType.DigitalRelease, () -> Cargo.getInstance().stopIntake())
+				.registerDigitalCommand(Controller.Joystick2, ControlsConfig.SPIN_OUTTAKE,
+						DigitalType.DigitalHold, () -> Cargo.getInstance().spinOuttake())
+				.registerDigitalCommand(Controller.Joystick2, ControlsConfig.SPIN_OUTTAKE,
+						DigitalType.DigitalRelease, () -> Cargo.getInstance().stopIntake())
+				// Cargo Heights
+				.registerDigitalCommand(Controller.Joystick2, ControlsConfig.CARGO_HEIGHT,
+						DigitalType.DigitalPress, () -> Cargo.getInstance().cargoConveyor())
+				.registerDigitalCommand(Controller.Joystick2, ControlsConfig.ROCKET_HEIGHT,
+						DigitalType.DigitalPress, () -> Cargo.getInstance().rocketConveyor())
+				.registerDigitalCommand(Controller.Joystick2, ControlsConfig.GROUND_HEIGHT,
+						DigitalType.DigitalPress, () -> Cargo.getInstance().groundConveyor())
+				// Manual Cargo Height
+				.registerAnalogCommand(Controller.Joystick2, ControlsConfig.MOVE_ANGLE,
+						AnalogType.OutOfThresholdMinor, value -> Cargo.getInstance().manualConveyor(value));
 	}
 
 	private static void setupClimber() {
-		boolean elevenPressed = false; // FIXME
-		Controls.getInstance().registerDigitalCommand(Controller.Joystick1, ControlsConfig.RELEASE_CLIMBER_2, DigitalType.DigitalPress, () -> {
-			if (DriverStation.getInstance().getMatchTime() < 30 && DriverStation.getInstance().isOperatorControl() && elevenPressed) {
-				HatchPanel.getInstance().slideMiddle();
-				release();
-			}
-		}).registerDigitalCommand(Controller.Joystick1, ControlsConfig.RELEASE_CLIMBER_1, DigitalType.DigitalHold, () -> elevenPressed = true)
-				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.RELEASE_CLIMBER_1, DigitalType.DigitalRelease, () -> elevenPressed = false);
+		Controls.getInstance()
+				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.RELEASE_CLIMBER,
+						DigitalType.DigitalPress, () -> {
+							if (DriverStation.getInstance().getMatchTime() < 30 && DriverStation.getInstance().isOperatorControl()) {
+								HatchPanel.getInstance().slideMiddle();
+								HatchPanel.getInstance().forward();
+								try {
+									Thread.sleep(1000); // TODO Need to See if is Enough Time
+								} catch (final InterruptedException e) {
+									e.printStackTrace();
+								}
+								Climber.getInstance().release();
+							}
+						});
 	}
 }

@@ -5,15 +5,18 @@ public class SequencesManager {
 
 	private Sequence currentSequence = null;
 
-	public void startSequence(final Sequence sequence) {
+	public synchronized void startSequence(final Sequence sequence) {
 		currentSequence = sequence;
+		currentSequence.start();
 	}
 
 	public static void setManual() {
 		manual = true;
 	}
 
-	void continueSequence() {
-
+	public synchronized void continueSequence() {
+		if (currentSequence != null && !currentSequence.isFinished()) {
+			currentSequence.start();
+		}
 	}
 }

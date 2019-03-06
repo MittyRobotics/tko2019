@@ -4,6 +4,8 @@ import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
 import com.amhsrobotics.tko2019.hardware.subsystems.HatchPanel;
 import com.amhsrobotics.tko2019.util.Conversions;
 import com.amhsrobotics.tko2019.vision.sequences.SequencesManager;
+import com.amhsrobotics.tko2019.vision.sequences.cargo.CargoScore;
+import com.amhsrobotics.tko2019.vision.sequences.hatch.HatchScore;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import org.opencv.core.Mat;
@@ -41,20 +43,12 @@ public class VisionSync {
 		NetworkTableInstance.getDefault().getEntry("frame").setRaw(raw);
 	}
 
-	@SuppressWarnings("Duplicates")
 	public final synchronized void confirm() {
 		final SequencesManager manager = new SequencesManager();
 		if (cam == CameraDirection.Hatch) {
-			manager.startSequence();
+			manager.startSequence(new HatchScore());
 		} else if (cam == CameraDirection.Cargo) {
-			switch (pos) {
-				case Left:
-					break;
-				case Center:
-					break;
-				case Right:
-					break;
-			}
+			manager.startSequence(new CargoScore());
 		}
 	}
 }
