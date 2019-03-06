@@ -4,7 +4,7 @@ public class TalonInversions {
 	//Drive
 
 	public static final boolean[] LEFT_DRIVE = {false, false};
-	public static final boolean[] RIGHT_DRIVE = {true, true};
+	public static final boolean[] RIGHT_DRIVE = {false, false};
 
 
 	//Hatch Panel
