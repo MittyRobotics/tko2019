@@ -6,6 +6,7 @@ import com.amhsrobotics.tko2019.hardware.subsystems.Cargo;
 import com.amhsrobotics.tko2019.hardware.subsystems.Climber;
 import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
 import com.amhsrobotics.tko2019.hardware.subsystems.HatchPanel;
+import com.amhsrobotics.tko2019.vision.VisionSync;
 import edu.wpi.first.wpilibj.DriverStation;
 
 public final class ControlBindings {
@@ -14,7 +15,13 @@ public final class ControlBindings {
 		setupCargo();
 		setupHatch();
 		setupClimber();
+		setupVision();
 	}
+
+
+	///////////////////////////////////////////////////////////////////////////
+	// Drive
+	///////////////////////////////////////////////////////////////////////////
 
 	private static void setupDrive() {
 		Controls.getInstance()
@@ -35,6 +42,11 @@ public final class ControlBindings {
 				.registerAnalogCommand(Controller.XboxController, ControlsConfig.RIGHT_WHEELS,
 						AnalogType.InThresholdMinor, value -> Drive.getInstance().setRight(0));
 	}
+
+
+	///////////////////////////////////////////////////////////////////////////
+	// Hatch Panel
+	///////////////////////////////////////////////////////////////////////////
 
 	private static void setupHatch() {
 		Controls.getInstance()
@@ -62,6 +74,11 @@ public final class ControlBindings {
 				});
 	}
 
+
+	///////////////////////////////////////////////////////////////////////////
+	// Cargo
+	///////////////////////////////////////////////////////////////////////////
+
 	private static void setupCargo() {
 		Controls.getInstance()
 				// Rollers
@@ -85,6 +102,11 @@ public final class ControlBindings {
 						AnalogType.OutOfThresholdMinor, value -> Cargo.getInstance().manualConveyor(value));
 	}
 
+
+	///////////////////////////////////////////////////////////////////////////
+	// Climber
+	///////////////////////////////////////////////////////////////////////////
+
 	private static void setupClimber() {
 		Controls.getInstance()
 				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.RELEASE_CLIMBER,
@@ -100,5 +122,25 @@ public final class ControlBindings {
 								Climber.getInstance().release();
 							}
 						});
+	}
+
+
+	///////////////////////////////////////////////////////////////////////////
+	// Vision
+	///////////////////////////////////////////////////////////////////////////
+
+	private static void setupVision() {
+		final VisionSync visionSync = new VisionSync();
+		Controls.getInstance()
+				.registerDigitalCommand(Controller.XboxController, ControlsConfig.CONFIRM_VISION,
+						DigitalType.DigitalPress, () -> new Thread(() -> {
+							try {
+								visionSync.request();
+							} catch (final Exception e) {
+								e.printStackTrace();
+							}
+						}).start())
+				.registerDigitalCommand(Controller.XboxController, ControlsConfig.CONFIRM_VISION,
+						DigitalType.DigitalRelease, () -> new Thread(visionSync::confirm).start());
 	}
 }
