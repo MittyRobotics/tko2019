@@ -1,10 +1,12 @@
 package com.amhsrobotics.tko2019.vision;
 
+import com.amhsrobotics.tko2019.hardware.Switches;
 import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
 import com.amhsrobotics.tko2019.hardware.subsystems.HatchPanel;
 import com.amhsrobotics.tko2019.util.Conversions;
 import com.amhsrobotics.tko2019.vision.sequences.SequencesManager;
 import com.amhsrobotics.tko2019.vision.sequences.cargo.CargoScore;
+import com.amhsrobotics.tko2019.vision.sequences.hatch.HatchRetrieve;
 import com.amhsrobotics.tko2019.vision.sequences.hatch.HatchScore;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -46,7 +48,11 @@ public final class VisionSync {
 	public final synchronized void confirm() {
 		final SequencesManager manager = new SequencesManager();
 		if (cam == CameraDirection.Hatch) {
-			manager.startSequence(new HatchScore());
+			if (Switches.getInstance().hasHatch()) {
+				manager.startSequence(new HatchScore());
+			} else {
+				manager.startSequence(new HatchRetrieve());
+			}
 		} else if (cam == CameraDirection.Cargo) {
 			manager.startSequence(new CargoScore());
 		}
