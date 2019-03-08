@@ -7,6 +7,7 @@ import com.amhsrobotics.tko2019.hardware.subsystems.Cargo;
 import com.amhsrobotics.tko2019.hardware.subsystems.Climber;
 import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
 import com.amhsrobotics.tko2019.hardware.subsystems.HatchPanel;
+import com.amhsrobotics.tko2019.vision.VisionSync;
 import edu.wpi.first.wpilibj.DriverStation;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -17,7 +18,7 @@ public final class ControlBindings {
 		setupCargo();
 		setupHatch();
 		setupClimber();
-//		setupVision();
+		setupVision(); //Don't forget about me!
 	}
 
 
@@ -156,21 +157,21 @@ public final class ControlBindings {
 
 
 	///////////////////////////////////////////////////////////////////////////
-	// Vision
+	// Vision which Nobody Cares About :(
 	///////////////////////////////////////////////////////////////////////////
 
-//	private static void setupVision() {
-//		final VisionSync visionSync = new VisionSync();
-//		Controls.getInstance()
-//				.registerDigitalCommand(Controller.XboxController, ControlsConfig.CONFIRM_VISION,
-//						DigitalType.DigitalPress, () -> new Thread(() -> {
-//							try {
-//								visionSync.request();
-//							} catch (final Exception e) {
-//								e.printStackTrace();
-//							}
-//						}).start())
-//				.registerDigitalCommand(Controller.XboxController, ControlsConfig.CONFIRM_VISION,
-//						DigitalType.DigitalRelease, () -> new Thread(visionSync::confirm).start());
-//	}
+	private static void setupVision() {
+		final VisionSync visionSync = new VisionSync();
+		Controls.getInstance()
+				.registerDigitalCommand(Controller.XboxController, ControlsConfig.CONFIRM_VISION,
+						DigitalType.DigitalPress, () -> new Thread(() -> {
+							try {
+								visionSync.request();
+							} catch (final Exception e) {
+								e.printStackTrace();
+							}
+						}).start())
+				.registerDigitalCommand(Controller.XboxController, ControlsConfig.CONFIRM_VISION,
+						DigitalType.DigitalRelease, () -> new Thread(visionSync::confirm).start());
+	}
 }
