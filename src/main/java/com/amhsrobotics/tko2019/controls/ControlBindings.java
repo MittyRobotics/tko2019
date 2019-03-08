@@ -7,7 +7,6 @@ import com.amhsrobotics.tko2019.hardware.subsystems.Cargo;
 import com.amhsrobotics.tko2019.hardware.subsystems.Climber;
 import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
 import com.amhsrobotics.tko2019.hardware.subsystems.HatchPanel;
-import com.amhsrobotics.tko2019.vision.VisionSync;
 import edu.wpi.first.wpilibj.DriverStation;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -64,9 +63,9 @@ public final class ControlBindings {
 //						HatchPanel.getInstance().grab();
 //					}
 				})
-				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.MANUAL_GRAB_HATCH, DigitalType.DigitalPress, ()->{
+				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.MANUAL_GRAB_HATCH, DigitalType.DigitalPress, () -> {
 //					if(Switches.getInstance().hasHatch()){
-						HatchPanel.getInstance().grab();
+					HatchPanel.getInstance().grab();
 //					} else {
 //						HatchPanel.getInstance().release();
 //					}
@@ -123,7 +122,7 @@ public final class ControlBindings {
 				.registerAnalogCommand(Controller.Joystick2, ControlsConfig.MOVE_ANGLE,
 						AnalogType.InThresholdMinor, value -> Cargo.getInstance().manualConveyor(0))
 				.registerAnalogCommand(Controller.Joystick2, ControlsConfig.MOVE_ANGLE,
-						AnalogType.OutOfThresholdMinor, value -> Cargo.getInstance().manualConveyor(value/2));
+						AnalogType.OutOfThresholdMinor, value -> Cargo.getInstance().manualConveyor(value / 2));
 	}
 
 

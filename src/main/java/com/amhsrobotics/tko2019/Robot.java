@@ -3,13 +3,10 @@ package com.amhsrobotics.tko2019;
 import com.amhsrobotics.tko2019.controls.ControlBindings;
 import com.amhsrobotics.tko2019.controls.Controls;
 import com.amhsrobotics.tko2019.hardware.Compressor;
-import com.amhsrobotics.tko2019.hardware.Gyro;
 import com.amhsrobotics.tko2019.hardware.Switches;
 import com.amhsrobotics.tko2019.hardware.subsystems.Cargo;
-import com.amhsrobotics.tko2019.hardware.subsystems.Climber;
 import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
 import com.amhsrobotics.tko2019.hardware.subsystems.HatchPanel;
-import com.amhsrobotics.tko2019.vision.VisionSync;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -27,7 +24,7 @@ public final class Robot extends SampleRobot {
 		// Init Cameras
 		//CameraServer.getInstance().startAutomaticCapture(0);
 
-	//	CameraServer.getInstance().startAutomaticCapture(1);
+		//	CameraServer.getInstance().startAutomaticCapture(1);
 		final UsbCamera[] CAMERAS = new UsbCamera[3]; //0 is vision
 		CAMERAS[0] = CameraServer.getInstance().startAutomaticCapture("0", 0);
 		CAMERAS[0].setResolution(640, 360);
