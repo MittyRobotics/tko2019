@@ -21,9 +21,9 @@ public final class Drive {
 
 	private final WPI_TalonSRX[] leftTalons = new WPI_TalonSRX[TalonIds.LEFT_DRIVE.length];
 	private final WPI_TalonSRX[] rightTalons = new WPI_TalonSRX[TalonIds.RIGHT_DRIVE.length];
-	private final DoubleSolenoid gearShifter = new DoubleSolenoid(
-			SolenoidIds.DRIVE_SHIFTER[0], SolenoidIds.DRIVE_SHIFTER[1]
-	);
+//	private final DoubleSolenoid gearShifter = new DoubleSolenoid(
+//			SolenoidIds.DRIVE_SHIFTER[0], SolenoidIds.DRIVE_SHIFTER[1]
+//	);
 
 	private volatile boolean reversed = false;
 	private volatile int currentGear = 1;
@@ -206,16 +206,16 @@ public final class Drive {
 		reversed = !reversed;
 	}
 
-	public final synchronized void shiftGear() {
-		switch (currentGear) {
-			case 0:
-				gearShifter.set(DoubleSolenoid.Value.kForward);
-				currentGear = 1;
-				break;
-			case 1:
-				gearShifter.set(DoubleSolenoid.Value.kReverse);
-				currentGear = 0;
-				break;
-		}
-	}
+//	public final synchronized void shiftGear() {
+//		switch (currentGear) {
+//			case 0:
+//				gearShifter.set(DoubleSolenoid.Value.kForward);
+//				currentGear = 1;
+//				break;
+//			case 1:
+//				gearShifter.set(DoubleSolenoid.Value.kReverse);
+//				currentGear = 0;
+//				break;
+//		}
+//	}
 }

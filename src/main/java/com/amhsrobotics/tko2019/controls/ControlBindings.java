@@ -29,8 +29,8 @@ public final class ControlBindings {
 	private static void setupDrive() {
 		Controls.getInstance()
 				// Gear Shifting
-				.registerDigitalCommand(Controller.XboxController, ControlsConfig.GEAR_SWITCH,
-						DigitalType.DigitalPress, () -> Drive.getInstance().shiftGear())
+//				.registerDigitalCommand(Controller.XboxController, ControlsConfig.GEAR_SWITCH,
+//						DigitalType.DigitalPress, () -> Drive.getInstance().shiftGear())
 				// Reversing
 				.registerDigitalCommand(Controller.XboxController, ControlsConfig.REVERSE_DIRECTION,
 						DigitalType.DigitalPress, () -> Drive.getInstance().toggleReverser())
