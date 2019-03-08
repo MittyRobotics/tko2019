@@ -68,32 +68,8 @@ public final class Robot extends SampleRobot {
 
 	@Override
 	public final void test() { // Zero Encoders
+		Compressor.getInstance().start();
 		HatchPanel.getInstance().zeroEncoder();
-//		Cargo.getInstance().zeroEncoder();
-//		while (isEnabled()){
-//			if(Switches.getInstance().hasHatch()){
-//				System.out.println("HERE");
-//			}
-//		}
-//		while (isEnabled()){
-//			if(
-//					Cargo.getInstance().conveyorTalons[0].getSensorCollection().isFwdLimitSwitchClosed()
-//					||
-//					Cargo.getInstance().conveyorTalons[0].getSensorCollection().isRevLimitSwitchClosed()
-//			){
-//				System.out.println("HERE");
-//			}
-//			else {
-//				System.out.println("NOT");
-//			}
-//			try {
-//				Thread.sleep(20);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
-//		}
-//		Drive.getInstance().setLeft(0.5);
-//		Drive.getInstance().setRight(0.5);
 	}
 
 	@Override
