@@ -23,7 +23,7 @@ final class ControlsConfig {
 	static final DigitalInput SLIDE_RIGHT = DigitalInput.Joystick5;
 	static final DigitalInput SLIDE_MIDDLE = DigitalInput.Joystick3;
 	static final DigitalInput CHECK_GRAB_HATCH = DigitalInput.JoystickTrigger;
-//	static final DigitalInput CHECK_SLIDE = DigitalInput.Joystick2;
+	//	static final DigitalInput CHECK_SLIDE = DigitalInput.Joystick2;
 	static final DigitalInput MANUAL_GRAB_HATCH = DigitalInput.Joystick2;
 
 	static final AnalogInput JOYSTICK_SLIDE = AnalogInput.JoystickX;

@@ -18,7 +18,7 @@ public final class ControlBindings {
 		setupCargo();
 		setupHatch();
 		setupClimber();
-//		setupVision();
+		setupVision(); //Don't forget about me!
 	}
 
 
@@ -64,9 +64,9 @@ public final class ControlBindings {
 //						HatchPanel.getInstance().grab();
 //					}
 				})
-				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.MANUAL_GRAB_HATCH, DigitalType.DigitalPress, ()->{
+				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.MANUAL_GRAB_HATCH, DigitalType.DigitalPress, () -> {
 //					if(Switches.getInstance().hasHatch()){
-						HatchPanel.getInstance().grab();
+					HatchPanel.getInstance().grab();
 //					} else {
 //						HatchPanel.getInstance().release();
 //					}
@@ -123,7 +123,7 @@ public final class ControlBindings {
 				.registerAnalogCommand(Controller.Joystick2, ControlsConfig.MOVE_ANGLE,
 						AnalogType.InThresholdMinor, value -> Cargo.getInstance().manualConveyor(0))
 				.registerAnalogCommand(Controller.Joystick2, ControlsConfig.MOVE_ANGLE,
-						AnalogType.OutOfThresholdMinor, value -> Cargo.getInstance().manualConveyor(value/2));
+						AnalogType.OutOfThresholdMinor, value -> Cargo.getInstance().manualConveyor(value / 2));
 	}
 
 
@@ -157,21 +157,21 @@ public final class ControlBindings {
 
 
 	///////////////////////////////////////////////////////////////////////////
-	// Vision
+	// Vision which Nobody Cares About :(
 	///////////////////////////////////////////////////////////////////////////
 
-//	private static void setupVision() {
-//		final VisionSync visionSync = new VisionSync();
-//		Controls.getInstance()
-//				.registerDigitalCommand(Controller.XboxController, ControlsConfig.CONFIRM_VISION,
-//						DigitalType.DigitalPress, () -> new Thread(() -> {
-//							try {
-//								visionSync.request();
-//							} catch (final Exception e) {
-//								e.printStackTrace();
-//							}
-//						}).start())
-//				.registerDigitalCommand(Controller.XboxController, ControlsConfig.CONFIRM_VISION,
-//						DigitalType.DigitalRelease, () -> new Thread(visionSync::confirm).start());
-//	}
+	private static void setupVision() {
+		final VisionSync visionSync = new VisionSync();
+		Controls.getInstance()
+				.registerDigitalCommand(Controller.XboxController, ControlsConfig.CONFIRM_VISION,
+						DigitalType.DigitalPress, () -> new Thread(() -> {
+							try {
+								visionSync.request();
+							} catch (final Exception e) {
+								e.printStackTrace();
+							}
+						}).start())
+				.registerDigitalCommand(Controller.XboxController, ControlsConfig.CONFIRM_VISION,
+						DigitalType.DigitalRelease, () -> new Thread(visionSync::confirm).start());
+	}
 }

@@ -14,12 +14,11 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public final class HatchPanel {
-	private boolean checkSlide = false;
 	private final static HatchPanel INSTANCE = new HatchPanel();
 	public final WPI_TalonSRX slideTalon = new WPI_TalonSRX(TalonIds.SLIDE);
 	private final DoubleSolenoid grabber = new DoubleSolenoid(SolenoidIds.GRABBER[0], SolenoidIds.GRABBER[1]);
 	private final DoubleSolenoid pusher = new DoubleSolenoid(SolenoidIds.PUSH_FORWARD[0], SolenoidIds.PUSH_FORWARD[1]);
-
+	private boolean checkSlide = false;
 	private volatile HatchPosition hatchPosition = HatchPosition.Center;
 
 	private HatchPanel() {
@@ -83,7 +82,7 @@ public final class HatchPanel {
 	}
 
 	public void slideManual(final double value) {
-		if(Math.abs(value) > 0.2){
+		if (Math.abs(value) > 0.2) {
 			slide(slideTalon.getSelectedSensorPosition() / TicksPerInch.SLIDER - 0.8 * value);
 		}
 	}
@@ -91,7 +90,8 @@ public final class HatchPanel {
 	private void slide(double position) {
 		slideTalon.set(ControlMode.Position, (position * TicksPerInch.SLIDER));
 	}
-	public void canSlide(boolean canSlide){
+
+	public void canSlide(boolean canSlide) {
 		checkSlide = canSlide;
 	}
 

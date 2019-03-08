@@ -4,8 +4,6 @@ import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
 import com.amhsrobotics.tko2019.hardware.subsystems.HatchPanel;
 import com.amhsrobotics.tko2019.util.Conversions;
 import com.amhsrobotics.tko2019.vision.sequences.SequencesManager;
-import com.amhsrobotics.tko2019.vision.sequences.cargo.CargoScore;
-import com.amhsrobotics.tko2019.vision.sequences.hatch.HatchScore;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import org.opencv.core.Mat;
@@ -44,11 +42,21 @@ public final class VisionSync {
 	}
 
 	public final synchronized void confirm() {
-		final SequencesManager manager = new SequencesManager();
-		if (cam == CameraDirection.Hatch) {
-			manager.startSequence(new HatchScore());
-		} else if (cam == CameraDirection.Cargo) {
-			manager.startSequence(new CargoScore());
+		final double t1 = NetworkTableInstance.getDefault().getEntry("t1").getDouble(0);
+		if (t1 != 0) {
+			Drive.getInstance().turn(t1);
+		}
+		final double d1 = NetworkTableInstance.getDefault().getEntry("d1").getDouble(0);
+		if (d1 != 0) {
+			Drive.getInstance().moveStraight(d1);
+		}
+		final double t2 = NetworkTableInstance.getDefault().getEntry("t2").getDouble(0);
+		if (t2 != 0) {
+			Drive.getInstance().turn(t2);
+		}
+		final double d2 = NetworkTableInstance.getDefault().getEntry("d2").getDouble(0);
+		if (d2 != 0) {
+			Drive.getInstance().moveStraight(d2);
 		}
 	}
 }

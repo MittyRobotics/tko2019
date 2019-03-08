@@ -9,6 +9,7 @@ public final class Climber {
 	private final DoubleSolenoid climberSolenoid = new DoubleSolenoid(SolenoidIds.CLIMBER[0], SolenoidIds.CLIMBER[1]);
 
 	private Climber() {
+		climberSolenoid.set(DoubleSolenoid.Value.kForward);
 	}
 
 	public static Climber getInstance() {

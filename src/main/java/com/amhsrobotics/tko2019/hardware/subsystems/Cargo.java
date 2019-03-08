@@ -4,22 +4,22 @@ import com.amhsrobotics.tko2019.hardware.Switches;
 import com.amhsrobotics.tko2019.hardware.settings.subsystems.EncoderInversions;
 import com.amhsrobotics.tko2019.hardware.settings.subsystems.NeutralModes;
 import com.amhsrobotics.tko2019.hardware.settings.subsystems.PID;
-import com.amhsrobotics.tko2019.hardware.settings.subsystems.SolenoidIds;
 import com.amhsrobotics.tko2019.hardware.settings.subsystems.TalonIds;
 import com.amhsrobotics.tko2019.hardware.settings.subsystems.TalonInversions;
 import com.amhsrobotics.tko2019.hardware.settings.subsystems.cargo.IntakeHeights;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public final class Cargo {
 	private static final Cargo INSTANCE = new Cargo();
 
+	private final WPI_TalonSRX[] conveyorTalons = new WPI_TalonSRX[TalonIds.CONVEYOR.length];
 	private final WPI_TalonSRX[] intakeTalons = new WPI_TalonSRX[TalonIds.INTAKE.length];
-	public final WPI_TalonSRX[] conveyorTalons = new WPI_TalonSRX[TalonIds.CONVEYOR.length];
-//	private final DoubleSolenoid holdIntake = new DoubleSolenoid(SolenoidIds.HOLD_INTAKE[0], SolenoidIds.HOLD_INTAKE[1]);
+
+	//	private final DoubleSolenoid holdIntake = new DoubleSolenoid(SolenoidIds.HOLD_INTAKE[0], SolenoidIds.HOLD_INTAKE[1]);
 	private boolean intakeLocked = true;
+
 	private Cargo() {
 		// Intake Talons
 		for (int i = 0; i < TalonIds.INTAKE.length; i++) {

@@ -95,5 +95,7 @@ public abstract class Sequence extends Thread {
 		}
 	}
 
-	protected abstract boolean shouldContinue();
+	protected boolean shouldContinue() {
+		return true;
+	}
 }
