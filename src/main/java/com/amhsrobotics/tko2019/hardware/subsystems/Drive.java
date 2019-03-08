@@ -25,7 +25,7 @@ public final class Drive {
 			SolenoidIds.DRIVE_SHIFTER[0], SolenoidIds.DRIVE_SHIFTER[1]
 	);
 
-	private volatile boolean reversed = true;
+	private volatile boolean reversed = false;
 	private volatile int currentGear = 1;
 
 	private Drive() {
@@ -94,7 +94,7 @@ public final class Drive {
 		if (!reversed) {
 			setLeft(ControlMode.PercentOutput, value);
 		} else {
-			setLeft(ControlMode.PercentOutput, -value);
+			setRight(ControlMode.PercentOutput, -value);
 		}
 	}
 
@@ -106,7 +106,7 @@ public final class Drive {
 		if (!reversed) {
 			setRight(ControlMode.PercentOutput, value);
 		} else {
-			setRight(ControlMode.PercentOutput, -value);
+			setLeft(ControlMode.PercentOutput, -value);
 		}
 	}
 

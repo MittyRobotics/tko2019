@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 public final class HatchPanel {
 	private boolean checkSlide = false;
 	private final static HatchPanel INSTANCE = new HatchPanel();
-	private final WPI_TalonSRX slideTalon = new WPI_TalonSRX(TalonIds.SLIDE);
+	public final WPI_TalonSRX slideTalon = new WPI_TalonSRX(TalonIds.SLIDE);
 	private final DoubleSolenoid grabber = new DoubleSolenoid(SolenoidIds.GRABBER[0], SolenoidIds.GRABBER[1]);
 	private final DoubleSolenoid pusher = new DoubleSolenoid(SolenoidIds.PUSH_FORWARD[0], SolenoidIds.PUSH_FORWARD[1]);
 
@@ -55,11 +55,11 @@ public final class HatchPanel {
 	}
 
 	public final void forward() {
-		pusher.set(DoubleSolenoid.Value.kForward);
+		pusher.set(DoubleSolenoid.Value.kReverse);
 	}
 
 	public final void back() {
-		pusher.set(DoubleSolenoid.Value.kReverse);
+		pusher.set(DoubleSolenoid.Value.kForward);
 	}
 
 
@@ -83,8 +83,8 @@ public final class HatchPanel {
 	}
 
 	public void slideManual(final double value) {
-		if(checkSlide){
-			slide(slideTalon.getSelectedSensorPosition() / TicksPerInch.SLIDER - 0.5 * value);
+		if(Math.abs(value) > 0.2){
+			slide(slideTalon.getSelectedSensorPosition() / TicksPerInch.SLIDER - 0.8 * value);
 		}
 	}
 

@@ -15,4 +15,7 @@ public class SolenoidIds {
 
 	public static final int[] PUSH_FORWARD = {2, 3};
 	public static final int[] GRABBER = {4, 5};
+
+	//Cargo
+	public static final int[] HOLD_INTAKE = {8, 9};
 }

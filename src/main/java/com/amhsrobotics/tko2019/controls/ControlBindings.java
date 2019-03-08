@@ -10,13 +10,15 @@ import com.amhsrobotics.tko2019.hardware.subsystems.HatchPanel;
 import com.amhsrobotics.tko2019.vision.VisionSync;
 import edu.wpi.first.wpilibj.DriverStation;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public final class ControlBindings {
 	public static void setupControls() {
 		setupDrive();
 		setupCargo();
 		setupHatch();
 		setupClimber();
-		setupVision();
+//		setupVision();
 	}
 
 
@@ -52,25 +54,35 @@ public final class ControlBindings {
 	private static void setupHatch() {
 		Controls.getInstance()
 				// Hatch
-				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.CHECK_GRAB_HATCH, DigitalType.DigitalPress, () -> {
+				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.CHECK_GRAB_HATCH, DigitalType.DigitalHold, () -> {
+//					HatchPanel.getInstance().forward();
 					if (Switches.getInstance().hasHatch()) {
-						HatchPanel.getInstance().grab();
-					} else {
 						HatchPanel.getInstance().release();
+//						HatchPanel.getInstance().forward();
 					}
+//					else {
+//						HatchPanel.getInstance().grab();
+//					}
+				})
+				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.MANUAL_GRAB_HATCH, DigitalType.DigitalPress, ()->{
+//					if(Switches.getInstance().hasHatch()){
+						HatchPanel.getInstance().grab();
+//					} else {
+//						HatchPanel.getInstance().release();
+//					}
 				})
 				// PID Setpoint Slider Movement
 				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.SLIDE_MIDDLE,
 						DigitalType.DigitalPress, () -> HatchPanel.getInstance().slideMiddle())
-				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.SLIDE_LEFT,
-						DigitalType.DigitalPress, () -> HatchPanel.getInstance().slideLeft())
 				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.SLIDE_RIGHT,
+						DigitalType.DigitalPress, () -> HatchPanel.getInstance().slideLeft())
+				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.SLIDE_LEFT,
 						DigitalType.DigitalPress, () -> HatchPanel.getInstance().slideRight())
 				// Manual PID Setpoint Slider Movement
-				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.CHECK_SLIDE,
-						DigitalType.DigitalPress, () -> HatchPanel.getInstance().canSlide(true))
-				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.CHECK_SLIDE,
-						DigitalType.DigitalRelease, () -> HatchPanel.getInstance().canSlide(false))
+//				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.CHECK_SLIDE,
+//						DigitalType.DigitalPress, () -> HatchPanel.getInstance().canSlide(true))
+//				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.CHECK_SLIDE,
+//						DigitalType.DigitalRelease, () -> HatchPanel.getInstance().canSlide(false))
 				.registerAnalogCommand(Controller.Joystick1, ControlsConfig.JOYSTICK_SLIDE,
 						AnalogType.OutOfThresholdMinor, value -> HatchPanel.getInstance().slideManual(value))
 				.registerAnalogCommand(Controller.Joystick1, ControlsConfig.PUSH_HATCH_MECHANISM, AnalogType.OutOfThresholdMajor, value -> {
@@ -98,16 +110,20 @@ public final class ControlBindings {
 						DigitalType.DigitalHold, () -> Cargo.getInstance().spinOuttake())
 				.registerDigitalCommand(Controller.Joystick2, ControlsConfig.SPIN_OUTTAKE,
 						DigitalType.DigitalRelease, () -> Cargo.getInstance().stopIntake())
+//				.registerDigitalCommand(Controller.Joystick2, ControlsConfig.LOCK_CARGO,
+//						DigitalType.DigitalPress, () -> Cargo.getInstance().holdIntake())
 				// Cargo Heights
-				.registerDigitalCommand(Controller.Joystick2, ControlsConfig.CARGO_HEIGHT,
-						DigitalType.DigitalPress, () -> Cargo.getInstance().cargoConveyor())
-				.registerDigitalCommand(Controller.Joystick2, ControlsConfig.ROCKET_HEIGHT,
-						DigitalType.DigitalPress, () -> Cargo.getInstance().rocketConveyor())
-				.registerDigitalCommand(Controller.Joystick2, ControlsConfig.GROUND_HEIGHT,
-						DigitalType.DigitalPress, () -> Cargo.getInstance().groundConveyor())
+//				.registerDigitalCommand(Controller.Joystick2, ControlsConfig.CARGO_HEIGHT,
+//						DigitalType.DigitalPress, () -> Cargo.getInstance().cargoConveyor())
+//				.registerDigitalCommand(Controller.Joystick2, ControlsConfig.ROCKET_HEIGHT,
+//						DigitalType.DigitalPress, () -> Cargo.getInstance().rocketConveyor())
+//				.registerDigitalCommand(Controller.Joystick2, ControlsConfig.GROUND_HEIGHT,
+//						DigitalType.DigitalPress, () -> Cargo.getInstance().groundConveyor())
 				// Manual Cargo Height
 				.registerAnalogCommand(Controller.Joystick2, ControlsConfig.MOVE_ANGLE,
-						AnalogType.OutOfThresholdMinor, value -> Cargo.getInstance().manualConveyor(value));
+						AnalogType.InThresholdMinor, value -> Cargo.getInstance().manualConveyor(0))
+				.registerAnalogCommand(Controller.Joystick2, ControlsConfig.MOVE_ANGLE,
+						AnalogType.OutOfThresholdMinor, value -> Cargo.getInstance().manualConveyor(value/2));
 	}
 
 
@@ -116,10 +132,13 @@ public final class ControlBindings {
 	///////////////////////////////////////////////////////////////////////////
 
 	private static void setupClimber() {
+		AtomicBoolean elevenPressed = new AtomicBoolean(false);
 		Controls.getInstance()
-				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.RELEASE_CLIMBER,
+				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.RELEASE_CLIMBER_10,
 						DigitalType.DigitalPress, () -> {
-							if (DriverStation.getInstance().getMatchTime() < 30 && DriverStation.getInstance().isOperatorControl()) {
+							if (
+//									DriverStation.getInstance().getMatchTime() < 30 &&
+									DriverStation.getInstance().isOperatorControl()) {
 								HatchPanel.getInstance().slideMiddle();
 								HatchPanel.getInstance().forward();
 								try {
@@ -129,7 +148,11 @@ public final class ControlBindings {
 								}
 								Climber.getInstance().release();
 							}
-						});
+						})
+				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.RELEASE_CLIMBER_11,
+						DigitalType.DigitalPress, () -> elevenPressed.set(true))
+				.registerDigitalCommand(Controller.Joystick2, ControlsConfig.RELEASE_CLIMBER_11,
+						DigitalType.DigitalRelease, () -> elevenPressed.set(false));
 	}
 
 
@@ -137,18 +160,18 @@ public final class ControlBindings {
 	// Vision
 	///////////////////////////////////////////////////////////////////////////
 
-	private static void setupVision() {
-		final VisionSync visionSync = new VisionSync();
-		Controls.getInstance()
-				.registerDigitalCommand(Controller.XboxController, ControlsConfig.CONFIRM_VISION,
-						DigitalType.DigitalPress, () -> new Thread(() -> {
-							try {
-								visionSync.request();
-							} catch (final Exception e) {
-								e.printStackTrace();
-							}
-						}).start())
-				.registerDigitalCommand(Controller.XboxController, ControlsConfig.CONFIRM_VISION,
-						DigitalType.DigitalRelease, () -> new Thread(visionSync::confirm).start());
-	}
+//	private static void setupVision() {
+//		final VisionSync visionSync = new VisionSync();
+//		Controls.getInstance()
+//				.registerDigitalCommand(Controller.XboxController, ControlsConfig.CONFIRM_VISION,
+//						DigitalType.DigitalPress, () -> new Thread(() -> {
+//							try {
+//								visionSync.request();
+//							} catch (final Exception e) {
+//								e.printStackTrace();
+//							}
+//						}).start())
+//				.registerDigitalCommand(Controller.XboxController, ControlsConfig.CONFIRM_VISION,
+//						DigitalType.DigitalRelease, () -> new Thread(visionSync::confirm).start());
+//	}
 }

@@ -25,19 +25,25 @@ public final class Robot extends SampleRobot {
 	@Override
 	protected final void robotInit() {
 		// Init Cameras
-		final UsbCamera[] CAMERAS = new UsbCamera[4];
-		CAMERAS[0] = CameraServer.getInstance().startAutomaticCapture("0", 0);
-		CAMERAS[1] = CameraServer.getInstance().startAutomaticCapture("1", 1);
-		CAMERAS[2] = CameraServer.getInstance().startAutomaticCapture("2", 2);
-		CAMERAS[3] = CameraServer.getInstance().startAutomaticCapture("3", 3);
+		//CameraServer.getInstance().startAutomaticCapture(0);
 
-		CAMERAS[2].setBrightness(-100);
-		CAMERAS[2].setExposureManual(-100);
+	//	CameraServer.getInstance().startAutomaticCapture(1);
+		final UsbCamera[] CAMERAS = new UsbCamera[3]; //0 is vision
+		CAMERAS[0] = CameraServer.getInstance().startAutomaticCapture("0", 0);
+		CAMERAS[0].setResolution(640, 360);
+		CAMERAS[1] = CameraServer.getInstance().startAutomaticCapture("1", 1);
+		CAMERAS[1].setResolution(640, 360);
+		CAMERAS[2] = CameraServer.getInstance().startAutomaticCapture("2", 2);
+
+		CAMERAS[0].setBrightness(0);
+		CAMERAS[0].setExposureManual(0);
+		CAMERAS[2].setBrightness(50);
+		CAMERAS[2].setExposureManual(50);
 		CAMERAS[2].setResolution(640, 360);
 
 
 		// Init Hardware
-		Gyro.getInstance();
+//		Gyro.getInstance();
 		Switches.getInstance();
 
 		Compressor.getInstance();
@@ -45,7 +51,7 @@ public final class Robot extends SampleRobot {
 		Drive.getInstance();
 		HatchPanel.getInstance();
 		Cargo.getInstance();
-		Climber.getInstance();
+//		Climber.getInstance();
 
 
 		// Init Controls
@@ -60,13 +66,37 @@ public final class Robot extends SampleRobot {
 	@Override
 	public final void operatorControl() {
 		enabled();
-		VisionSync.SEQUENCES_MANAGER.continueSequence();
+//		VisionSync.SEQUENCES_MANAGER.continueSequence();
 	}
 
 	@Override
 	public final void test() { // Zero Encoders
 		HatchPanel.getInstance().zeroEncoder();
-		Cargo.getInstance().zeroEncoder();
+//		Cargo.getInstance().zeroEncoder();
+//		while (isEnabled()){
+//			if(Switches.getInstance().hasHatch()){
+//				System.out.println("HERE");
+//			}
+//		}
+//		while (isEnabled()){
+//			if(
+//					Cargo.getInstance().conveyorTalons[0].getSensorCollection().isFwdLimitSwitchClosed()
+//					||
+//					Cargo.getInstance().conveyorTalons[0].getSensorCollection().isRevLimitSwitchClosed()
+//			){
+//				System.out.println("HERE");
+//			}
+//			else {
+//				System.out.println("NOT");
+//			}
+//			try {
+//				Thread.sleep(20);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		Drive.getInstance().setLeft(0.5);
+//		Drive.getInstance().setRight(0.5);
 	}
 
 	@Override
