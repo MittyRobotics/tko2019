@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.PIDController;
 public final class Drive {
 	private static final Drive INSTANCE = new Drive();
 
-	private final WPI_TalonSRX[] leftTalons = new WPI_TalonSRX[TalonIds.LEFT_DRIVE.length];
+	public final WPI_TalonSRX[] leftTalons = new WPI_TalonSRX[TalonIds.LEFT_DRIVE.length];
 	private final WPI_TalonSRX[] rightTalons = new WPI_TalonSRX[TalonIds.RIGHT_DRIVE.length];
 //	private final DoubleSolenoid gearShifter = new DoubleSolenoid(
 //			SolenoidIds.DRIVE_SHIFTER[0], SolenoidIds.DRIVE_SHIFTER[1]

@@ -69,8 +69,18 @@ public final class Robot extends SampleRobot {
 
 	@Override
 	public final void test() { // Zero Encoders
-		Compressor.getInstance().start();
-		HatchPanel.getInstance().zeroEncoder();
+//		Compressor.getInstance().start();
+//		HatchPanel.getInstance().zeroEncoder();
+//		Drive.getInstance().moveStraight(24);
+		enabled();
+		while (isEnabled()){
+			System.out.println(Drive.getInstance().leftTalons[0].getSelectedSensorPosition());
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
