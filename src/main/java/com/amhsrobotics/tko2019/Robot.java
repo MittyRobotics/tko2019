@@ -5,6 +5,7 @@ import com.amhsrobotics.tko2019.controls.Controls;
 import com.amhsrobotics.tko2019.hardware.Compressor;
 import com.amhsrobotics.tko2019.hardware.Switches;
 import com.amhsrobotics.tko2019.hardware.subsystems.Cargo;
+import com.amhsrobotics.tko2019.hardware.subsystems.Climber;
 import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
 import com.amhsrobotics.tko2019.hardware.subsystems.HatchPanel;
 import edu.wpi.cscore.UsbCamera;
@@ -48,7 +49,7 @@ public final class Robot extends SampleRobot {
 		Drive.getInstance();
 		HatchPanel.getInstance();
 		Cargo.getInstance();
-//		Climber.getInstance();
+		Climber.getInstance();
 
 
 		// Init Controls
