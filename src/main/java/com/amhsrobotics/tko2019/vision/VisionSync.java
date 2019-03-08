@@ -1,13 +1,10 @@
 package com.amhsrobotics.tko2019.vision;
 
-import com.amhsrobotics.tko2019.hardware.Switches;
 import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
 import com.amhsrobotics.tko2019.hardware.subsystems.HatchPanel;
 import com.amhsrobotics.tko2019.util.Conversions;
 import com.amhsrobotics.tko2019.vision.sequences.SequencesManager;
-import com.amhsrobotics.tko2019.vision.sequences.cargo.CargoScore;
-import com.amhsrobotics.tko2019.vision.sequences.hatch.HatchRetrieve;
-import com.amhsrobotics.tko2019.vision.sequences.hatch.HatchScore;
+import com.amhsrobotics.tko2019.vision.sequences.drive.DriveSequence;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import org.opencv.core.Mat;
@@ -47,14 +44,6 @@ public final class VisionSync {
 
 	public final synchronized void confirm() {
 		final SequencesManager manager = new SequencesManager();
-		if (cam == CameraDirection.Hatch) {
-			if (Switches.getInstance().hasHatch()) {
-				manager.startSequence(new HatchScore());
-			} else {
-				manager.startSequence(new HatchRetrieve());
-			}
-		} else if (cam == CameraDirection.Cargo) {
-			manager.startSequence(new CargoScore());
-		}
+		manager.startSequence(new DriveSequence());
 	}
 }
