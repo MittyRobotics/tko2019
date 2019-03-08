@@ -4,6 +4,7 @@ import com.amhsrobotics.tko2019.controls.ControlBindings;
 import com.amhsrobotics.tko2019.controls.Controls;
 import com.amhsrobotics.tko2019.hardware.Compressor;
 import com.amhsrobotics.tko2019.hardware.Switches;
+import com.amhsrobotics.tko2019.hardware.settings.subsystems.TalonIds;
 import com.amhsrobotics.tko2019.hardware.subsystems.Cargo;
 import com.amhsrobotics.tko2019.hardware.subsystems.Climber;
 import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
@@ -63,24 +64,34 @@ public final class Robot extends SampleRobot {
 
 	@Override
 	public final void operatorControl() {
+		Climber.getInstance().push();
 		enabled();
+//		while (isEnabled()){
+//			System.out.println("L: " + Drive.getInstance().leftTalons[0].getSelectedSensorVelocity());
+//			System.out.println("R: " + Drive.getInstance().rightTalons[0].getSelectedSensorVelocity());
+//			try {
+//				Thread.sleep(10);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+//		}
 //		VisionSync.SEQUENCES_MANAGER.continueSequence();
 	}
 
 	@Override
 	public final void test() { // Zero Encoders
-//		Compressor.getInstance().start();
-//		HatchPanel.getInstance().zeroEncoder();
-//		Drive.getInstance().moveStraight(24);
-		enabled();
-		while (isEnabled()){
-			System.out.println(Drive.getInstance().leftTalons[0].getSelectedSensorPosition());
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+		Compressor.getInstance().start();
+		HatchPanel.getInstance().zeroEncoder();
+//		Drive.getInstance().moveStraight(-12);
+//		enabled();
+//		while (isEnabled()){
+//			System.out.println(Drive.getInstance().leftTalons[0].getSelectedSensorPosition());
+//			try {
+//				Thread.sleep(10);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+//		}
 	}
 
 	@Override

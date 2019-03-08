@@ -20,7 +20,7 @@ public final class Drive {
 	private static final Drive INSTANCE = new Drive();
 
 	public final WPI_TalonSRX[] leftTalons = new WPI_TalonSRX[TalonIds.LEFT_DRIVE.length];
-	private final WPI_TalonSRX[] rightTalons = new WPI_TalonSRX[TalonIds.RIGHT_DRIVE.length];
+	public final WPI_TalonSRX[] rightTalons = new WPI_TalonSRX[TalonIds.RIGHT_DRIVE.length];
 //	private final DoubleSolenoid gearShifter = new DoubleSolenoid(
 //			SolenoidIds.DRIVE_SHIFTER[0], SolenoidIds.DRIVE_SHIFTER[1]
 //	);
@@ -43,7 +43,7 @@ public final class Drive {
 				talon.config_kI(0, PID.DRIVE[1]);
 				talon.config_kD(0, PID.DRIVE[2]);
 			} else {
-				talon.follow(leftTalons[0]);
+				talon.set(ControlMode.Follower, TalonIds.LEFT_DRIVE[0]);
 			}
 			leftTalons[i] = talon;
 		}
@@ -62,7 +62,7 @@ public final class Drive {
 				talon.config_kI(0, PID.DRIVE[1]);
 				talon.config_kD(0, PID.DRIVE[2]);
 			} else {
-				talon.follow(rightTalons[0]);
+				talon.set(ControlMode.Follower, TalonIds.RIGHT_DRIVE[0]);
 			}
 			rightTalons[i] = talon;
 		}
@@ -124,6 +124,8 @@ public final class Drive {
 
 	public final void moveStraight(final double inches, final double waitTime) {
 		// Calculate Threshold
+
+		final double startAngle = Gyro.getInstance().getAngle();
 		final double threshold = 0.25 * 160;
 
 		// Start PID Loop
@@ -139,6 +141,7 @@ public final class Drive {
 				e.printStackTrace();
 			}
 		}
+		turn(Gyro.getInstance().getAngle() - startAngle);
 
 		// End PID Control
 		setLeft(0);

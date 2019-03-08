@@ -8,8 +8,8 @@ public class NeutralModes {
 
 	//Cargo
 	public static final NeutralMode INTAKE = NeutralMode.Coast;
-	public static final NeutralMode CONVEYOR = NeutralMode.Brake;
+	public static final NeutralMode CONVEYOR = NeutralMode.Coast;
 
 	//Hatch Panel
-	public static final NeutralMode SLIDER = NeutralMode.Brake;
+	public static final NeutralMode SLIDER = NeutralMode.Coast;
 }

@@ -19,4 +19,7 @@ public final class Climber {
 	public final void release() {
 		climberSolenoid.set(DoubleSolenoid.Value.kReverse);
 	}
+	public void push(){
+		climberSolenoid.set(DoubleSolenoid.Value.kForward);
+	}
 }
