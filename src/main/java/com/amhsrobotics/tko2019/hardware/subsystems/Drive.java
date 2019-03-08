@@ -4,7 +4,6 @@ import com.amhsrobotics.tko2019.hardware.Gyro;
 import com.amhsrobotics.tko2019.hardware.settings.subsystems.EncoderInversions;
 import com.amhsrobotics.tko2019.hardware.settings.subsystems.NeutralModes;
 import com.amhsrobotics.tko2019.hardware.settings.subsystems.PID;
-import com.amhsrobotics.tko2019.hardware.settings.subsystems.SolenoidIds;
 import com.amhsrobotics.tko2019.hardware.settings.subsystems.TalonIds;
 import com.amhsrobotics.tko2019.hardware.settings.subsystems.TalonInversions;
 import com.amhsrobotics.tko2019.hardware.settings.subsystems.TicksPerInch;
@@ -12,7 +11,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PIDController;
 
@@ -123,29 +121,19 @@ public final class Drive {
 	}
 
 	public final void moveStraight(final double inches, final double waitTime) {
-		// Calculate Threshold
+		final double threshold = 100;
 
-		final double startAngle = Gyro.getInstance().getAngle();
-		final double threshold = 0.25 * 160;
+		final double setpoint = leftTalons[0].getSelectedSensorPosition() + inches * TicksPerInch.DRIVE[currentGear];
 
-		// Start PID Loop
-		setRight(ControlMode.Follower, leftTalons[0].getDeviceID());
-		setLeft(ControlMode.Position,
-				leftTalons[0].getSelectedSensorPosition() - inches * TicksPerInch.DRIVE[currentGear]);
+		final PIDController pidTurn = new PIDController(1, 0, 0, Gyro.getInstance(), leftTalons[0]);
+
 		final long startingTime = System.currentTimeMillis();
 		while (DriverStation.getInstance().isEnabled() && System.currentTimeMillis() - startingTime > waitTime
-				&& Math.abs(leftTalons[0].getClosedLoopError()) > threshold) {
-			try {
-				Thread.sleep(5);
-			} catch (final InterruptedException e) {
-				e.printStackTrace();
-			}
+				&& Math.abs(setpoint - leftTalons[0].getSelectedSensorPosition()) > threshold) {
+			setLeft(0.2 + pidTurn.get());
+			setRight(0.2 + pidTurn.get());
 		}
-		turn(Gyro.getInstance().getAngle() - startAngle);
-
-		// End PID Control
-		setLeft(0);
-		setRight(0);
+		set(0);
 	}
 
 	public final synchronized void turn(final double degrees) {
