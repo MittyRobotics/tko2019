@@ -40,9 +40,10 @@ public final class Drive {
 				talon.config_kP(0, PID.DRIVE[0]);
 				talon.config_kI(0, PID.DRIVE[1]);
 				talon.config_kD(0, PID.DRIVE[2]);
-			} else {
-				talon.set(ControlMode.Follower, TalonIds.LEFT_DRIVE[0]);
 			}
+// 			else {
+//				talon.set(ControlMode.Follower, TalonIds.LEFT_DRIVE[0]);
+//			}
 			leftTalons[i] = talon;
 		}
 
@@ -59,9 +60,10 @@ public final class Drive {
 				talon.config_kP(0, PID.DRIVE[0]);
 				talon.config_kI(0, PID.DRIVE[1]);
 				talon.config_kD(0, PID.DRIVE[2]);
-			} else {
-				talon.set(ControlMode.Follower, TalonIds.RIGHT_DRIVE[0]);
 			}
+//			else {
+//				talon.set(ControlMode.Follower, TalonIds.RIGHT_DRIVE[0]);
+//			}
 			rightTalons[i] = talon;
 		}
 	}
@@ -98,6 +100,7 @@ public final class Drive {
 
 	public final void setLeft(final ControlMode controlMode, final double value) {
 		leftTalons[0].set(controlMode, value);
+		leftTalons[1].set(controlMode, value);
 	}
 
 	public final void setRight(final double value) {
@@ -110,6 +113,7 @@ public final class Drive {
 
 	public final void setRight(final ControlMode controlMode, final double value) {
 		rightTalons[0].set(controlMode, value);
+		rightTalons[1].set(controlMode, value);
 	}
 
 	///////////////////////////////////////////////////////////////////////////

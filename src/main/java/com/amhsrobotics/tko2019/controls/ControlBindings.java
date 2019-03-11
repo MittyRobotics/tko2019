@@ -17,7 +17,7 @@ public final class ControlBindings {
 		setupDrive();
 		setupCargo();
 		setupHatch();
-		setupClimber();
+//		setupClimber();
 		setupVision(); //Don't forget about me!
 	}
 
@@ -36,12 +36,20 @@ public final class ControlBindings {
 						DigitalType.DigitalPress, () -> Drive.getInstance().toggleReverser())
 				// Left Wheels
 				.registerAnalogCommand(Controller.XboxController, ControlsConfig.LEFT_WHEELS,
-						AnalogType.OutOfThresholdMinor, value -> Drive.getInstance().setLeft(value))
+						AnalogType.OutOfThresholdMinor, value -> {
+					Drive.getInstance().setLeft(value);
+					//System.out.println("L Desired: " + value);
+					//System.out.println("R Output: " + Drive.getInstance().leftTalons[0].getMotorOutputPercent());
+						})
 				.registerAnalogCommand(Controller.XboxController, ControlsConfig.LEFT_WHEELS,
 						AnalogType.InThresholdMinor, value -> Drive.getInstance().setLeft(0))
 				// Right Wheels
 				.registerAnalogCommand(Controller.XboxController, ControlsConfig.RIGHT_WHEELS,
-						AnalogType.OutOfThresholdMinor, value -> Drive.getInstance().setRight(value))
+						AnalogType.OutOfThresholdMinor, value -> {
+					Drive.getInstance().setRight(value);
+					//System.out.println("R: Desired: " + value);
+					//System.out.println("R: Output: " + Drive.getInstance().rightTalons[0].getMotorOutputPercent());
+						})
 				.registerAnalogCommand(Controller.XboxController, ControlsConfig.RIGHT_WHEELS,
 						AnalogType.InThresholdMinor, value -> Drive.getInstance().setRight(0));
 	}
@@ -56,10 +64,10 @@ public final class ControlBindings {
 				// Hatch
 				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.CHECK_GRAB_HATCH, DigitalType.DigitalHold, () -> {
 //					HatchPanel.getInstance().forward();
-					if (Switches.getInstance().hasHatch()) {
+//					if (Switches.getInstance().hasHatch()) {
 						HatchPanel.getInstance().release();
 //						HatchPanel.getInstance().forward();
-					}
+//					}
 //					else {
 //						HatchPanel.getInstance().grab();
 //					}
@@ -110,20 +118,16 @@ public final class ControlBindings {
 						DigitalType.DigitalHold, () -> Cargo.getInstance().spinOuttake())
 				.registerDigitalCommand(Controller.Joystick2, ControlsConfig.SPIN_OUTTAKE,
 						DigitalType.DigitalRelease, () -> Cargo.getInstance().stopIntake())
-//				.registerDigitalCommand(Controller.Joystick2, ControlsConfig.LOCK_CARGO,
-//						DigitalType.DigitalPress, () -> Cargo.getInstance().holdIntake())
-				// Cargo Heights
-//				.registerDigitalCommand(Controller.Joystick2, ControlsConfig.CARGO_HEIGHT,
-//						DigitalType.DigitalPress, () -> Cargo.getInstance().cargoConveyor())
-//				.registerDigitalCommand(Controller.Joystick2, ControlsConfig.ROCKET_HEIGHT,
-//						DigitalType.DigitalPress, () -> Cargo.getInstance().rocketConveyor())
-//				.registerDigitalCommand(Controller.Joystick2, ControlsConfig.GROUND_HEIGHT,
-//						DigitalType.DigitalPress, () -> Cargo.getInstance().groundConveyor())
+//				 Cargo Heights
+				.registerDigitalCommand(Controller.Joystick2, ControlsConfig.CARGO_HEIGHT,
+						DigitalType.DigitalPress, () -> Cargo.getInstance().cargoConveyor())
+				.registerDigitalCommand(Controller.Joystick2, ControlsConfig.ROCKET_HEIGHT,
+						DigitalType.DigitalPress, () -> Cargo.getInstance().rocketConveyor())
+				.registerDigitalCommand(Controller.Joystick2, ControlsConfig.GROUND_HEIGHT,
+						DigitalType.DigitalPress, () -> Cargo.getInstance().groundConveyor())
 				// Manual Cargo Height
 				.registerAnalogCommand(Controller.Joystick2, ControlsConfig.MOVE_ANGLE,
-						AnalogType.InThresholdMinor, value -> Cargo.getInstance().manualConveyor(0))
-				.registerAnalogCommand(Controller.Joystick2, ControlsConfig.MOVE_ANGLE,
-						AnalogType.OutOfThresholdMinor, value -> Cargo.getInstance().manualConveyor(value / 2));
+						AnalogType.OutOfThresholdMinor, value -> Cargo.getInstance().moveConveyor(Cargo.getInstance().conveyorTalons[0].getSelectedSensorPosition() - value * 1000));
 	}
 
 

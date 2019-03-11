@@ -10,11 +10,12 @@ import com.amhsrobotics.tko2019.hardware.settings.subsystems.cargo.IntakeHeights
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.DriverStation;
 
 public final class Cargo {
 	private static final Cargo INSTANCE = new Cargo();
 
-	private final WPI_TalonSRX[] conveyorTalons = new WPI_TalonSRX[TalonIds.CONVEYOR.length];
+	public final WPI_TalonSRX[] conveyorTalons = new WPI_TalonSRX[TalonIds.CONVEYOR.length];
 	private final WPI_TalonSRX[] intakeTalons = new WPI_TalonSRX[TalonIds.INTAKE.length];
 
 	//	private final DoubleSolenoid holdIntake = new DoubleSolenoid(SolenoidIds.HOLD_INTAKE[0], SolenoidIds.HOLD_INTAKE[1]);
@@ -35,6 +36,7 @@ public final class Cargo {
 			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.CONVEYOR[i]);
 			talon.configFactoryDefault();
 			talon.setInverted(TalonInversions.CONVEYOR[i]);
+			talon.configClosedLoopPeakOutput(0, 0.35);
 			if (i == 0) {
 				talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
 				talon.setSensorPhase(EncoderInversions.CONVEYOR_ENCODER);
@@ -43,7 +45,7 @@ public final class Cargo {
 				talon.config_kI(0, PID.CARGO[1]);
 				talon.config_kD(0, PID.CARGO[2]);
 			} else {
-				talon.follow(conveyorTalons[0]);
+				talon.set(ControlMode.Follower, conveyorTalons[0].getDeviceID());
 			}
 			conveyorTalons[i] = talon;
 		}
@@ -60,8 +62,8 @@ public final class Cargo {
 
 	public final void spinIntake() {
 		if (!Switches.getInstance().hasCargo()) {
-			intakeTalons[0].set(ControlMode.PercentOutput, 0.6);
-			intakeTalons[1].set(ControlMode.PercentOutput, 0.6);
+			intakeTalons[0].set(ControlMode.PercentOutput, 0.8);
+			intakeTalons[1].set(ControlMode.PercentOutput, 0.8);
 		} else {
 //			visionConveyor();
 			stopIntake();
@@ -69,8 +71,8 @@ public final class Cargo {
 	}
 
 	public final void spinOuttake() {
-		intakeTalons[0].set(ControlMode.PercentOutput, -0.6);
-		intakeTalons[1].set(ControlMode.PercentOutput, -0.6);
+		intakeTalons[0].set(ControlMode.PercentOutput, -0.8);
+		intakeTalons[1].set(ControlMode.PercentOutput, 0.3);
 	}
 
 	public final void stopIntake() {
@@ -117,7 +119,7 @@ public final class Cargo {
 		conveyorTalons[0].set(ControlMode.PercentOutput, value);
 	}
 
-	private void moveConveyor(final double neededPos) { // In negative ticks (more negative moving up) FIXME wtf? just invert the sensor and the output???
+	public void moveConveyor(final double neededPos) { // In negative ticks (more negative moving up) FIXME wtf? just invert the sensor and the output???
 		conveyorTalons[0].set(ControlMode.Position, neededPos);
 	}
 
@@ -127,8 +129,8 @@ public final class Cargo {
 	///////////////////////////////////////////////////////////////////////////
 
 	public final void zeroEncoder() {
-		conveyorTalons[0].set(ControlMode.PercentOutput, 0.1);
-		while (!conveyorTalons[0].getSensorCollection().isFwdLimitSwitchClosed()) {
+		conveyorTalons[0].set(ControlMode.PercentOutput, -0.3);
+		while (!conveyorTalons[0].getSensorCollection().isRevLimitSwitchClosed()) {
 			System.out.println(conveyorTalons[0].getSelectedSensorPosition());
 			try {
 				Thread.sleep(5);

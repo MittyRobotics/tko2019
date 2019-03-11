@@ -23,20 +23,14 @@ public final class Robot extends SampleRobot {
 	@Override
 	protected final void robotInit() {
 		// Init Cameras
-		//CameraServer.getInstance().startAutomaticCapture(0);
-
-		//	CameraServer.getInstance().startAutomaticCapture(1);
-		final UsbCamera[] CAMERAS = new UsbCamera[3]; //0 is vision
-		CAMERAS[0] = CameraServer.getInstance().startAutomaticCapture("0", 0);
-		CAMERAS[1] = CameraServer.getInstance().startAutomaticCapture("1", 1);
-		CAMERAS[2] = CameraServer.getInstance().startAutomaticCapture("2", 2);
-
-		CAMERAS[0].setBrightness(0);
-		CAMERAS[0].setExposureManual(0);
-		CAMERAS[2].setBrightness(50);
-		CAMERAS[2].setExposureManual(50);
-		CAMERAS[2].setResolution(640, 360);
-
+		UsbCamera c = CameraServer.getInstance().startAutomaticCapture(0);
+		c.setBrightness(50);
+		c.setExposureAuto();
+		c.setWhiteBalanceAuto();
+		UsbCamera m = CameraServer.getInstance().startAutomaticCapture(1);
+		m.setBrightness(50);
+		m.setExposureAuto();
+		m.setWhiteBalanceAuto();
 
 		// Init Hardware
 //		Gyro.getInstance();
@@ -56,29 +50,50 @@ public final class Robot extends SampleRobot {
 
 	@Override
 	public final void autonomous() {
-		enabled();
+		//Cargo 6390
+
+		Cargo.getInstance().moveConveyor(15734);
+		while (isEnabled()) {
+			System.out.println(Cargo.getInstance().conveyorTalons[0].getSelectedSensorPosition());
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
 	public final void operatorControl() {
-		Climber.getInstance().push();
+//		Climber.getInstance().push();
 		enabled();
-//		while (isEnabled()){
-//			System.out.println("L: " + Drive.getInstance().leftTalons[0].getSelectedSensorVelocity());
-//			System.out.println("R: " + Drive.getInstance().rightTalons[0].getSelectedSensorVelocity());
-//			try {
-//				Thread.sleep(10);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
-//		}
+		while (isEnabled()){
+			System.out.println(Cargo.getInstance().conveyorTalons[0].getSelectedSensorPosition());
+//			System.out.println("Real: " + Drive.getInstance().leftTalons[0].getMotorOutputPercent());
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 //		VisionSync.SEQUENCES_MANAGER.continueSequence();
 	}
 
 	@Override
 	public final void test() { // Zero Encoders
 		Compressor.getInstance().start();
-		HatchPanel.getInstance().zeroEncoder();
+//		Cargo.getInstance().moveConveyor(15000);
+		Cargo.getInstance().zeroEncoder();
+		//Rockket 15730
+//		while (isEnabled()){
+//			System.out.println(Cargo.getInstance().conveyorTalons[0].getSelectedSensorPosition());
+//			try {
+//				Thread.sleep(10);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		HatchPanel.getInstance().zeroEncoder();
 //		Drive.getInstance().moveStraight(-12);
 //		enabled();
 //		while (isEnabled()){

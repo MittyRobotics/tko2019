@@ -14,5 +14,5 @@ public class PID {
 
 	// Cargo
 
-	public final static double[] CARGO = {0.2, 0, 0};
+	public final static double[] CARGO = {0.8, 0, 0};
 }

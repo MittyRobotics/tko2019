@@ -4,7 +4,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 public class NeutralModes {
 	//Drive
-	public static final NeutralMode DRIVE = NeutralMode.Brake;
+	public static final NeutralMode DRIVE = NeutralMode.Coast;
 
 	//Cargo
 	public static final NeutralMode INTAKE = NeutralMode.Coast;
