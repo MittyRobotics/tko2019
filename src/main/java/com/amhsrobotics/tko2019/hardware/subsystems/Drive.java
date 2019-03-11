@@ -130,12 +130,13 @@ public final class Drive {
 		final double setpoint = leftTalons[0].getSelectedSensorPosition() + inches * TicksPerInch.DRIVE[currentGear];
 
 		final PIDController pidTurn = new PIDController(1, 0, 0, Gyro.getInstance(), leftTalons[0]);
+		pidTurn.setSetpoint(Gyro.getInstance().getAngle());
 
 		final long startingTime = System.currentTimeMillis();
 		while (DriverStation.getInstance().isEnabled() && System.currentTimeMillis() - startingTime > waitTime
 				&& Math.abs(setpoint - leftTalons[0].getSelectedSensorPosition()) > threshold) {
 			setLeft(0.2 + pidTurn.get());
-			setRight(0.2 + pidTurn.get());
+			setRight(0.2 - pidTurn.get());
 		}
 		set(0);
 	}
