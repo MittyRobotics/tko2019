@@ -2,12 +2,11 @@ package com.amhsrobotics.tko2019.controls;
 
 import com.amhsrobotics.tko2019.controls.commands.AnalogType;
 import com.amhsrobotics.tko2019.controls.commands.DigitalType;
-import com.amhsrobotics.tko2019.hardware.Switches;
 import com.amhsrobotics.tko2019.hardware.subsystems.Cargo;
 import com.amhsrobotics.tko2019.hardware.subsystems.Climber;
 import com.amhsrobotics.tko2019.hardware.subsystems.Drive;
 import com.amhsrobotics.tko2019.hardware.subsystems.HatchPanel;
-import com.amhsrobotics.tko2019.vision.VisionSync;
+import com.amhsrobotics.tko2019.vision.Vision;
 import edu.wpi.first.wpilibj.DriverStation;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -17,8 +16,8 @@ public final class ControlBindings {
 		setupDrive();
 		setupCargo();
 		setupHatch();
-//		setupClimber();
-		setupVision(); //Don't forget about me!
+//		setupClimber(); // FIXME IDK If I Should Still be Disabled
+		setupVision(); //Don't forget about me! (DW I Remembered You)
 	}
 
 
@@ -165,17 +164,10 @@ public final class ControlBindings {
 	///////////////////////////////////////////////////////////////////////////
 
 	private static void setupVision() {
-		final VisionSync visionSync = new VisionSync();
 		Controls.getInstance()
-				.registerDigitalCommand(Controller.XboxController, ControlsConfig.CONFIRM_VISION,
-						DigitalType.DigitalPress, () -> new Thread(() -> {
-							try {
-								visionSync.request();
-							} catch (final Exception e) {
-								e.printStackTrace();
-							}
-						}).start())
-				.registerDigitalCommand(Controller.XboxController, ControlsConfig.CONFIRM_VISION,
-						DigitalType.DigitalRelease, () -> new Thread(visionSync::confirm).start());
+				.registerDigitalCommand(Controller.XboxController, ControlsConfig.START_VISION,
+						DigitalType.DigitalPress, Vision::enable)
+				.registerDigitalCommand(Controller.XboxController, ControlsConfig.STOP_VISION,
+						DigitalType.DigitalRelease, Vision::distable);
 	}
 }

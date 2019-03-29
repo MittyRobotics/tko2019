@@ -56,6 +56,6 @@ final class ControlsConfig {
 	// Vision
 	///////////////////////////////////////////////////////////////////////////
 
-	static final DigitalInput REQUEST_VISION = DigitalInput.XboxA;
-	static final DigitalInput CONFIRM_VISION = DigitalInput.XboxB;
+	static final DigitalInput START_VISION = DigitalInput.XboxA;
+	static final DigitalInput STOP_VISION = DigitalInput.XboxB;
 }
