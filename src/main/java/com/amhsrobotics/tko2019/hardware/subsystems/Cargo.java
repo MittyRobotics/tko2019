@@ -36,7 +36,7 @@ public final class Cargo {
 			final WPI_TalonSRX talon = new WPI_TalonSRX(TalonIds.CONVEYOR[i]);
 			talon.configFactoryDefault();
 			talon.setInverted(TalonInversions.CONVEYOR[i]);
-			talon.configClosedLoopPeakOutput(0, 0.35);
+			talon.configClosedLoopPeakOutput(0, 0.55);
 			if (i == 0) {
 				talon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
 				talon.setSensorPhase(EncoderInversions.CONVEYOR_ENCODER);
@@ -131,7 +131,7 @@ public final class Cargo {
 	public final void zeroEncoder() {
 		conveyorTalons[0].set(ControlMode.PercentOutput, -0.3);
 		while (!conveyorTalons[0].getSensorCollection().isRevLimitSwitchClosed()) {
-			System.out.println(conveyorTalons[0].getSelectedSensorPosition());
+//			System.out.println(conveyorTalons[0].getSelectedSensorPosition());
 			try {
 				Thread.sleep(5);
 			} catch (InterruptedException e) {
