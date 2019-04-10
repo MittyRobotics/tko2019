@@ -112,7 +112,7 @@ public final class Controls extends Thread {
 								controlCommand.action(value);
 							}
 						}
-						if (Math.abs(value) > 0.05) {
+						if (Math.abs(value) > 0.1) {
 							SequencesManager.setManual();
 							ArrayList<AnalogControlCommand> outOfMinorThresholdCommands = analogControls.get(controller).get(analogInput).get(AnalogType.OutOfThresholdMinor);
 							if (outOfMinorThresholdCommands != null) {

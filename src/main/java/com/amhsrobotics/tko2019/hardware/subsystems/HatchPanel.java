@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DriverStation;
 
 public final class HatchPanel {
 	private final static HatchPanel INSTANCE = new HatchPanel();
@@ -102,7 +103,7 @@ public final class HatchPanel {
 
 	public final void zeroEncoder() {
 		slideTalon.set(ControlMode.PercentOutput, 0.1);
-		while (!slideTalon.getSensorCollection().isFwdLimitSwitchClosed()) {
+		while (!slideTalon.getSensorCollection().isFwdLimitSwitchClosed() && DriverStation.getInstance().isTest()) {
 			try {
 				Thread.sleep(20);
 			} catch (InterruptedException e) {

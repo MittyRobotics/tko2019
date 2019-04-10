@@ -17,7 +17,8 @@ public final class ControlBindings {
 		setupCargo();
 		setupHatch();
 //		setupClimber(); // FIXME IDK If I Should Still be Disabled
-		setupVision(); //Don't forget about me! (DW I Remembered You)
+//		setupVision(); //Don't forget about me! (DW I Remembered You)
+//		setupAuton();
 	}
 
 
@@ -28,8 +29,10 @@ public final class ControlBindings {
 	private static void setupDrive() {
 		Controls.getInstance()
 				// Gear Shifting
-//				.registerDigitalCommand(Controller.XboxController, ControlsConfig.GEAR_SWITCH,
-//						DigitalType.DigitalPress, () -> Drive.getInstance().shiftGear())
+				.registerDigitalCommand(Controller.XboxController, ControlsConfig.HIGH_GEAR_SWITCH,
+						DigitalType.DigitalPress, () -> Drive.getInstance().shiftHigh())
+				.registerDigitalCommand(Controller.XboxController, ControlsConfig.LOW_GEAR_SWITCH,
+						DigitalType.DigitalPress, () -> Drive.getInstance().shiftLow())
 				// Reversing
 				.registerDigitalCommand(Controller.XboxController, ControlsConfig.REVERSE_DIRECTION,
 						DigitalType.DigitalPress, () -> Drive.getInstance().toggleReverser())
@@ -122,11 +125,15 @@ public final class ControlBindings {
 						DigitalType.DigitalPress, () -> Cargo.getInstance().cargoConveyor())
 				.registerDigitalCommand(Controller.Joystick2, ControlsConfig.ROCKET_HEIGHT,
 						DigitalType.DigitalPress, () -> Cargo.getInstance().rocketConveyor())
-				.registerDigitalCommand(Controller.Joystick2, ControlsConfig.GROUND_HEIGHT,
-						DigitalType.DigitalPress, () -> Cargo.getInstance().groundConveyor())
+//				.registerDigitalCommand(Controller.Joystick2, ControlsConfig.GROUND_HEIGHT,
+//						DigitalType.DigitalPress, () -> Cargo.getInstance().groundConveyor())
 				// Manual Cargo Height
 				.registerAnalogCommand(Controller.Joystick2, ControlsConfig.MOVE_ANGLE,
-						AnalogType.OutOfThresholdMinor, value -> Cargo.getInstance().moveConveyor(Cargo.getInstance().conveyorTalons[0].getSelectedSensorPosition() - value * 1000));
+						AnalogType.OutOfThresholdMinor, value -> {
+							if (Math.abs(value) > 0.15){
+								Cargo.getInstance().moveConveyor(Cargo.getInstance().conveyorTalons[0].getSelectedSensorPosition() - value * 1000);
+							}
+						});
 	}
 
 
@@ -135,13 +142,14 @@ public final class ControlBindings {
 	///////////////////////////////////////////////////////////////////////////
 
 	private static void setupClimber() {
-		AtomicBoolean elevenPressed = new AtomicBoolean(false);
 		Controls.getInstance()
 				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.RELEASE_CLIMBER_10,
 						DigitalType.DigitalPress, () -> {
 							if (
-//									DriverStation.getInstance().getMatchTime() < 30 &&
-									DriverStation.getInstance().isOperatorControl()) {
+
+									DriverStation.getInstance().getMatchTime() < 30 &&
+									DriverStation.getInstance().isOperatorControl() &&
+											Climber.getInstance().isElevenPressed()) {
 								HatchPanel.getInstance().slideMiddle();
 								HatchPanel.getInstance().forward();
 								try {
@@ -153,9 +161,9 @@ public final class ControlBindings {
 							}
 						})
 				.registerDigitalCommand(Controller.Joystick1, ControlsConfig.RELEASE_CLIMBER_11,
-						DigitalType.DigitalPress, () -> elevenPressed.set(true))
+						DigitalType.DigitalPress, () -> Climber.getInstance().setElevenPressed(true))
 				.registerDigitalCommand(Controller.Joystick2, ControlsConfig.RELEASE_CLIMBER_11,
-						DigitalType.DigitalRelease, () -> elevenPressed.set(false));
+						DigitalType.DigitalRelease, () -> Climber.getInstance().setElevenPressed(false));
 	}
 
 
@@ -165,9 +173,18 @@ public final class ControlBindings {
 
 	private static void setupVision() {
 		Controls.getInstance()
-				.registerDigitalCommand(Controller.XboxController, ControlsConfig.START_VISION,
-						DigitalType.DigitalPress, Vision::enable)
-				.registerDigitalCommand(Controller.XboxController, ControlsConfig.STOP_VISION,
-						DigitalType.DigitalRelease, Vision::distable);
+				.registerAnalogCommand(Controller.XboxController, ControlsConfig.START_VISION, AnalogType.OutOfThresholdMajor, value -> Vision.enable())
+				.registerAnalogCommand(Controller.XboxController, ControlsConfig.STOP_VISION, AnalogType.OutOfThresholdMajor, value -> Vision.disable());
+	}
+
+	private static void setupAuton(){
+		Controls.getInstance()
+				.registerDigitalCommand(Controller.XboxController, ControlsConfig.RUN_AUTON, DigitalType.DigitalPress, () ->{
+					if(DriverStation.getInstance().isAutonomous()){
+						Drive.getInstance().enablePID();
+						//in negative inches
+						Drive.getInstance().moveStraight(-50); //TODO find value
+					}
+				}).registerDigitalCommand(Controller.XboxController, ControlsConfig.CANCEL_AUTON, DigitalType.DigitalPress, ()-> Drive.getInstance().disablePID());
 	}
 }

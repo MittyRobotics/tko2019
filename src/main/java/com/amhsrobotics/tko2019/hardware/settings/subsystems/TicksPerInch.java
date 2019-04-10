@@ -3,7 +3,7 @@ package com.amhsrobotics.tko2019.hardware.settings.subsystems;
 public class TicksPerInch {
 	// Drive
 
-	public static final double[] DRIVE = {0.0, 160};
+	public static final double[] DRIVE = {232.82, 79.68};
 
 
 	// Hatch Panel

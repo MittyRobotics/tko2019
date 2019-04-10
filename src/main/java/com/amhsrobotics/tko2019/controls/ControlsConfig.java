@@ -3,13 +3,18 @@ package com.amhsrobotics.tko2019.controls;
 import com.amhsrobotics.tko2019.controls.input.AnalogInput;
 import com.amhsrobotics.tko2019.controls.input.DigitalInput;
 
+import java.io.DataInput;
+
 final class ControlsConfig {
 	///////////////////////////////////////////////////////////////////////////
 	// Drive
 	///////////////////////////////////////////////////////////////////////////
 
 	static final DigitalInput REVERSE_DIRECTION = DigitalInput.XboxRJoystick;
-	static final DigitalInput GEAR_SWITCH = DigitalInput.XboxRBumper;
+	static final DigitalInput HIGH_GEAR_SWITCH = DigitalInput.XboxRBumper;
+	static final DigitalInput LOW_GEAR_SWITCH = DigitalInput.XboxLBumper;
+	static final DigitalInput RUN_AUTON = DigitalInput.XboxA;
+	static final DigitalInput CANCEL_AUTON = DigitalInput.XboxB;
 
 	static final AnalogInput LEFT_WHEELS = AnalogInput.XboxLYJoystick;
 	static final AnalogInput RIGHT_WHEELS = AnalogInput.XboxRYJoystick;
@@ -56,6 +61,6 @@ final class ControlsConfig {
 	// Vision
 	///////////////////////////////////////////////////////////////////////////
 
-	static final DigitalInput START_VISION = DigitalInput.XboxA;
-	static final DigitalInput STOP_VISION = DigitalInput.XboxB;
+	static final AnalogInput START_VISION = AnalogInput.XboxRTrigger;
+	static final AnalogInput STOP_VISION = AnalogInput.XboxLTrigger;
 }

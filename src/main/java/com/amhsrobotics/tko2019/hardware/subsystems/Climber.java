@@ -4,6 +4,7 @@ import com.amhsrobotics.tko2019.hardware.settings.subsystems.SolenoidIds;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public final class Climber {
+	private boolean elevenPressed = false;
 	private static final Climber INSTANCE = new Climber();
 
 	private final DoubleSolenoid climberSolenoid = new DoubleSolenoid(SolenoidIds.CLIMBER[0], SolenoidIds.CLIMBER[1]);
@@ -21,5 +22,12 @@ public final class Climber {
 	}
 	public void push(){
 		climberSolenoid.set(DoubleSolenoid.Value.kForward);
+	}
+
+	public boolean isElevenPressed(){
+		return elevenPressed;
+	}
+	public void setElevenPressed(boolean state){
+		elevenPressed = state;
 	}
 }

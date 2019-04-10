@@ -5,8 +5,8 @@ import com.amhsrobotics.tko2019.vision.networking.Connection;
 import edu.wpi.first.wpilibj.DriverStation;
 
 public final class Vision {
-	private static final double dP = 0.0;
-	private static final double dT = 0.0;
+	private static final double dP = 0.0025;
+	private static final double dT = 0.2;
 
 	private static volatile boolean shouldRun = false;
 
@@ -28,7 +28,7 @@ public final class Vision {
 		}
 	}
 
-	public static void distable() {
+	public static void disable() {
 		shouldRun = false;
 	}
 }
